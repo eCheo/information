@@ -144,13 +144,13 @@ export default [
         component: () => import('@/view/update/update-table.vue')
       },
       {
-        path: 'update_paste_page',
-        name: 'update_paste_page',
+        path: 'getIntegral',
+        name: 'getIntegral',
         meta: {
           icon: 'md-clipboard',
           title: '积分获取'
         },
-        component: () => import('@/view/update/update-paste.vue')
+        component: () => import('@/view/update/getIntegral.vue')
       },
       {
         path: 'update_paste_page',

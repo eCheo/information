@@ -53,15 +53,11 @@ export default {
   },
   data () {
     return {
-  
     }
   },
   methods: {
-
   },
-  mounted () {
-  
-  }
+  mounted () {}
 }
 </script>
 <style lang="less">

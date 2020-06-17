@@ -6,7 +6,11 @@ export const login = ({ userName, password }) => {
     password
   }
   return axios.request({
-    url: 'login',
+    url: '/api/front/member/login.json',
+    headers: {
+      Authorization: 'Basic TW9iaWxlOkFuZHJvaWQtSU9T',
+      'Content-Type': 'application/json'
+    },
     data,
     method: 'post'
   })
@@ -14,7 +18,7 @@ export const login = ({ userName, password }) => {
 
 export const getUserInfo = (token) => {
   return axios.request({
-    url: 'get_info',
+    url: 'get_info', // /api/front/member/findMember.json
     params: {
       token
     },

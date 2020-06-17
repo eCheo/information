@@ -107,9 +107,7 @@ export default {
       parent: this
     }
   },
-  methods: {
-   
-  }
+  methods: {}
 }
 </script>
 
