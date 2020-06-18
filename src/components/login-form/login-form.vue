@@ -44,7 +44,8 @@ export default {
     return {
       form: {
         userName: 'news03',
-        password: '123456'
+        password: '123456',
+        loginType: 'PASSWORD'
       }
     }
   },
@@ -61,8 +62,9 @@ export default {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.$emit('on-success-valid', {
-            userName: this.form.userName,
-            password: this.form.password
+            account: this.form.userName,
+            passWord: this.form.password,
+            loginType: 'PASSWORD'
           })
         }
       })

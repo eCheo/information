@@ -74,15 +74,18 @@ export default {
   },
   actions: {
     // 登录
-    handleLogin ({ commit }, { userName, password }) {
-      userName = userName.trim()
+    handleLogin ({ commit }, { account, passWord, loginType }) {
+      account = account.trim()
       return new Promise((resolve, reject) => {
         login({
-          userName,
-          password
+          account,
+          passWord,
+          loginType
         }).then(res => {
           const data = res.data
+          console.log(data)
           commit('setToken', data.token)
+          commit('token')
           resolve()
         }).catch(err => {
           reject(err)
@@ -93,7 +96,6 @@ export default {
     handleLogOut ({ state, commit }) {
       return new Promise((resolve, reject) => {
         logout(state.token).then(() => {
-          commit('setToken', '')
           commit('setAccess', [])
           resolve()
         }).catch(err => {
@@ -109,12 +111,13 @@ export default {
     getUserInfo ({ state, commit }) {
       return new Promise((resolve, reject) => {
         try {
+          console.log(state.token)
           getUserInfo(state.token).then(res => {
             const data = res.data
-            commit('setAvator', data.avator)
-            commit('setUserName', data.name)
-            commit('setUserId', data.user_id)
-            commit('setAccess', data.access)
+            commit('setAvator', data.headImgPath)
+            commit('setUserName', data.nickName)
+            // commit('setUserId', data.user_id)
+            commit('setAccess', ['super_admin'])
             commit('setHasGetInfo', true)
             resolve(data)
           }).catch(err => {

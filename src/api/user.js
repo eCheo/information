@@ -1,9 +1,10 @@
 import axios from '@/libs/api.request'
 
-export const login = ({ userName, password }) => {
+export const login = ({ account, passWord, loginType }) => {
   const data = {
-    userName,
-    password
+    account,
+    passWord,
+    loginType
   }
   return axios.request({
     url: '/api/front/member/login.json',
@@ -18,11 +19,11 @@ export const login = ({ userName, password }) => {
 
 export const getUserInfo = (token) => {
   return axios.request({
-    url: 'get_info', // /api/front/member/findMember.json
-    params: {
-      token
+    url: '/api/front/member/findMember.json', // /api/front/member/findMember.json
+    headers: {
+      Authorization: token
     },
-    method: 'get'
+    method: 'POST'
   })
 }
 
