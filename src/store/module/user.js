@@ -17,6 +17,7 @@ export default {
     userId: '',
     avatorImgPath: '',
     token: getToken(),
+    tokenType: '',
     access: '',
     hasGetInfo: false,
     unreadCount: 0,
@@ -65,6 +66,9 @@ export default {
       const msgItem = state[from].splice(index, 1)[0]
       msgItem.loading = false
       state[to].unshift(msgItem)
+    },
+    setTokeType (state, tokenType) {
+      state.tokenType = tokenType
     }
   },
   getters: {
@@ -82,9 +86,9 @@ export default {
           passWord,
           loginType
         }).then(res => {
-          const data = res.data
-          console.log(data)
-          commit('setToken', data.token)
+          const data = res.data.data
+          commit('setToken', data.accessToken)
+          commit('setTokeType', data.tokenType)
           commit('token')
           resolve()
         }).catch(err => {
@@ -97,12 +101,12 @@ export default {
       return new Promise((resolve, reject) => {
         logout(state.token).then(() => {
           commit('setAccess', [])
+          commit('setToken', '')
           resolve()
         }).catch(err => {
           reject(err)
         })
         // 如果你的退出登录无需请求接口，则可以直接使用下面三行代码而无需使用logout调用接口
-        // commit('setToken', '')
         // commit('setAccess', [])
         // resolve()
       })
@@ -112,8 +116,8 @@ export default {
       return new Promise((resolve, reject) => {
         try {
           console.log(state.token)
-          getUserInfo(state.token).then(res => {
-            const data = res.data
+          getUserInfo(state.tokenType, state.token).then(res => {
+            const data = res.data.data
             commit('setAvator', data.headImgPath)
             commit('setUserName', data.nickName)
             // commit('setUserId', data.user_id)

@@ -17,11 +17,11 @@ export const login = ({ account, passWord, loginType }) => {
   })
 }
 
-export const getUserInfo = (token) => {
+export const getUserInfo = (tokenType, token) => {
   return axios.request({
     url: '/api/front/member/findMember.json', // /api/front/member/findMember.json
     headers: {
-      Authorization: token
+      Authorization: tokenType + ' ' + token
     },
     method: 'POST'
   })

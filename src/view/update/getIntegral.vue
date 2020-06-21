@@ -38,7 +38,7 @@ export default {
       ]
     }
   },
-  created() {
+  created () {
     console.log(this.$store.state.user)
   }
 }

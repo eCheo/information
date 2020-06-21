@@ -153,31 +153,31 @@ export default [
         component: () => import('@/view/update/getIntegral.vue')
       },
       {
-        path: 'update_paste_page',
-        name: 'update_paste_page',
+        path: 'getIntegralChange',
+        name: 'getIntegralChange',
         meta: {
           icon: 'md-clipboard',
           title: '积分变更'
-        }
-        // component: () => import('@/view/update/update-paste.vue')
+        },
+        component: () => import('@/view/update/getIntegralChange.vue')
       },
       {
-        path: 'update_paste_page',
-        name: 'update_paste_page',
+        path: 'getIntegralDetailed',
+        name: 'getIntegralDetailed',
         meta: {
           icon: 'md-clipboard',
           title: '会员积分明细'
-        }
-        // component: () => import('@/view/update/update-paste.vue')
+        },
+        component: () => import('@/view/update/getIntegralDetailed.vue')
       },
       {
-        path: 'update_paste_page',
-        name: 'update_paste_page',
+        path: 'shoppingManger',
+        name: 'shoppingManger',
         meta: {
           icon: 'md-clipboard',
           title: '商城管理'
-        }
-        // component: () => import('@/view/update/update-paste.vue')
+        },
+        component: () => import('@/view/update/shoppingManger.vue')
       },
       {
         path: 'update_paste_page',
