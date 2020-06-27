@@ -106,13 +106,32 @@ export default [
         component: () => import('@/view/components/count-to/count-to.vue')
       },
       {
-        path: 'drag_list_page',
-        name: 'drag_list_page',
+        path: 'drag',
+        name: 'drag',
         meta: {
-          icon: 'ios-infinite',
-          title: '审核发布'
+          hideInBread: true
         },
-        component: () => import('@/view/components/drag-list/drag-list.vue')
+        children: [
+          {
+            path: 'drag_list_page',
+            name: 'drag_list_page',
+            meta: {
+              icon: 'ios-infinite',
+              title: '审核发布'
+            },
+            component: () => import('@/view/components/drag-list/drag-list.vue')
+          },
+          {
+            path: 'addArticle',
+            name: 'addArticle',
+            meta: {
+              hideInMenu: true,
+              title: '发布文章'
+            },
+            component: () => import('@/view/components/drag-list/addArticle.vue')
+          }
+        ],
+        component: parentView
       },
       {
         path: 'editor_page',
@@ -171,13 +190,33 @@ export default [
         component: () => import('@/view/update/getIntegralDetailed.vue')
       },
       {
-        path: 'shoppingManger',
-        name: 'shoppingManger',
+        path: 'shop',
+        name: 'shop',
         meta: {
           icon: 'md-clipboard',
-          title: '商城管理'
+          title: ''
         },
-        component: () => import('@/view/update/shoppingManger.vue')
+        children: [
+          {
+            path: 'shoppingManger',
+            name: 'shoppingManger',
+            meta: {
+              icon: 'md-clipboard',
+              title: '商城管理'
+            },
+            component: () => import('@/view/update/shoppingManger.vue')
+          },
+          {
+            path: 'shoppingAdd',
+            name: 'shoppingAdd',
+            meta: {
+              title: '添加商品',
+              hideInMenu: true
+            },
+            component: () => import('@/view/update/shoppingAdd.vue')
+          }
+        ],
+        component: parentView
       },
       {
         path: 'update_paste_page',

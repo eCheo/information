@@ -36,7 +36,10 @@
       </div>
     </div>
     <div class="content">
-      <p>商品列表</p>
+      <div>
+        <span>商品列表</span>
+        <Button style="float:right" type="success" @click="$router.push('/update/shop/shoppingAdd')">添加商品</Button>
+      </div>
       <hr style="margin:20px 0;" color="#e9e9e9" />
       <Table border :columns="integralList" :data="integralData"></Table>
     </div>
