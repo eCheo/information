@@ -83,3 +83,47 @@ export const findArticles = data => {
     data: data
   })
 }
+
+export const findGoodsPage = data => {
+  return axios.request({
+    url: '/api/backend/good/findBackEndGoodsPageResult.json',
+    method: 'post',
+    headers: {
+      Authorization: $store.state.tokenType + ' ' + $store.state.token
+    },
+    data: data
+  })
+}
+
+export const goodsGrounding = data => {
+  return axios.request({
+    url: '/api/backend/good/goodsGrounding.json',
+    method: 'post',
+    headers: {
+      Authorization: $store.state.tokenType + ' ' + $store.state.token
+    },
+    data: data
+  })
+}
+
+export const deleteGoods = data => {
+  return axios.request({
+    url: '/api/backend/good/deleteGoods.json',
+    method: 'post',
+    headers: {
+      Authorization: $store.state.tokenType + ' ' + $store.state.token
+    },
+    data: data
+  })
+}
+
+export const integralList = data => {
+  return axios.request({
+    url: '/api/backend/member/findBackEndIntegralRecordPage.json',
+    method: 'post',
+    headers: {
+      Authorization: $store.state.tokenType + ' ' + $store.state.token
+    },
+    data: data
+  })
+}

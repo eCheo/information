@@ -168,7 +168,6 @@ export default {
   },
   methods: {
     handleChange (html, text) {
-      console.log(html, text)
       this.content = html
     },
     changeContent () {

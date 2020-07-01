@@ -5,16 +5,17 @@
       <div class="top-box">
         <div class="top-item">
           <span>商品ID</span>
-          <Input style="width:200px"></Input>
+          <Input v-model="integralFrom.EQ_id" style="width:200px"></Input>
         </div>
         <div class="top-item">
           <span>商品名称</span>
-          <Input style="width:200px"></Input>
+          <Input v-model="integralFrom.EQ_name" style="width:200px"></Input>
         </div>
         <div class="top-item">
           <span>有效期</span>
           <DatePicker
             :value="time"
+            @on-change='changeDate'
             format="yyyy年MM月dd日"
             type="daterange"
             placement="bottom-end"
@@ -24,7 +25,7 @@
         </div>
         <div class="top-item">
           <span>上架状态</span>
-          <Select v-model="upStatus" style="width:200px">
+          <Select v-model="integralFrom.EQ_goodsGroundingType" style="width:200px">
             <Option
               v-for="item in upStatusList"
               :value="item.value"
@@ -41,45 +42,160 @@
         <Button style="float:right" type="success" @click="$router.push('/update/shop/shoppingAdd')">添加商品</Button>
       </div>
       <hr style="margin:20px 0;" color="#e9e9e9" />
-      <Table border :columns="integralList" :data="integralData"></Table>
+      <Table border :loading='tableLoading' :columns="integralList" :data="integralData.content"></Table>
+      <Page style="margin-top:10px;float:right;" :total="integralData.totalElements" @on-change='findGoodsPage' />
     </div>
   </div>
 </template>
 
 <script>
+import { findGoodsPage, goodsGrounding } from '@/api/data'
 export default {
   data () {
     return {
       integralList: [
         {
-          title: '商品ID'
+          title: '商品ID',
+          key: 'id'
         },
         {
-          title: '商品名称'
+          title: '商品名称',
+          key: 'name'
         },
         {
-          title: '兑换积分'
+          title: '兑换积分',
+          key: 'integral'
         },
         {
-          title: '库存数量'
+          title: '库存数量',
+          key: 'stock'
         },
         {
-          title: '商品成本'
+          title: '商品成本',
+          key: 'money'
         },
         {
-          title: '有效期'
+          title: '有效期',
+          key: 'expirationDate'
         },
         {
-          title: '上架状态'
+          title: '上架状态',
+          render: (h, params) => {
+            return h("span", params.row.type)
+          }
         },
         {
-          title: '操作'
+          title: '操作',
+          render: (h, params) => {
+            return h('div', [
+              h('span', {
+                style: {
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    this.goodsGrounding(params.row)
+                  }
+                }
+              }, params.row.type === '上架' ? '下架' : '上架'),
+              h('span', {
+                style: {
+                  display: 'inline-block',
+                  margin: '0 20px',
+                  cursor: 'pointer'
+                }
+              }, '编辑'),
+              h('span', {
+                style: {
+                  cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    this.deleteGoods(params.row);
+                  }
+                }
+              }, '删除')
+            ])
+          }
         }
       ],
       integralData: [],
       time: '',
-      upStatus: '',
-      upStatusList: []
+      upStatusList: [
+        {
+          label: '上架',
+          value: 'Grounding'
+        },
+        {
+          label: '下架',
+          value: 'Dismount'
+        }
+      ],
+      integralFrom: {
+        GTE_startDate: '',
+        LTE_expirationDate: '',
+        EQ_goodsGroundingType: '',
+        EQ_name: '',
+        EQ_id: '',
+        page: '1',
+        size: '15'
+      },
+      tableLoading: true
+    }
+  },
+  created() {
+    this.findGoodsPage()
+  },
+  methods: {
+    findGoodsPage(page) {
+      this.integralFrom.page = page;
+      findGoodsPage(this.integralFrom).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.integralData = res.data.data;
+          this.integralData.content.forEach(item => {
+            item.type = item.goodsGroundingType.message
+          })
+          this.tableLoading = false;
+        } else {
+          this.$Message.error(res.data.message);
+          this.tableLoading = false;
+        }
+      })
+    },
+    goodsGrounding(row) {
+      let params = {
+        id: row.id,
+        goodsGroundingType: row.type === '上架' ? 'Dismount' : 'Grounding'
+      }
+      goodsGrounding(params).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.$Message.success('商品上架成功');
+          this.findGoodsPage('1');
+        } else {
+          this.$Message.error(res.data.message);
+          this.tableLoading = false;
+        }
+      })
+    },
+    deleteGoods(row) {
+      let params = {
+        id: row.id
+      }
+      deleteGoods(params).then(res => {
+         if (res.status === 200 && res.data.code === '200') { 
+           this.$Message.success('商品删除成功');
+           this.findGoodsPage('1');
+         } else {
+           this.$Message.error(res.data.message);
+           this.tableLoading = false;
+         }
+      })
+    },
+    changeDate (date) {
+      let starTime = date[0].replace(/([^\u0000-\u00FF])/g, '-')
+      let endTime = date[1].replace(/([^\u0000-\u00FF])/g, '-')
+      this.integralFrom.GTE_startDate = starTime.substring(0, starTime.length - 1)
+      this.integralFrom.LTE_expirationDate = endTime.substring(0, endTime.length - 1)
     }
   }
 }

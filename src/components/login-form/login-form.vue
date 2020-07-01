@@ -15,7 +15,7 @@
       </Input>
     </FormItem>
     <FormItem>
-      <Button @click="handleSubmit" type="primary" long>登录</Button>
+      <Button :loading='logLoading' @click="handleSubmit" type="primary" long>登录</Button>
     </FormItem>
   </Form>
 </template>
@@ -38,7 +38,8 @@ export default {
           { required: true, message: '密码不能为空', trigger: 'blur' }
         ]
       }
-    }
+    },
+    logLoading: false
   },
   data () {
     return {
