@@ -33,7 +33,7 @@
             >{{ item.label }}</Option>
           </Select>
         </div>
-        <Button style="height:30px" type="success" icon="ios-search">搜索</Button>
+        <Button style="height:30px" type="success" icon="ios-search" @click="findGoodsPage(1)">搜索</Button>
       </div>
     </div>
     <div class="content">
@@ -43,7 +43,7 @@
       </div>
       <hr style="margin:20px 0;" color="#e9e9e9" />
       <Table border :loading='tableLoading' :columns="integralList" :data="integralData.content"></Table>
-      <Page style="margin-top:10px;float:right;" :total="integralData.totalElements" @on-change='findGoodsPage' />
+      <Page style="margin-top:10px;float:right;" :page-size='15' :total="integralData.totalElements" @on-change='findGoodsPage' />
     </div>
   </div>
 </template>

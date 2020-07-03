@@ -117,9 +117,20 @@ export const deleteGoods = data => {
   })
 }
 
-export const integralList = data => {
+export const findIntegral = data => {
   return axios.request({
     url: '/api/backend/member/findBackEndIntegralRecordPage.json',
+    method: 'post',
+    headers: {
+      Authorization: $store.state.tokenType + ' ' + $store.state.token
+    },
+    data: data
+  })
+}
+
+export const findIntegralDetailed = data => {
+  return axios.request({
+    url: '/api/backend/member/findBackEndIntegralDetailed.json',
     method: 'post',
     headers: {
       Authorization: $store.state.tokenType + ' ' + $store.state.token
