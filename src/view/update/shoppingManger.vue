@@ -103,6 +103,11 @@ export default {
                   display: 'inline-block',
                   margin: '0 20px',
                   cursor: 'pointer'
+                },
+                on: {
+                  click: () => {
+                    this.$router.push({path: '/update/shop/shoppingAdd', query: {id: params.row.id}})
+                  }
                 }
               }, '编辑'),
               h('span', {

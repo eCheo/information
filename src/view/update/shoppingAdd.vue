@@ -19,7 +19,7 @@
           <Button @click="specsDelete(index)">删除规格</Button>
           <Button type="success" @click="specsSonAdd(item)" :disabled="item.sonName === ''">新增子规格</Button>
           <div style="margin-top:20px">
-            <div class="s-button" v-for="(son, index2) in item.specification" :key="index2">
+            <div class="s-button" v-for="(son, index2) in item.specification || item.info" :key="index2">
               <div class="s-close" @click="specsSonDetele(item, index2)"></div>
               {{son}}
             </div>
@@ -40,6 +40,7 @@
                 </template> -->
             <Upload
                 ref="upload"
+                v-if="row.image === ''"
                 :show-upload-list="true"
                 :on-success="handleSuccess"
                 :format="['jpg','jpeg','png']"
@@ -56,6 +57,7 @@
                     <p>上传图片</p>
                 </div>
             </Upload>
+            <img style="width:50px;height:50px" v-else :src="row.image">
         </template>
       </Table>
       <FormItem label='有效期' prop='date'>
@@ -73,7 +75,7 @@
 </template>
 
 <script>
-import { createGoods } from '@/api/data'
+import { createGoods, findBackEndGoods, updateGoods } from '@/api/data'
 import store from '../../store/module/user'
 export default {
   data () {
@@ -120,12 +122,38 @@ export default {
       upObj: {}
     }
   },
+  created() {
+    if (this.$route.query.id) {
+      this.findBackEndGoods(this.$route.query.id);
+    }
+  },
   mounted () {
     this.headers = {
       Authorization: store.state.tokenType + ' ' + store.state.token
     }
   },
   methods: {
+    findBackEndGoods(id) {
+      this.specsList = this.specsListEmp;
+      findBackEndGoods({id: id}).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.specification = JSON.parse(res.data.data.attributeList);
+          this.formValidate = res.data.data;
+          res.data.data.specificationDetailsDtos.forEach(item => {
+            item.specification.forEach(it => {
+              item[it.key] = it.name
+            })
+          })
+          this.specsData = res.data.data.specificationDetailsDtos;
+          this.specification.forEach(item => {
+            this.specsList.unshift({key: item.key, title: item.key});
+          })
+          this.formValidate.date = [res.data.data.startDate, res.data.data.expirationDate]
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      })
+    },
     specsAdd () {
       let datas = {
         key: this.formValidate.specsName,
@@ -176,18 +204,21 @@ export default {
       this.tableAdd()
     },
     specsSonDetele (item, index) {
-      this.deleteSonNameEmp = item.specification.splice(index, 1)[0]
-      if (item.specification.length === 0) {
+      console.log(item)
+      console.log(this.specsData)
+      this.deleteSonNameEmp = item.specification ? item.specification.splice(index, 1)[0] : item.info.splice(index, 1)[0]
+      if (item.specification ? item.specification.length === 0 : item.info.length === 0) {
         for (var i = this.specsList.length - 1; i >= 0; i--) {
           if (this.specsList[i].key === item.key) {
             this.specsList.splice(i, 1)
           }
         }
       } else {
+        console.log(this.deleteSonNameEmp)
         for (var i = this.specsData.length - 1; i >= 0; i--) {
           if (this.specsData[i][item.key] === this.deleteSonNameEmp) {
             this.specsData.splice(i, 1)
-            item.specification.splice(index, 1)
+            item.specification ? item.specification.splice(index, 1) :  item.info.splice(index, 1)
           }
         }
       }
@@ -209,10 +240,10 @@ export default {
             var tableValue = tableAttr[1]
             data[tableTitle] = tableValue
             specification[tableTitle] = tableValue
-            data.money = '10'
+            data.money = '20'
             data.image = 'https://i0.hdslb.com/bfs/archive/7da891bf650caf6c7ba320d0dfd52917d4b74b28.png'
-            data.integral = '20'
-            data.stock = '1'
+            data.integral = '60'
+            data.stock = '100'
             if (this.isTableTitleExit(tableTitle)) continue
             this.specsList.unshift({ key: tableTitle, title: tableTitle })
           }
@@ -263,9 +294,10 @@ export default {
       return this.printList(list)
     },
     tableDel (obj) {
-      for (var j = obj.specification.length - 1; j >= 0; j--) {
-        this.deleteSonNameEmp = obj.specification.splice(j, 1)[0]
-        if (obj.specification.length === 0) {
+      let data = obj.specification ? obj.specification : obj.info
+      for (var j = data.length - 1; j >= 0; j--) {
+        this.deleteSonNameEmp = data.splice(j, 1)[0]
+        if (data.length === 0) {
           for (var i = this.specsList.length - 1; i >= 0; i--) {
             if (this.specsList[i].key === obj.key) {
               this.specsList.splice(i, 1)
@@ -282,13 +314,23 @@ export default {
     },
     upGoods () {
       this.formValidate.specificationDetailsDtos = JSON.parse(JSON.stringify(this.specsData))
-      createGoods(this.formValidate).then(res => {
-        if (res.data.code === '200') {
-          this.$Message.success('添加成功')
-        } else {
-          this.$Message.error(res.data.message)
-        }
-      })
+      if (this.$route.query.id) {
+        updateGoods(this.formValidate).then(res => {
+          if (res.data.code === '200') {
+            this.$Message.success('修改成功')
+          } else {
+            this.$Message.error(res.data.message)
+          }
+        })
+      } else {
+        createGoods(this.formValidate).then(res => {
+          if (res.data.code === '200') {
+            this.$Message.success('添加成功')
+          } else {
+            this.$Message.error(res.data.message)
+          }
+        })
+      }
     },
     changeDate (date) {
       let starTime = date[0].replace(/([^\u0000-\u00FF])/g, '-')
@@ -302,7 +344,6 @@ export default {
     },
     handleSuccess (res, file) {
       this.upObj.image = res.data.viewUrl
-      console.log(this.upObj)
     },
     handleFormatError (file) {
       this.$Notice.warning({

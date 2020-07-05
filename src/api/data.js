@@ -138,3 +138,60 @@ export const findIntegralDetailed = data => {
     data: data
   })
 }
+
+export const findArticlesResult = data => {
+  return axios.request({
+    url: '/api/backend/article/findArticlesBackEndResult.json',
+    method: 'post',
+    headers: {
+      Authorization: $store.state.tokenType + ' ' + $store.state.token
+    },
+    data: data
+  })
+}
+
+export const setGroundingType = data => {
+  return axios.request({
+    url: '/api/backend/article/setGroundingType.json',
+    method: 'post',
+    headers: {
+      Authorization: $store.state.tokenType + ' ' + $store.state.token
+    },
+    data: data
+  })
+}
+
+export const deleteArticles = data => {
+  return axios.request({
+    url: '/api/backend/article/deleteBackEndArticle.json',
+    method: 'post',
+    headers: {
+      Authorization: $store.state.tokenType + ' ' + $store.state.token
+    },
+    data: data
+  })
+}
+// /api/backend/article/findArticlesColumnListByCondition.json
+// export const 
+
+export const findBackEndGoods = data => {
+  return axios.request({
+    url: '/api/backend/good/findBackEndGoodsById.json',
+    method: 'post',
+    headers: {
+      Authorization: $store.state.tokenType + ' ' + $store.state.token
+    },
+    data: data
+  })
+}
+
+export const updateGoods = data => {
+  return axios.request({
+    url: '/api/backend/good/updateGoods.json',
+    method: 'post',
+    headers: {
+      Authorization: $store.state.tokenType + ' ' + $store.state.token
+    },
+    data: data
+  })
+}

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="viewType === 'wz'">
+    <div v-if="viewType === 'PublishArticle'">
       <Input v-model="title" placeholder="请输入文章标题"></Input>
       <editor ref="editor" :value="content" @on-change="handleChange" />
       <p>*封面(必填)</p>
@@ -50,7 +50,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="viewType === 'sp'">
+    <div v-else-if="viewType === 'PublishVideo'">
         <div>
             <p>上传视频<span>请上传时长10-30分钟,支持主流的视频格式，超出限制的视频请到腾讯视频上传</span></p>
             <Upload
@@ -118,7 +118,7 @@
           >{{item.name}}</div>
         </div>
     </div>
-    <div v-else-if="viewType === 'ht'">
+    <div v-else-if="viewType === 'Topic'">
 
     </div>
     <div>
@@ -130,7 +130,7 @@
 
 <script>
 import Editor from '_c/editor'
-import { releaseArticle, findArticles } from '../../../api/data'
+import { releaseArticle, findArticles} from '../../../api/data'
 import store from '../../../store/module/user'
 export default {
   data () {
@@ -222,7 +222,6 @@ export default {
       if (this.viewType === 'sp') {
         if (this.fileName === 'sp') {
           this.viodeUrl = res.data.viewUrl
-          console.log(this.viodeUrl)
         } else {
           this.videoImagePath = res.data.viewUrl
         }
