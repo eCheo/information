@@ -66,6 +66,9 @@
       <FormItem label='商品描述' prop='goodDescribe'>
         <Input v-model="formValidate.goodDescribe" type="textarea" :rows="4"/>
       </FormItem>
+      <div class="demo1">
+        <div class="demo2">居中</div>
+      </div>
       <div style="margin-top:20px;">
         <Button type="success" @click="upGoods">确认</Button>
         <Button>取消</Button>
@@ -204,8 +207,6 @@ export default {
       this.tableAdd()
     },
     specsSonDetele (item, index) {
-      console.log(item)
-      console.log(this.specsData)
       this.deleteSonNameEmp = item.specification ? item.specification.splice(index, 1)[0] : item.info.splice(index, 1)[0]
       if (item.specification ? item.specification.length === 0 : item.info.length === 0) {
         for (var i = this.specsList.length - 1; i >= 0; i--) {
@@ -213,12 +214,22 @@ export default {
             this.specsList.splice(i, 1)
           }
         }
+        this.specsData.forEach(it => {
+          it.specification.forEach((ot, num) => {
+            if (ot.name === this.deleteSonNameEmp) {
+              it.specification.splice(num, 1)
+            }
+          })
+        })
       } else {
-        console.log(this.deleteSonNameEmp)
         for (var i = this.specsData.length - 1; i >= 0; i--) {
           if (this.specsData[i][item.key] === this.deleteSonNameEmp) {
             this.specsData.splice(i, 1)
-            item.specification ? item.specification.splice(index, 1) :  item.info.splice(index, 1)
+            if (item.specification) {
+              item.specification.splice(index, 1)
+            } else {
+              item.info.splice(index, 1)
+            }
           }
         }
       }
@@ -374,6 +385,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.demo1 {
+  width: 100px;
+  height: 200px;
+  border: 1px solid #000;
+  .demo2 {
+    margin-top: calc(100% - 50% - 10px)
+  }
+}
 .s-list {
   margin: 20px 0;
   .s-button {
