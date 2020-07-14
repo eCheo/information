@@ -156,3 +156,11 @@ export const updateGoods = data => {
     data: data
   })
 }
+
+export const upload = data => {
+  return axios.request({
+    url: '/api/obs/upload.json',
+    method: 'post',
+    data: data
+  })
+}
