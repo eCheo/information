@@ -86,11 +86,14 @@ export default {
           passWord,
           loginType
         }).then(res => {
-          const data = res.data.data
-          commit('setToken', data.accessToken)
-          commit('setTokeType', data.tokenType)
-          commit('token')
-          resolve()
+          if (res.data.data) {
+            const data = res.data.data
+            commit('setToken', data.accessToken)
+            commit('setTokeType', data.tokenType)
+            sessionStorage.setItem('token', data.accessToken)
+            sessionStorage.setItem('tokenType', data.tokenType)
+          }
+          resolve(res)
         }).catch(err => {
           reject(err)
         })
@@ -114,14 +117,17 @@ export default {
     // 获取用户相关信息
     getUserInfo ({ state, commit }) {
       return new Promise((resolve, reject) => {
+        let tokenType = sessionStorage.getItem('tokenType') || state.tokenType
+        let token = sessionStorage.getItem('token') || state.token
         try {
-          getUserInfo(state.tokenType, state.token).then(res => {
+          getUserInfo(tokenType, token).then(res => {
             const data = res.data.data
             commit('setAvator', data.headImgPath)
             commit('setUserName', data.nickName)
             // commit('setUserId', data.user_id)
             commit('setAccess', ['super_admin'])
             commit('setHasGetInfo', true)
+            sessionStorage.setItem('setHasGetInfo', true)
             resolve(data)
           }).catch(err => {
             reject(err)

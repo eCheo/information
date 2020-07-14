@@ -8,10 +8,6 @@ export const login = ({ account, passWord, loginType }) => {
   }
   return axios.request({
     url: '/api/front/member/login.json',
-    headers: {
-      Authorization: 'Basic TW9iaWxlOkFuZHJvaWQtSU9T',
-      'Content-Type': 'application/json'
-    },
     data,
     method: 'post'
   })
@@ -19,10 +15,7 @@ export const login = ({ account, passWord, loginType }) => {
 
 export const getUserInfo = (tokenType, token) => {
   return axios.request({
-    url: '/api/front/member/findMember.json', // /api/front/member/findMember.json
-    headers: {
-      Authorization: tokenType + ' ' + token
-    },
+    url: '/api/front/member/findMember.json',
     method: 'POST'
   })
 }
