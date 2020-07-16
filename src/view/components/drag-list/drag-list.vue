@@ -44,7 +44,7 @@
         <span class="tr-title">文章列表</span>
         <Button style="float:right;" type="success" @click="$router.push({path:'/components/drag/addArticle', query:{type: releaseType}})" v-if="releaseType !== 'BrokeTheNews'">{{releaseBtText}}</Button>
       </div>
-      <Table border :columns="authenticationList" :data="authenticationData.content"></Table>
+      <Table border :columns="authenticationList" :loading='tableLoading' :data="authenticationData.content"></Table>
       <Page style="margin-top:10px;float:right;" :page-size='15' :total="authenticationData.totalElements" @on-change='findArticlesResult' />
     </div>
   </div>
@@ -66,31 +66,24 @@ export default {
         {
           title: '封面',
           render: (h, params) => {
-            let arr = []
-            if (params.row.imagePaths) {
-              params.row.imagePaths.forEach(item => {
-                let node = h('img', {
-                    style: {
-                      width: '150px'
-                    },
-                    attrs: {
-                      src: item
-                    }
-                  })
-                  arr.push(node)
-              })
-            }
             if (params.row.videoImagePath) {
               return h('img', {
                     style: {
-                      width: '150px'
+                      maxWidth: '150px'
                     },
                     attrs: {
                       src: params.row.videoImagePath
                     }
                     })
             } else {
-              return h('div', arr)
+              return h('img', {
+                    style: {
+                      maxWidth: '150px'
+                    },
+                    attrs: {
+                      src: params.row.imagePaths[0]
+                    }
+                  })
             }
           }
         },
@@ -186,11 +179,14 @@ export default {
     },
     findArticlesResult(page) {
       this.authenticationFrom.page = page;
+      this.tableLoading = true;
       findArticlesResult(this.authenticationFrom).then(res => {
         if (res.status === 200 && res.data.code === '200') {
           this.authenticationData = res.data.data;
+          this.tableLoading = false;
         } else {
           this.$Message.error(res.data.message);
+          this.tableLoading = false;
         }
       })
     },
