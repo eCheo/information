@@ -1,5 +1,6 @@
 import axios from 'axios'
 import store from '@/store'
+import router from 'vue-router'
 // import { Spin } from 'iview'
 const addErrorLog = errorInfo => {
   const { statusText, status, request: { responseURL } } = errorInfo
@@ -19,10 +20,7 @@ class HttpRequest {
   }
   getInsideConfig () {
     const config = {
-      baseURL: this.baseUrl,
-      headers: {
-        //
-      }
+      baseURL: this.baseUrl
     }
     return config
   }
@@ -47,6 +45,9 @@ class HttpRequest {
     // 响应拦截
     instance.interceptors.response.use(res => {
       this.destroy(url)
+      if (res.status === 200 && res.data.code === '208') {
+        location.href = '/login'
+      }
       const { data, status } = res
       return { data, status }
     }, error => {
@@ -66,6 +67,16 @@ class HttpRequest {
   }
   request (options) {
     const instance = axios.create()
+    if (options.url === '/api/front/member/login.json') {
+      options.headers = {
+        Authorization: 'Basic TW9iaWxlOkFuZHJvaWQtSU9T',
+        'Content-Type': 'application/json'
+      }
+    } else {
+      options.headers = {
+        Authorization: sessionStorage.getItem('tokenType') + ' ' + sessionStorage.getItem('token')
+      }
+    }
     options = Object.assign(this.getInsideConfig(), options)
     this.interceptors(instance, options.url)
     return instance(options)

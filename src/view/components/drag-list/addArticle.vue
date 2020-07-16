@@ -2,7 +2,7 @@
   <div>
     <div v-if="viewType === 'PublishArticle'">
       <Input v-model="title" placeholder="请输入文章标题"></Input>
-      <editor ref="editor" :value="content" @on-change="handleChange" />
+      <tinymce-editor ref="editor" :init='init' v-model="content" @on-change="handleChange" />
       <p>*封面(必填)</p>
       <p>只能上传jgp/png文件，且不超过5M</p>
       <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index">
@@ -129,8 +129,17 @@
 </template>
 
 <script>
-import Editor from '_c/editor'
-import { releaseArticle, findArticles} from '../../../api/data'
+// import Editor from '_c/editor'
+import tinymce from 'tinymce/tinymce'
+import 'tinymce/themes/silver'
+import 'tinymce/icons/default'
+import 'tinymce/plugins/image'// 插入上传图片插件
+import 'tinymce/plugins/media'// 插入视频插件
+import 'tinymce/plugins/table'// 插入表格插件
+import 'tinymce/plugins/lists'// 列表插件
+import 'tinymce/plugins/wordcount'// 字数统计插件
+import Editor from "@tinymce/tinymce-vue";
+import { releaseArticle, findArticles, upload} from '../../../api/data'
 import store from '../../../store/module/user'
 export default {
   data () {
@@ -148,11 +157,35 @@ export default {
       viewType: '',
       fileName: '',
       videoImagePath: 'https://jznews.oss-cn-hongkong.aliyuncs.com/image/3db69f7c-7e8f-478e-9e67-fa9e6335defb.jpg',
-      viodeUrl: 'https://jznews.oss-cn-hongkong.aliyuncs.com/video/de350529-87db-41a8-98cc-50d2fc928211.mp4'
+      viodeUrl: 'https://jznews.oss-cn-hongkong.aliyuncs.com/video/de350529-87db-41a8-98cc-50d2fc928211.mp4',
+      init: {
+        language_url: "/tinymce/langs/zh_CN.js",
+        language: "zh_CN",
+        skin_url: '/tinymce/skins/ui/oxide',
+        height: 430,
+        plugins:"link lists image code table colorpicker textcolor wordcount contextmenu",
+        toolbar:"bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify|bullist numlist |outdent indent blockquote | undo redo | link unlink image code | removeformat",
+        branding: false,
+        menubar: false,
+        images_upload_handler: (blobInfo, success, failure) => {
+          const file = blobInfo.blob();
+          console.log(file);
+          if (file.size > 5242880) {
+            this.$Message.error("图片请不要大于 5MB");
+          } else {
+            try {
+              // success(await upload(file));
+              this.$Message.success("图片上传成功");
+            } catch {
+              this.$Message.error("上传图片失败");
+            }
+          }
+        }
+     }
     }
   },
   components: {
-    Editor
+     "tinymce-editor": Editor
   },
   created () {
     this.getCondition()
@@ -161,6 +194,7 @@ export default {
     }
   },
   mounted () {
+    tinymce.init({})
     this.uploadList = this.$refs.upload.fileList
     this.headers = {
       Authorization: store.state.tokenType + ' ' + store.state.token
@@ -169,9 +203,6 @@ export default {
   methods: {
     handleChange (html, text) {
       this.content = html
-    },
-    changeContent () {
-      this.$refs.editor.setHtml('<p>powered by wangeditor</p>')
     },
     articleAdd (status) {
       let params = {}

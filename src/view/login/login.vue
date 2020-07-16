@@ -34,12 +34,17 @@ export default {
     handleSubmit ({ account, passWord, loginType }) {
       this.logLoading = true;
       this.handleLogin({ account, passWord, loginType }).then(res => {
-        this.getUserInfo().then(res => {
-          this.logLoading = false;
-          this.$router.push({
-            name: this.$config.homeName
+        if (res.status === 200 && res.data.code === '200') {
+          this.getUserInfo().then(res => {
+              this.logLoading = false;
+              this.$router.push({
+                name: this.$config.homeName
+              })
           })
-        })
+        } else {
+          this.$Message.error(res.data.message)
+          this.logLoading = false;
+        }
       })
     }
   }

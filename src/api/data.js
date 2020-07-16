@@ -55,9 +55,6 @@ export const createGoods = getData => {
   return axios.request({
     url: '/api/backend/good/createGoods.json',
     method: 'post',
-    headers: {
-      Authorization: $store.state.tokenType + ' ' + $store.state.token
-    },
     data: getData
   })
 }
@@ -66,9 +63,6 @@ export const releaseArticle = data => {
   return axios.request({
     url: '/api/backend/article/release.json',
     method: 'post',
-    headers: {
-      Authorization: $store.state.tokenType + ' ' + $store.state.token
-    },
     data: data
   })
 }
@@ -77,9 +71,6 @@ export const findArticles = data => {
   return axios.request({
     url: '/api/backend/article/findArticlesColumnListByCondition.json',
     method: 'post',
-    headers: {
-      Authorization: $store.state.tokenType + ' ' + $store.state.token
-    },
     data: data
   })
 }
@@ -88,9 +79,6 @@ export const findGoodsPage = data => {
   return axios.request({
     url: '/api/backend/good/findBackEndGoodsPageResult.json',
     method: 'post',
-    headers: {
-      Authorization: $store.state.tokenType + ' ' + $store.state.token
-    },
     data: data
   })
 }
@@ -99,9 +87,6 @@ export const goodsGrounding = data => {
   return axios.request({
     url: '/api/backend/good/goodsGrounding.json',
     method: 'post',
-    headers: {
-      Authorization: $store.state.tokenType + ' ' + $store.state.token
-    },
     data: data
   })
 }
@@ -110,9 +95,6 @@ export const deleteGoods = data => {
   return axios.request({
     url: '/api/backend/good/deleteGoods.json',
     method: 'post',
-    headers: {
-      Authorization: $store.state.tokenType + ' ' + $store.state.token
-    },
     data: data
   })
 }
@@ -121,9 +103,6 @@ export const findIntegral = data => {
   return axios.request({
     url: '/api/backend/member/findBackEndIntegralRecordPage.json',
     method: 'post',
-    headers: {
-      Authorization: $store.state.tokenType + ' ' + $store.state.token
-    },
     data: data
   })
 }
@@ -132,9 +111,6 @@ export const findIntegralDetailed = data => {
   return axios.request({
     url: '/api/backend/member/findBackEndIntegralDetailed.json',
     method: 'post',
-    headers: {
-      Authorization: $store.state.tokenType + ' ' + $store.state.token
-    },
     data: data
   })
 }
@@ -143,9 +119,6 @@ export const findArticlesResult = data => {
   return axios.request({
     url: '/api/backend/article/findArticlesBackEndResult.json',
     method: 'post',
-    headers: {
-      Authorization: $store.state.tokenType + ' ' + $store.state.token
-    },
     data: data
   })
 }
@@ -154,9 +127,6 @@ export const setGroundingType = data => {
   return axios.request({
     url: '/api/backend/article/setGroundingType.json',
     method: 'post',
-    headers: {
-      Authorization: $store.state.tokenType + ' ' + $store.state.token
-    },
     data: data
   })
 }
@@ -165,9 +135,6 @@ export const deleteArticles = data => {
   return axios.request({
     url: '/api/backend/article/deleteBackEndArticle.json',
     method: 'post',
-    headers: {
-      Authorization: $store.state.tokenType + ' ' + $store.state.token
-    },
     data: data
   })
 }
@@ -178,9 +145,6 @@ export const findBackEndGoods = data => {
   return axios.request({
     url: '/api/backend/good/findBackEndGoodsById.json',
     method: 'post',
-    headers: {
-      Authorization: $store.state.tokenType + ' ' + $store.state.token
-    },
     data: data
   })
 }
@@ -189,9 +153,14 @@ export const updateGoods = data => {
   return axios.request({
     url: '/api/backend/good/updateGoods.json',
     method: 'post',
-    headers: {
-      Authorization: $store.state.tokenType + ' ' + $store.state.token
-    },
+    data: data
+  })
+}
+
+export const upload = data => {
+  return axios.request({
+    url: '/api/obs/upload.json',
+    method: 'post',
     data: data
   })
 }
