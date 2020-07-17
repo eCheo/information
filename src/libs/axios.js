@@ -45,7 +45,7 @@ class HttpRequest {
     // 响应拦截
     instance.interceptors.response.use(res => {
       this.destroy(url)
-      if (res.status === 200 && res.data.code === '208') {
+      if (res.status === 200 && res.data.code === '208' && location.href.lastIndexOf('login') === -1) {
         location.href = '/login'
       }
       const { data, status } = res
@@ -67,7 +67,7 @@ class HttpRequest {
   }
   request (options) {
     const instance = axios.create()
-    if (options.url === '/api/front/member/login.json') {
+    if (options.url === '/api/backend/member/login.json') {
       options.headers = {
         Authorization: 'Basic TW9iaWxlOkFuZHJvaWQtSU9T',
         'Content-Type': 'application/json'

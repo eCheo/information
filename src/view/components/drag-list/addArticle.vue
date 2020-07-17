@@ -1,9 +1,9 @@
 <template>
   <div>
     <div v-if="viewType === 'PublishArticle'">
-      <Input v-model="title" placeholder="请输入文章标题"></Input>
-      <tinymce-editor ref="editor" :init='init' v-model="content" @on-change="handleChange" />
-      <p>*封面(必填)</p>
+      <Input v-model="title" style="width:500px;margin-bottom: 20px;" placeholder="请输入文章标题"></Input>
+      <tinymce-editor ref="editor" :init='init' v-model="content" @on-change="handleChange"/>
+      <p style="margin:20px 0;">*封面(必填)</p>
       <p>只能上传jgp/png文件，且不超过5M</p>
       <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index">
         <template v-if="item.status === 'finished'">
@@ -122,7 +122,7 @@
 
     </div>
     <div>
-      <Button type="success" @click="articleAdd('Dismount')">保存</Button>
+      <Button type="success" @click="articleAdd('Dismount')" style="margin-right:10px;">保存</Button>
       <Button type="error" @click="articleAdd('Grounding')">上架</Button>
     </div>
   </div>
@@ -169,15 +169,22 @@ export default {
         menubar: false,
         images_upload_handler: (blobInfo, success, failure) => {
           const file = blobInfo.blob();
-          console.log(file);
           if (file.size > 5242880) {
             this.$Message.error("图片请不要大于 5MB");
           } else {
             try {
-              // success(await upload(file));
-              this.$Message.success("图片上传成功");
+             let params = new FormData();
+             params.append('filename', file.name);
+             params.append('file', file)
+              upload(params).then(res => {
+                if (res.status === 200 && res.data.code === '200') {
+                  success(res.data.data.viewUrl);
+                } else {
+                  failure(res.data.message)
+                }
+              })
             } catch {
-              this.$Message.error("上传图片失败");
+              failure('上传图片失败')
             }
           }
         }
@@ -195,7 +202,9 @@ export default {
   },
   mounted () {
     tinymce.init({})
-    this.uploadList = this.$refs.upload.fileList
+    if (this.$refs.upload.fileList) {
+      this.uploadList = this.$refs.upload.fileList
+    }
     this.headers = {
       Authorization: store.state.tokenType + ' ' + store.state.token
     }

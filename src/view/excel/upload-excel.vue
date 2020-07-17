@@ -1,114 +1,246 @@
-<style lang="less">
-  @import "./common.less";
-</style>
 <template>
   <div>
-    <Card title="导入EXCEL">
-      <Row>
-        <Upload action="" :before-upload="handleBeforeUpload" accept=".xls, .xlsx">
-          <Button icon="ios-cloud-upload-outline" :loading="uploadLoading" @click="handleUploadFile">上传文件</Button>
-        </Upload>
-      </Row>
-      <Row>
-        <div class="ivu-upload-list-file" v-if="file !== null">
-          <Icon type="ios-stats"></Icon>
-            {{ file.name }}
-          <Icon v-show="showRemoveFile" type="ios-close" class="ivu-upload-list-remove" @click.native="handleRemove()"></Icon>
+    <Tabs type="card">
+        <TabPane label="客服消息">
+          <div class="kf-top">
+            <ul class="kf-list">
+              <li class="kf-item">
+                <span>用户名字</span>
+                <Input style="width:200px;"> </Input>
+              </li>
+              <li class="kf-item">
+                <span>选择时间</span>
+                <DatePicker
+                :transfer='true'
+                v-model="selectTime"
+                @on-change='changeDate'
+                format="yyyy年MM月dd日"
+                type="daterange"
+                placement="bottom-end"
+                placeholder="Select date"
+                style="width: 200px"
+              ></DatePicker>
+              </li>
+              <li class="kf-item">
+                <Button type="success" @click="getChartBackEndRoom">搜索</Button>
+              </li>
+            </ul>
+          </div>
+          <div class="kf-tab">
+            <p>用户列表</p>
+            <Table border :columns="userList" :data="userData.content"></Table>
+            <Page style="margin-top:10px;float:right;" :page-size='15' :total="userData.totalElements" @on-change='getChartBackEndRoom' />
+          </div>
+        </TabPane>
+        <TabPane label="系统通知">
+          <div class="kf-top">
+            <ul class="kf-list">
+              <li class="kf-item">
+                <span>选择时间</span>
+                <DatePicker
+                :transfer='true'
+                v-model="selectTime"
+                @on-change='changeInfoDate'
+                format="yyyy年MM月dd日"
+                type="daterange"
+                placement="bottom-end"
+                placeholder="Select date"
+                style="width: 200px"
+              ></DatePicker>
+              </li>
+              <li class="kf-item">
+                <Button type="success" @click="findSystemMessage">搜索</Button>
+              </li>
+            </ul>
+          </div>
+          <div class="kf-tab">
+            <p>用户列表</p>
+            <Table border :columns="infoList" :data="infoData.content"></Table>
+            <Page style="margin-top:10px;float:right;" :page-size='15' :total="infoData.totalElements" @on-change='findSystemMessage' />
+          </div>
+        </TabPane>
+    </Tabs>
+    <Modal v-model="chatModal">
+        <p>时间</p>
+        <div class="chat">
+
         </div>
-      </Row>
-      <Row>
-        <transition name="fade">
-          <Progress v-if="showProgress" :percent="progressPercent" :stroke-width="2">
-            <div v-if="progressPercent == 100">
-              <Icon type="ios-checkmark-circle"></Icon>
-              <span>成功</span>
-            </div>
-          </Progress>
-        </transition>
-      </Row>
-    </Card>
-    <Row class="margin-top-10">
-      <Table :columns="tableTitle" :data="tableData" :loading="tableLoading"></Table>
-    </Row>
+   </Modal>
   </div>
 </template>
 <script>
-import excel from '@/libs/excel'
+import {getChartBackEndRoom, findSystemMessage} from "@/api/data"
 export default {
-  name: 'upload-excel',
   data () {
     return {
-      uploadLoading: false,
-      progressPercent: 0,
-      showProgress: false,
-      showRemoveFile: false,
-      file: null,
-      tableData: [],
-      tableTitle: [],
-      tableLoading: false
+      userList: [
+        {
+          title: '头像',
+          align: 'center',
+          render: (h, params) => {
+            return h('img', {
+              style: {
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%'
+              },
+              attrs: {
+                  src: params.row.headImgPath
+              }
+            })
+          }
+        },
+        {
+          title: '昵称',
+          key: 'nickName'
+        },
+        {
+          title: '发布内容',
+          key: 'content'
+        },
+        {
+          title: '发送时间',
+          key: 'pubDate'
+        },
+        {
+          title: '状态',
+          render: (h, params) => {
+            if (params.row.readType) {
+              return h('span', {
+                style: {
+                  color: '#19be6b'
+                }
+              }, '已回复')
+            } else {
+              return h('span', {
+                style: {
+                  color: '#ed4014'
+                }
+              }, '待回复')
+            }
+          }
+        },
+        {
+          title: '操作',
+          render: (h, params) => {
+            return h('Button', {
+              props: {
+                type: 'success'
+              },
+              on: {
+                click: () => {
+                  this.chatModal = true;
+                  this.chatInfo = params.row;
+                }
+              }
+            }, '回复')
+          }
+        }
+      ],
+      userData: {},
+      userFrom: {
+        nickName: '',
+        startTime: '',
+        endTime: '',
+        page: '1',
+        size: '10'
+      },
+      selectTime: '',
+      chatModal: false,
+      chatInfo: {},
+      infoList: [
+        {
+          title: '标题',
+          key: 'title'
+        },
+        {
+          title: '通知内容',
+          key: 'content'
+        },
+        {
+          title: '发送时间',
+          key: 'pubDate'
+        },
+        {
+          title: '操作',
+          render: (h, params) => {
+            return h( 'Button', {
+              props: {
+                type: 'success'
+              }
+            }, '删除')
+          }
+        }
+      ],
+      infoData: {},
+      infoFrom: {
+        GTE_pubDate: '',
+        LTE_pubDate: '',
+        page: '1',
+        size: '15'
+      }
     }
   },
   methods: {
-    initUpload () {
-      this.file = null
-      this.showProgress = false
-      this.loadingProgress = 0
-      this.tableData = []
-      this.tableTitle = []
+    getChartBackEndRoom(page) {
+      this.userFrom.page = page;
+      getChartBackEndRoom(this.userFrom).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.userData = res.data.data;
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      })
     },
-    handleUploadFile () {
-      this.initUpload()
+    changeDate (date) {
+      let starTime = date[0].replace(/([^\u0000-\u00FF])/g, '-')
+      let endTime = date[1].replace(/([^\u0000-\u00FF])/g, '-')
+      this.userFrom.startTime = starTime.substring(0, starTime.length - 1)
+      this.userFrom.endTime = endTime.substring(0, endTime.length - 1)
     },
-    handleRemove () {
-      this.initUpload()
-      this.$Message.info('上传的文件已删除！')
+    findSystemMessage(page) {
+      this.infoFrom.page = page;
+      findSystemMessage(this.infoFrom).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.infoData = res.data.data;
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      })
     },
-    handleBeforeUpload (file) {
-      const fileExt = file.name.split('.').pop().toLocaleLowerCase()
-      if (fileExt === 'xlsx' || fileExt === 'xls') {
-        this.readFile(file)
-        this.file = file
-      } else {
-        this.$Notice.warning({
-          title: '文件类型错误',
-          desc: '文件：' + file.name + '不是EXCEL文件，请选择后缀为.xlsx或者.xls的EXCEL文件。'
-        })
-      }
-      return false
-    },
-    // 读取文件
-    readFile (file) {
-      const reader = new FileReader()
-      reader.readAsArrayBuffer(file)
-      reader.onloadstart = e => {
-        this.uploadLoading = true
-        this.tableLoading = true
-        this.showProgress = true
-      }
-      reader.onprogress = e => {
-        this.progressPercent = Math.round(e.loaded / e.total * 100)
-      }
-      reader.onerror = e => {
-        this.$Message.error('文件读取出错')
-      }
-      reader.onload = e => {
-        this.$Message.info('文件读取成功')
-        const data = e.target.result
-        const { header, results } = excel.read(data, 'array')
-        const tableTitle = header.map(item => { return { title: item, key: item } })
-        this.tableData = results
-        this.tableTitle = tableTitle
-        this.uploadLoading = false
-        this.tableLoading = false
-        this.showRemoveFile = true
-      }
+    changeInfoDate(date) {
+      let starTime = date[0].replace(/([^\u0000-\u00FF])/g, '-')
+      let endTime = date[1].replace(/([^\u0000-\u00FF])/g, '-')
+      this.infoFrom.GTE_pubDate = starTime.substring(0, starTime.length - 1)
+      this.infoFrom.LTE_pubDate = endTime.substring(0, endTime.length - 1)
     }
   },
   created () {
-
+    this.getChartBackEndRoom(1);
+    this.findSystemMessage(1);
   },
   mounted () {
 
   }
 }
 </script>
+
+<style lang="less" scoped>
+.kf-top {
+  height: 200px;
+  padding: 20px;
+  background: #fff;
+}
+.kf-list {
+  .kf-item {
+    list-style: none;
+    display: inline-block;
+    margin-right: 20px;
+  }
+}
+.kf-tab {
+  background-color: #fff;
+  margin-top: 20px;
+  padding: 15px;
+}
+</style>

@@ -157,9 +157,33 @@ export const updateGoods = data => {
   })
 }
 
+export const labelReviewPage = data => {
+  return axios.request({
+    url: '/api/backend/member/findMemberLabelReviewPage.json',
+    method: 'post',
+    data: data
+  })
+}
+
 export const upload = data => {
   return axios.request({
     url: '/api/obs/upload.json',
+    method: 'post',
+    data: data
+  })
+}
+
+export const getChartBackEndRoom = data => {
+  return axios.request({
+    url: '/api/backend/message/getChartBackEndRoom.json',
+    method: 'post',
+    data: data
+  })
+}
+
+export const findSystemMessage = data => {
+  return axios.request({
+    url: '/api/backend/message/findSystemMessagePageByCondition.json',
     method: 'post',
     data: data
   })

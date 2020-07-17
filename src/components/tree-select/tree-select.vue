@@ -34,7 +34,7 @@
         </div>
         <div style="margin-top:20px;">
          <Input style="width:300px;"> </Input>
-        <Button type="primary" icon="ios-search">搜索</Button>
+        <Button type="success" icon="ios-search" style="margin-left:10px;">搜索</Button>
         </div>
       </div>
     </div>

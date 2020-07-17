@@ -7,20 +7,20 @@ export const login = ({ account, passWord, loginType }) => {
     loginType
   }
   return axios.request({
-    url: '/api/front/member/login.json',
+    url: '/api/backend/member/login.json',
     data,
     method: 'post'
   })
 }
 
-export const getUserInfo = (tokenType, token) => {
+export const getUserInfo = () => {
   return axios.request({
-    url: '/api/front/member/findMember.json',
+    url: '/api/backend/member/findBackEndMember.json',
     method: 'POST'
   })
 }
 
-export const logout = (token) => {
+export const logout = () => {
   return axios.request({
     url: 'logout',
     method: 'post'
