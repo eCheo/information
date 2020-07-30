@@ -67,7 +67,7 @@
                 action="http://47.56.186.16:8089/api/obs/upload.json"
                 style="width:200px;"
             >
-                <Button icon="ios-cloud-upload-outline" @click="fileName ='sp'">Upload files</Button>
+                <Button icon="ios-cloud-upload-outline" @click="fileName ='PublishVideo'">Upload files</Button>
             </Upload>
         </div>
         <div>
@@ -206,7 +206,7 @@ export default {
       this.uploadList = this.$refs.upload.fileList
     }
     this.headers = {
-      Authorization: store.state.tokenType + ' ' + store.state.token
+      Authorization: sessionStorage.getItem('tokenType') + ' ' + sessionStorage.getItem('token')
     }
   },
   methods: {
@@ -236,7 +236,8 @@ export default {
       }
       releaseArticle(params).then(res => {
         if (res.data.code === '200') {
-          this.$Message.success('发布成功')
+          this.$Message.success('发布成功');
+          this.$router.push('/components/drag/drag_list_page');
         } else {
           this.$Message.error(res.data.message)
         }
@@ -259,15 +260,16 @@ export default {
       this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
     },
     handleSuccess (res, file) {
-      if (this.viewType === 'sp') {
-        if (this.fileName === 'sp') {
+      if (this.viewType === 'PublishVideo') {
+        if (this.fileName === 'PublishVideo') {
           this.viodeUrl = res.data.viewUrl
         } else {
           this.videoImagePath = res.data.viewUrl
         }
       } else {
-        file.url = res.data.viewUrl
-        this.viewImg.push(res.data.viewUrl)
+        file.url = res.data.viewUrl;
+        this.viewImg.push(res.data.viewUrl);
+        console.log(res.data.viewUrl, this.viewImg);
       }
     },
     handleFormatError (file) {
