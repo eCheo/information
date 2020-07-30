@@ -215,7 +215,7 @@ export default {
     },
     articleAdd (status) {
       let params = {}
-      if (this.viewType === 'sp') {
+      if (this.viewType === 'PublishVideo') {
         params = {
           groundingType: status,
           type: 'PublishVideo',
@@ -224,7 +224,7 @@ export default {
           videoPath: this.viodeUrl,
           videoImagePath: this.videoImagePath
         }
-      } else if (this.viewType === 'wz') {
+      } else if (this.viewType === 'PublishArticle') {
         params = {
           title: this.title,
           content: this.content,
