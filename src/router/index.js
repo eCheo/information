@@ -9,8 +9,7 @@ const { homeName } = config
 
 Vue.use(Router)
 const router = new Router({
-  routes,
-  mode: 'history'
+  routes
 })
 const LOGIN_PAGE_NAME = 'login'
 const turnTo = (to, access, next) => {
