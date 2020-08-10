@@ -50,7 +50,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="viewType === 'PublishVideo'">
+    <div style="width:860px;margin:0 auto;" v-else-if="viewType === 'PublishVideo'">
         <div>
             <p>上传视频<span>请上传时长10-30分钟,支持主流的视频格式，超出限制的视频请到腾讯视频上传</span></p>
             <Upload
@@ -119,7 +119,30 @@
         </div>
     </div>
     <div v-else-if="viewType === 'Topic'">
-
+      <tinymce-editor ref="editor" :init='init' v-model="content" @on-change="handleChange"/>
+      <p>*问题 给话题制造问题，给出两个对立的观点，让读者参与到话题的投票中，进行阅读的互动</p>
+      <div class="top-box">
+        <div>
+            <span>问题标题</span>
+            <Input v-model="topicData.title"></Input>
+        </div>
+        <div>
+            <span>观点一</span>
+            <Input v-model="topicData.viewpointOne"></Input>
+        </div>
+        <div>
+            <span>肯定选项</span>
+            <Input v-model="topicData.optionOne"></Input>
+        </div>
+        <div>
+            <span>观点二</span>
+            <Input v-model="topicData.viewpointTwo"></Input>
+        </div>
+        <div>
+            <span>否定选项</span>
+            <Input v-model="topicData.optionTwo"></Input>
+        </div>
+      </div>
     </div>
     <div>
       <Button type="success" @click="articleAdd('Dismount')" style="margin-right:10px;">保存</Button>
@@ -148,7 +171,7 @@ export default {
       uploadList: [],
       headers: {},
       viewImg: [
-        'https://jznews.oss-cn-hongkong.aliyuncs.com/image/3db69f7c-7e8f-478e-9e67-fa9e6335defb.jpg'
+        ''
       ],
       title: '',
       conditionList: [],
@@ -156,8 +179,8 @@ export default {
       condiIndex: 0,
       viewType: '',
       fileName: '',
-      videoImagePath: 'https://jznews.oss-cn-hongkong.aliyuncs.com/image/3db69f7c-7e8f-478e-9e67-fa9e6335defb.jpg',
-      viodeUrl: 'https://jznews.oss-cn-hongkong.aliyuncs.com/video/de350529-87db-41a8-98cc-50d2fc928211.mp4',
+      videoImagePath: '',
+      viodeUrl: '',
       init: {
         language_url: "/tinymce/langs/zh_CN.js",
         language: "zh_CN",
@@ -188,6 +211,13 @@ export default {
             }
           }
         }
+     },
+     topicData: {
+       titile: '',
+       viewpointOne: '',
+       optionOne: '',
+       viewpointTwo: '',
+       optionTwo: '',
      }
     }
   },
@@ -233,6 +263,14 @@ export default {
           imagePaths: this.viewImg,
           groundingType: status
         }
+      } else if (this.viewType === 'Topic') {
+        params = {
+          problem: this.topicData.titile,
+          orthodoxView: this.topicData.viewpointOne,
+          opposingView: this.topicData.viewpointTwo,
+          orthodoxButtonText: this.topicData.optionOne,
+          opposingButtonText: this.topicData.optionTwo
+        }
       }
       releaseArticle(params).then(res => {
         if (res.data.code === '200') {
@@ -269,7 +307,6 @@ export default {
       } else {
         file.url = res.data.viewUrl;
         this.viewImg.push(res.data.viewUrl);
-        console.log(res.data.viewUrl, this.viewImg);
       }
     },
     handleFormatError (file) {
@@ -321,5 +358,12 @@ export default {
   border: 1px solid #19be6b;
   background-color: #19be6b;
   color: #fff;
+}
+.top-box {
+  border: 1px solid #e6e6e6;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px 0;
+  width: 890px;
 }
 </style>

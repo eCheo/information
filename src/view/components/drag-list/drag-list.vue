@@ -135,12 +135,20 @@ export default {
         },
         {
           title: "操作",
+          width: 250,
           render: (h, params) => {
             return h("div", [
-              h("Button", {}, "编辑"),
+              h("Button", {
+                props: {
+                  type: 'success'
+                }
+              }, "编辑"),
               h(
                 "Button",
                 {
+                  style: {
+                    marginLeft: '10px;'
+                  },
                   on: {
                     click: () => {
                       this.deleteArticles(params.row.id);

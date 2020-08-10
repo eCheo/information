@@ -66,9 +66,6 @@
       <FormItem label='商品描述' prop='goodDescribe'>
         <Input v-model="formValidate.goodDescribe" type="textarea" :rows="4"/>
       </FormItem>
-      <div class="demo1">
-        <div class="demo2">居中</div>
-      </div>
       <div style="margin-top:20px;">
         <Button type="success" @click="upGoods">确认</Button>
         <Button>取消</Button>
@@ -385,14 +382,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.demo1 {
-  width: 100px;
-  height: 200px;
-  border: 1px solid #000;
-  .demo2 {
-    margin-top: calc(100% - 50% - 10px)
-  }
-}
 .s-list {
   margin: 20px 0;
   .s-button {
