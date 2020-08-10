@@ -141,6 +141,11 @@ export default {
               h("Button", {
                 props: {
                   type: 'success'
+                },
+                on: {
+                  click: () => {
+                    this.$router.push({path: '/components/drag/addArticle', query: {type: this.releaseType, id: params.row.id}})
+                  }
                 }
               }, "编辑"),
               h(
@@ -253,7 +258,14 @@ export default {
       });
     }
   },
-  mounted() {}
+  mounted() {},
+  watch: {
+    '$route': {
+      handler(val, onl) {
+        this.findArticlesResult(1);
+      }
+    }
+  }
 };
 </script>
 <style lang="less">

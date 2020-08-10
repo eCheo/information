@@ -74,13 +74,13 @@
             <p>封面</p>
             <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index">
                 <template v-if="item.status === 'finished'">
-                <img :src="item.url" style="width:250px;height:250px;" />
-                <div class="demo-upload-list-cover">
-                    <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
-                </div>
+                  <img :src="item.url" style="width:250px;height:250px;" />
+                  <div class="demo-upload-list-cover">
+                      <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+                  </div>
                 </template>
                 <template v-else>
-                <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+                  <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
                 </template>
             </div>
             <Upload
@@ -97,6 +97,7 @@
                 type="drag"
                 action="http://47.56.186.16:8089/api/obs/upload.json"
                 style="display: inline-block;width:58px;"
+                v-if="uploadList.length < 4"
             >
                 <div style="width: 58px;height:58px;line-height: 58px;" @click="fileName = 'tp'">
                     <Icon type="ios-camera" size="20"></Icon>
@@ -162,7 +163,7 @@ import 'tinymce/plugins/table'// 插入表格插件
 import 'tinymce/plugins/lists'// 列表插件
 import 'tinymce/plugins/wordcount'// 字数统计插件
 import Editor from "@tinymce/tinymce-vue";
-import { releaseArticle, findArticles, upload} from '../../../api/data'
+import { releaseArticle, findArticles, upload, findBackEndArticles} from '../../../api/data'
 import store from '../../../store/module/user'
 export default {
   data () {
@@ -217,7 +218,7 @@ export default {
        viewpointOne: '',
        optionOne: '',
        viewpointTwo: '',
-       optionTwo: '',
+       optionTwo: ''
      }
     }
   },
@@ -227,7 +228,10 @@ export default {
   created () {
     this.getCondition()
     if (Object.keys(this.$route.query).length !== 0) {
-      this.viewType = this.$route.query.type
+      this.viewType = this.$route.query.type;
+      if (this.$route.query.id) {
+        this.findBackEndArticles(this.$route.query.id)
+      }
     }
   },
   mounted () {
@@ -269,12 +273,21 @@ export default {
           orthodoxView: this.topicData.viewpointOne,
           opposingView: this.topicData.viewpointTwo,
           orthodoxButtonText: this.topicData.optionOne,
-          opposingButtonText: this.topicData.optionTwo
+          opposingButtonText: this.topicData.optionTwo,
+          content: this.content,
+          type: 'Topic'
         }
+      }
+      if (this.$route.query.id) {
+        params.id = this.$route.query.id;
       }
       releaseArticle(params).then(res => {
         if (res.data.code === '200') {
-          this.$Message.success('发布成功');
+          if (status === 'Dismount') {
+            this.$Message.success('保存成功');
+          } else {
+            this.$Message.success('发布成功');
+          }
           this.$router.push('/components/drag/drag_list_page');
         } else {
           this.$Message.error(res.data.message)
@@ -286,6 +299,25 @@ export default {
         if (res.data.code === '200') {
           this.conditionList = res.data.data
           this.condiId = this.conditionList[0].id
+        }
+      })
+    },
+    findBackEndArticles(id) {
+      let params = {
+        id: id
+      }
+      findBackEndArticles(params).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.content = res.data.data.content
+          this.title = res.data.data.title;
+          if (res.data.data.imagePaths.length > 0) {
+            res.data.data.imagePaths.forEach(item => {
+              this.uploadList.push({
+                url: item,
+                status: 'finished'
+              })
+            });
+          }
         }
       })
     },
@@ -333,6 +365,21 @@ export default {
       }
       return check
     }
+  },
+  watch: {
+    'uploadList': {
+      handler(val, oldVal) {
+        if (this.uploadList.length > 0) {
+          this.uploadList.forEach(item => {
+            if (item.status === 'finished') {
+              this.viewImg.push(item.url)
+            }
+          })
+        } else {
+          this.viewImg = [];
+        }
+      }
+    }
   }
 }
 </script>
@@ -366,4 +413,40 @@ export default {
   margin: 10px 0;
   width: 890px;
 }
+ .demo-upload-list{
+        display: inline-block;
+        width: 150px;
+        height: 150px;
+        text-align: center;
+        line-height: 150px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        overflow: hidden;
+        background: #fff;
+        position: relative;
+        box-shadow: 0 1px 1px rgba(0,0,0,.2);
+        margin-right: 4px;
+    }
+    .demo-upload-list img{
+        width: 100%;
+        height: 100%;
+    }
+    .demo-upload-list-cover{
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,.6);
+    }
+    .demo-upload-list:hover .demo-upload-list-cover{
+        display: block;
+    }
+    .demo-upload-list-cover i{
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+        margin: 0 2px;
+    }
 </style>
