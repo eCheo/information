@@ -144,6 +144,38 @@
             <Input v-model="topicData.optionTwo"></Input>
         </div>
       </div>
+      <p>*封面 只能上传jgp/png文件，且不超过5M，封面的内容设计要与话题相符</p>
+      <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index">
+        <template v-if="item.status === 'finished'">
+          <img :src="item.url" style="width:250px;height:250px;" />
+          <div class="demo-upload-list-cover">
+            <Icon type="ios-eye-outline" @click.native="handleView(item.name)"></Icon>
+            <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+          </div>
+        </template>
+        <template v-else>
+          <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+        </template>
+      </div>
+      <Upload
+        ref="upload"
+        :show-upload-list="false"
+        :on-success="handleSuccess"
+        :format="['jpg','png']"
+        :max-size="5042"
+        :on-format-error="handleFormatError"
+        :on-exceeded-size="handleMaxSize"
+        :before-upload="handleBeforeUpload"
+        multiple
+        :headers="headers"
+        type="drag"
+        action="http://47.56.186.16:8089/api/obs/upload.json"
+        style="display: inline-block;width:58px;"
+      >
+        <div style="width: 58px;height:58px;line-height: 58px;">
+          <Icon type="ios-camera" size="20"></Icon>
+        </div>
+      </Upload>
     </div>
     <div>
       <Button type="success" @click="articleAdd('Dismount')" style="margin-right:10px;">保存</Button>
@@ -214,7 +246,7 @@ export default {
         }
      },
      topicData: {
-       titile: '',
+       title: '',
        viewpointOne: '',
        optionOne: '',
        viewpointTwo: '',
@@ -269,7 +301,7 @@ export default {
         }
       } else if (this.viewType === 'Topic') {
         params = {
-          problem: this.topicData.titile,
+          problem: this.topicData.title,
           orthodoxView: this.topicData.viewpointOne,
           opposingView: this.topicData.viewpointTwo,
           orthodoxButtonText: this.topicData.optionOne,
@@ -308,8 +340,13 @@ export default {
       }
       findBackEndArticles(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
-          this.content = res.data.data.content
+          this.content = res.data.data.content;
           this.title = res.data.data.title;
+          this.topicData.title = res.data.data.problem;
+          this.topicData.viewpointOne = res.data.data.orthodoxView;
+          this.topicData.optionOne = res.data.data.orthodoxButtonText;
+          this.topicData.viewpointTwo = res.data.data.opposingView;
+          this.topicData.optionTwo = res.data.data.opposingButtonText;
           if (res.data.data.imagePaths.length > 0) {
             res.data.data.imagePaths.forEach(item => {
               this.uploadList.push({
@@ -326,7 +363,7 @@ export default {
       this.condiId = item.id
     },
     handleRemove (file) {
-      const fileList = this.$refs.upload.fileList
+      const fileList = this.$refs.upload.fileList || [];
       this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
     },
     handleSuccess (res, file) {

@@ -239,8 +239,8 @@ export default [
         component: () => import('@/view/excel/upload-excel.vue')
       },
       {
-        path: 'export-excel',
-        name: 'export-excel',
+        path: 'commentmanage',
+        name: 'commentManage',
         meta: {
           icon: 'md-download',
           title: '评论管理'
