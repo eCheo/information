@@ -1,81 +1,98 @@
-<style lang="less">
-    @import "./common.less";
-</style>
+
 <template>
   <div>
-    <Card title="导出EXCEL">
-      <Row>
-        <Button icon="md-download" :loading="exportLoading" @click="exportExcel">导出文件</Button>
-      </Row>
-    </Card>
-    <Row class="margin-top-10">
-      <Table :columns="tableTitle" :data="tableData"></Table>
-    </Row>
+    <div class="kf-top">
+      <ul class="kf-list">
+        <li class="kf-item">
+          <span>用户名字</span>
+          <Input style="width:200px;"></Input>
+        </li>
+        <li class="kf-item">
+          <span>选择时间</span>
+          <DatePicker
+            :transfer="true"
+            v-model="selectTime"
+            @on-change="changeDate"
+            format="yyyy年MM月dd日"
+            type="daterange"
+            placement="bottom-end"
+            placeholder="Select date"
+            style="width: 200px"
+          ></DatePicker>
+        </li>
+        <li class="kf-item">
+          <Button type="success">搜索</Button>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 <script>
-import excel from '@/libs/excel'
+import { findBackEndComment, findBackEndArticle } from "@/api/data";
 export default {
-  name: 'export-excel',
-  data () {
+  data() {
     return {
-      exportLoading: false,
-      tableTitle: [
-        {
-          title: '一级分类',
-          key: 'category1'
-        },
-        {
-          title: '二级分类',
-          key: 'category2'
-        },
-        {
-          title: '三级分类',
-          key: 'category3'
-        }
-      ],
-      tableData: [
-        {
-          category1: 1,
-          category2: 2,
-          category3: 3
-        },
-        {
-          category1: 4,
-          category2: 5,
-          category3: 6
-        },
-        {
-          category1: 7,
-          category2: 8,
-          category3: 9
-        }
-      ]
-    }
+      selectTime: "",
+      commentList: [],
+      articleList: {}
+    };
+  },
+  created() {
+    this.findBackEndArticle();
   },
   methods: {
-    exportExcel () {
-      if (this.tableData.length) {
-        this.exportLoading = true
-        const params = {
-          title: ['一级分类', '二级分类', '三级分类'],
-          key: ['category1', 'category2', 'category3'],
-          data: this.tableData,
-          autoWidth: true,
-          filename: '分类列表'
+    changeDate(date) {
+      let starTime = date[0].replace(/([^\u0000-\u00FF])/g, "-");
+      let endTime = date[1].replace(/([^\u0000-\u00FF])/g, "-");
+      this.userFrom.startTime = starTime.substring(0, starTime.length - 1);
+      this.userFrom.endTime = endTime.substring(0, endTime.length - 1);
+    },
+    findBackEndComment() {
+      let params = {
+        page: "1",
+        size: "10"
+      };
+      findBackEndComment().then(res => {
+        if (res.status === 200 && res.data.code === "200") {
+          this.commentList = res.data.data;
+        } else {
+          this.$Message.error(res.data.message);
         }
-        excel.export_array_to_excel(params)
-        this.exportLoading = false
-      } else {
-        this.$Message.info('表格数据不能为空！')
-      }
+      });
+    },
+    findBackEndArticle() {
+      let params = {
+        page: "1",
+        size: "6"
+      };
+      findBackEndArticle(params).then(res => {
+        if (res.status === 200 && res.data.code === "200") {
+          this.articleList = res.data.data;
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      });
     }
-  },
-  created () {
+  }
+};
+</script>
 
-  },
-  mounted () {
-
+<style lang="less" scoped>
+.kf-top {
+  height: 200px;
+  padding: 20px;
+  background: #fff;
+}
+.kf-list {
+  .kf-item {
+    list-style: none;
+    display: inline-block;
+    margin-right: 20px;
   }
 }
-</script>
+.kf-tab {
+  background-color: #fff;
+  margin-top: 20px;
+  padding: 15px;
+}
+</style>

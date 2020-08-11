@@ -50,7 +50,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="viewType === 'PublishVideo'">
+    <div style="width:860px;margin:0 auto;" v-else-if="viewType === 'PublishVideo'">
         <div>
             <p>上传视频<span>请上传时长10-30分钟,支持主流的视频格式，超出限制的视频请到腾讯视频上传</span></p>
             <Upload
@@ -74,13 +74,13 @@
             <p>封面</p>
             <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index">
                 <template v-if="item.status === 'finished'">
-                <img :src="item.url" style="width:250px;height:250px;" />
-                <div class="demo-upload-list-cover">
-                    <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
-                </div>
+                  <img :src="item.url" style="width:250px;height:250px;" />
+                  <div class="demo-upload-list-cover">
+                      <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+                  </div>
                 </template>
                 <template v-else>
-                <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+                  <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
                 </template>
             </div>
             <Upload
@@ -97,6 +97,7 @@
                 type="drag"
                 action="http://47.56.186.16:8089/api/obs/upload.json"
                 style="display: inline-block;width:58px;"
+                v-if="uploadList.length < 4"
             >
                 <div style="width: 58px;height:58px;line-height: 58px;" @click="fileName = 'tp'">
                     <Icon type="ios-camera" size="20"></Icon>
@@ -119,7 +120,62 @@
         </div>
     </div>
     <div v-else-if="viewType === 'Topic'">
-
+      <tinymce-editor ref="editor" :init='init' v-model="content" @on-change="handleChange"/>
+      <p>*问题 给话题制造问题，给出两个对立的观点，让读者参与到话题的投票中，进行阅读的互动</p>
+      <div class="top-box">
+        <div>
+            <span>问题标题</span>
+            <Input v-model="topicData.title"></Input>
+        </div>
+        <div>
+            <span>观点一</span>
+            <Input v-model="topicData.viewpointOne"></Input>
+        </div>
+        <div>
+            <span>肯定选项</span>
+            <Input v-model="topicData.optionOne"></Input>
+        </div>
+        <div>
+            <span>观点二</span>
+            <Input v-model="topicData.viewpointTwo"></Input>
+        </div>
+        <div>
+            <span>否定选项</span>
+            <Input v-model="topicData.optionTwo"></Input>
+        </div>
+      </div>
+      <p>*封面 只能上传jgp/png文件，且不超过5M，封面的内容设计要与话题相符</p>
+      <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index">
+        <template v-if="item.status === 'finished'">
+          <img :src="item.url" style="width:250px;height:250px;" />
+          <div class="demo-upload-list-cover">
+            <Icon type="ios-eye-outline" @click.native="handleView(item.name)"></Icon>
+            <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+          </div>
+        </template>
+        <template v-else>
+          <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+        </template>
+      </div>
+      <Upload
+        ref="upload"
+        :show-upload-list="false"
+        :on-success="handleSuccess"
+        :format="['jpg','png']"
+        :max-size="5042"
+        :on-format-error="handleFormatError"
+        :on-exceeded-size="handleMaxSize"
+        :before-upload="handleBeforeUpload"
+        multiple
+        :headers="headers"
+        type="drag"
+        action="http://47.56.186.16:8089/api/obs/upload.json"
+        style="display: inline-block;width:58px;"
+      >
+        <div style="width: 58px;height:58px;line-height: 58px;">
+          <Icon type="ios-camera" size="20"></Icon>
+        </div>
+      </Upload>
     </div>
     <div>
       <Button type="success" @click="articleAdd('Dismount')" style="margin-right:10px;">保存</Button>
@@ -139,7 +195,7 @@ import 'tinymce/plugins/table'// 插入表格插件
 import 'tinymce/plugins/lists'// 列表插件
 import 'tinymce/plugins/wordcount'// 字数统计插件
 import Editor from "@tinymce/tinymce-vue";
-import { releaseArticle, findArticles, upload, findArticlesDetails} from '../../../api/data'
+import { releaseArticle, findArticles, upload, findBackEndArticles} from '../../../api/data'
 import store from '../../../store/module/user'
 export default {
   data () {
@@ -186,6 +242,13 @@ export default {
             }
           }
         }
+     },
+     topicData: {
+       title: '',
+       viewpointOne: '',
+       optionOne: '',
+       viewpointTwo: '',
+       optionTwo: ''
      }
     }
   },
@@ -197,7 +260,7 @@ export default {
     if (Object.keys(this.$route.query).length !== 0) {
       this.viewType = this.$route.query.type;
       if (this.$route.query.id) {
-        this.findArticlesDetails();
+        this.findBackEndArticles(this.$route.query.id)
       }
     }
   },
@@ -245,10 +308,27 @@ export default {
           imagePaths: this.viewImg,
           groundingType: status
         }
+      } else if (this.viewType === 'Topic') {
+        params = {
+          problem: this.topicData.title,
+          orthodoxView: this.topicData.viewpointOne,
+          opposingView: this.topicData.viewpointTwo,
+          orthodoxButtonText: this.topicData.optionOne,
+          opposingButtonText: this.topicData.optionTwo,
+          content: this.content,
+          type: 'Topic'
+        }
+      }
+      if (this.$route.query.id) {
+        params.id = this.$route.query.id;
       }
       releaseArticle(params).then(res => {
         if (res.data.code === '200') {
-          this.$Message.success('发布成功');
+          if (status === 'Dismount') {
+            this.$Message.success('保存成功');
+          } else {
+            this.$Message.success('发布成功');
+          }
           this.$router.push('/components/drag/drag_list_page');
         } else {
           this.$Message.error(res.data.message)
@@ -263,12 +343,36 @@ export default {
         }
       })
     },
+    findBackEndArticles(id) {
+      let params = {
+        id: id
+      }
+      findBackEndArticles(params).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.content = res.data.data.content;
+          this.title = res.data.data.title;
+          this.topicData.title = res.data.data.problem;
+          this.topicData.viewpointOne = res.data.data.orthodoxView;
+          this.topicData.optionOne = res.data.data.orthodoxButtonText;
+          this.topicData.viewpointTwo = res.data.data.opposingView;
+          this.topicData.optionTwo = res.data.data.opposingButtonText;
+          if (res.data.data.imagePaths.length > 0) {
+            res.data.data.imagePaths.forEach(item => {
+              this.uploadList.push({
+                url: item,
+                status: 'finished'
+              })
+            });
+          }
+        }
+      })
+    },
     getId (item, index) {
       this.condiIndex = index
       this.condiId = item.id
     },
     handleRemove (file) {
-      const fileList = this.$refs.upload.fileList
+      const fileList = this.$refs.upload.fileList || [];
       this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
     },
     handleSuccess (res, file) {
@@ -281,7 +385,6 @@ export default {
       } else {
         file.url = res.data.viewUrl;
         this.viewImg.push(res.data.viewUrl);
-        console.log(res.data.viewUrl, this.viewImg);
       }
     },
     handleFormatError (file) {
@@ -307,6 +410,21 @@ export default {
         })
       }
       return check
+    }
+  },
+  watch: {
+    'uploadList': {
+      handler(val, oldVal) {
+        if (this.uploadList.length > 0) {
+          this.uploadList.forEach(item => {
+            if (item.status === 'finished') {
+              this.viewImg.push(item.url)
+            }
+          })
+        } else {
+          this.viewImg = [];
+        }
+      }
     }
   }
 }
@@ -334,4 +452,47 @@ export default {
   background-color: #19be6b;
   color: #fff;
 }
+.top-box {
+  border: 1px solid #e6e6e6;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px 0;
+  width: 890px;
+}
+ .demo-upload-list{
+        display: inline-block;
+        width: 150px;
+        height: 150px;
+        text-align: center;
+        line-height: 150px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        overflow: hidden;
+        background: #fff;
+        position: relative;
+        box-shadow: 0 1px 1px rgba(0,0,0,.2);
+        margin-right: 4px;
+    }
+    .demo-upload-list img{
+        width: 100%;
+        height: 100%;
+    }
+    .demo-upload-list-cover{
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,.6);
+    }
+    .demo-upload-list:hover .demo-upload-list-cover{
+        display: block;
+    }
+    .demo-upload-list-cover i{
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+        margin: 0 2px;
+    }
 </style>

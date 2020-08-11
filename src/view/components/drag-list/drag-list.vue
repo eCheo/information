@@ -135,6 +135,7 @@ export default {
         },
         {
           title: "操作",
+          width: 250,
           render: (h, params) => {
             return h("div", [
               h("Button", {
@@ -147,6 +148,9 @@ export default {
               h(
                 "Button",
                 {
+                  style: {
+                    marginLeft: '10px;'
+                  },
                   on: {
                     click: () => {
                       this.deleteArticles(params.row.id);
@@ -251,7 +255,14 @@ export default {
       });
     }
   },
-  mounted() {}
+  mounted() {},
+  watch: {
+    '$route': {
+      handler(val, onl) {
+        this.findArticlesResult(1);
+      }
+    }
+  }
 };
 </script>
 <style lang="less">
