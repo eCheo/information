@@ -210,13 +210,13 @@ export default [
         component: parentView
       },
       {
-        path: 'update_paste_page',
-        name: 'update_paste_page',
+        path: 'ordermanage',
+        name: 'ordermanage',
         meta: {
           icon: 'md-clipboard',
           title: '订单管理'
-        }
-        // component: () => import('@/view/update/update-paste.vue')
+        },
+        component: () => import('@/view/update/orderManage.vue')
       }
     ]
   },

@@ -212,3 +212,11 @@ export const findBackEndArticle = data => {
     data: data
   })
 }
+
+export const findBackEndOrder = data => {
+  return axios.request({
+    url: '/api/backend/good/findBackEndOrderPage.json',
+    method: 'post',
+    data: data
+  })
+}
