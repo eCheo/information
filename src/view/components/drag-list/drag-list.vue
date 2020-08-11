@@ -137,7 +137,13 @@ export default {
           title: "操作",
           render: (h, params) => {
             return h("div", [
-              h("Button", {}, "编辑"),
+              h("Button", {
+                on: {
+                  click: () => {
+                    this.$router.push({path:'/components/drag/addArticle', query:{type: this.releaseType, id: params.row.id}})
+                  }
+                }
+              }, "编辑"),
               h(
                 "Button",
                 {

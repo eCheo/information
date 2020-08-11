@@ -139,7 +139,7 @@ import 'tinymce/plugins/table'// 插入表格插件
 import 'tinymce/plugins/lists'// 列表插件
 import 'tinymce/plugins/wordcount'// 字数统计插件
 import Editor from "@tinymce/tinymce-vue";
-import { releaseArticle, findArticles, upload} from '../../../api/data'
+import { releaseArticle, findArticles, upload, findArticlesDetails} from '../../../api/data'
 import store from '../../../store/module/user'
 export default {
   data () {
@@ -147,17 +147,15 @@ export default {
       content: '',
       uploadList: [],
       headers: {},
-      viewImg: [
-        'https://jznews.oss-cn-hongkong.aliyuncs.com/image/3db69f7c-7e8f-478e-9e67-fa9e6335defb.jpg'
-      ],
+      viewImg: [],
       title: '',
       conditionList: [],
       condiId: '',
       condiIndex: 0,
       viewType: '',
       fileName: '',
-      videoImagePath: 'https://jznews.oss-cn-hongkong.aliyuncs.com/image/3db69f7c-7e8f-478e-9e67-fa9e6335defb.jpg',
-      viodeUrl: 'https://jznews.oss-cn-hongkong.aliyuncs.com/video/de350529-87db-41a8-98cc-50d2fc928211.mp4',
+      videoImagePath: '',
+      viodeUrl: '',
       init: {
         language_url: "/tinymce/langs/zh_CN.js",
         language: "zh_CN",
@@ -197,7 +195,10 @@ export default {
   created () {
     this.getCondition()
     if (Object.keys(this.$route.query).length !== 0) {
-      this.viewType = this.$route.query.type
+      this.viewType = this.$route.query.type;
+      if (this.$route.query.id) {
+        this.findArticlesDetails();
+      }
     }
   },
   mounted () {
@@ -210,6 +211,17 @@ export default {
     }
   },
   methods: {
+    findArticlesDetails() {
+      let params = {
+        id: this.$route.query.id
+      }
+      findArticlesDetails({id: this.$route.query.id}).then(res => {
+        if (res.data.code === '200') {
+          this.content = res.data.data.content;
+          this.title = res.data.data.title;
+        }
+      })
+    },
     handleChange (html, text) {
       this.content = html
     },

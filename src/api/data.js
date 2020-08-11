@@ -188,3 +188,11 @@ export const findSystemMessage = data => {
     data: data
   })
 }
+
+export const findArticlesDetails = data => {
+  return axios.request({
+    url: '/api/backend/article/findBackEndArticlesDetails.json',
+    method: 'post',
+    data: data
+  })
+}
