@@ -105,7 +105,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .tr-title {
   font-size: 16px;
   color: #333333;
@@ -113,12 +113,19 @@ export default {
   margin-bottom: 20px;
 }
 .tr-head {
+    background-color: #fff;
     height: 169px;
     box-shadow: 0px 1px 1px 0px #e9e9e9;
+    padding: 20px;
   .tr-from {
     display: flex;
     flex-wrap: wrap;
     width: 69%;
   }
+}
+.tr-content {
+  background-color: #fff;
+  margin-top: 20px;
+  padding: 20px;
 }
 </style>

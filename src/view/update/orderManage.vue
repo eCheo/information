@@ -29,7 +29,7 @@
         </li>
         <li class="kf-item">
           <span>订单状态</span>
-          <Select v-model="orderSeach.exchangeStatus" @on-change="findBackEndOrder(1)">
+          <Select v-model="orderSeach.exchangeStatus" @on-change="findBackEndOrder(1)" style="width:112px;">
               <Option v-for="item in orderStatusList" :key="item.label" :value="item.value">{{item.label}}</Option>
           </Select>
         </li>

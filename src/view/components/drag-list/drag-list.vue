@@ -268,10 +268,12 @@ export default {
   }
 };
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .tr-head {
     height: 169px;
     box-shadow: 0px 1px 1px 0px #e9e9e9;
+    padding: 20px;
+    background-color: #fff;
   .tr-from {
     display: flex;
     flex-wrap: wrap;
@@ -280,5 +282,17 @@ export default {
       width: 400px;
     }
   }
+}
+.tr-title {
+  font-size: 16px;
+  color: #333333;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.tr-content {
+  background-color: #fff;
+  margin-top: 20px;
+  padding:0 20px;
 }
 </style>
