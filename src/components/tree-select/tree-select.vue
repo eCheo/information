@@ -17,19 +17,18 @@
         <div>
           <span>审核状态</span>
           <RadioGroup v-model="auditStatus" type="button">
-              <Radio label="北京"></Radio>
-              <Radio label="上海"></Radio>
-              <Radio label="深圳"></Radio>
-              <Radio label="杭州"></Radio>
+            <Radio label="全部"></Radio>
+            <Radio label="等待审核"></Radio>
+            <Radio label="审核通过"></Radio>
+            <Radio label="审核不通过"></Radio>
           </RadioGroup>
         </div>
         <div style="margin-top:20px;">
           <span>发布类型</span>
           <RadioGroup v-model="releaseType" type="button">
-              <Radio label="北京"></Radio>
-              <Radio label="上海"></Radio>
-              <Radio label="深圳"></Radio>
-              <Radio label="杭州"></Radio>
+              <Radio label="全部">全部</Radio>
+              <Radio label="PublishArticle">文章</Radio>
+              <Radio label="PublishVideo">视频</Radio>
           </RadioGroup>
         </div>
         <div style="margin-top:20px;">
@@ -46,14 +45,9 @@
 </template>
 
 <script>
-// import Emitter from 'iview/src/mixins/emitter'
-// import TreeSelectTreeItem from './tree-select-tree.vue'
+
 export default {
   name: 'TreeSelect',
-  // mixins: [Emitter],
-  // components: {
-  //   TreeSelectTreeItem
-  // },
   props: {
     value: {
       type: Array,
@@ -125,9 +119,6 @@ export default {
     display: flex;
     flex-wrap: wrap;
     width: 69%;
-    >div {
-      width: 400px;
-    }
   }
 }
 </style>

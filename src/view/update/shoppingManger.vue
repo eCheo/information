@@ -9,7 +9,7 @@
         </div>
         <div class="top-item">
           <span>商品名称</span>
-          <Input v-model="integralFrom.EQ_name" style="width:200px"></Input>
+          <Input v-model="integralFrom.LIKE_name" style="width:200px"></Input>
         </div>
         <div class="top-item">
           <span>有效期</span>
@@ -19,7 +19,7 @@
             format="yyyy年MM月dd日"
             type="daterange"
             placement="bottom-end"
-            placeholder="Select date"
+            placeholder="请选择有效期"
             style="width: 200px"
           ></DatePicker>
         </div>
@@ -140,7 +140,7 @@ export default {
         GTE_startDate: '',
         LTE_expirationDate: '',
         EQ_goodsGroundingType: '',
-        EQ_name: '',
+        LIKE_name: '',
         EQ_id: '',
         page: '1',
         size: '15'
