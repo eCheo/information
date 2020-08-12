@@ -11,7 +11,7 @@
             format="yyyy年MM月dd日"
             type="daterange"
             placement="bottom-end"
-            placeholder="Select date"
+            placeholder="请选择申请时间"
             style="width: 200px"
           ></DatePicker>
         </div>
@@ -35,7 +35,7 @@
         </div>
         <div style="margin-top:20px;">
           <Input v-model="authenticationFrom.queryValue" style="width:300px;"></Input>
-          <Button type="primary" icon="ios-search">搜索</Button>
+          <Button type="success" icon="ios-search" @click="findArticlesResult(1)">搜索</Button>
         </div>
       </div>
     </div>
@@ -266,4 +266,16 @@ export default {
 };
 </script>
 <style lang="less">
+.tr-head {
+    height: 169px;
+    box-shadow: 0px 1px 1px 0px #e9e9e9;
+  .tr-from {
+    display: flex;
+    flex-wrap: wrap;
+    width: 69%;
+    >div {
+      width: 400px;
+    }
+  }
+}
 </style>

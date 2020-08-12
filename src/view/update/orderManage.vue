@@ -29,12 +29,12 @@
         </li>
         <li class="kf-item">
           <span>订单状态</span>
-          <Select v-model="orderSeach.exchangeStatus">
+          <Select v-model="orderSeach.exchangeStatus" @on-change="findBackEndOrder(1)">
               <Option v-for="item in orderStatusList" :key="item.label" :value="item.value">{{item.label}}</Option>
           </Select>
         </li>
         <li class="kf-item">
-          <Button type="success">搜索</Button>
+          <Button type="success" @click="findBackEndOrder(1)">搜索</Button>
         </li>
       </ul>
     </div>
@@ -84,7 +84,23 @@ export default {
                     }
                 },
                 {
-                    title: '操作'
+                    title: '操作',
+                    render: (h, parmas) => {
+                      return h('div', [
+                        h('span', {
+                          style: {
+                            cursor: 'pointer',
+                            color: '#2D8cF0',
+                            textDecoration: 'underline'
+                          },
+                          on: {
+                            click: ()=> {
+                              // this.$router.push('')
+                            }
+                          }
+                        }, '查看详情')
+                      ])
+                    }
                 }
             ],
             orderData: [],
@@ -99,6 +115,10 @@ export default {
                 exchangeStatus: ''
             },
             orderStatusList: [
+                {
+                  label: '全部',
+                  value: ''
+                },
                 {
                     label: '商家待处理',
                     value: 'Pending'
