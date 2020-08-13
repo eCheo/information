@@ -218,7 +218,11 @@ export default {
       };
       setGroundingType(params).then(res => {
         if (res.status === 200 && res.data.code === "200") {
-          this.$Message.success("上架成功");
+          if (row.groundingType.name === "Dismount") {
+            this.$Message.success("上架成功");
+          } else {
+            this.$Message.success("下架成功");
+          }
           this.findArticlesResult(1);
         } else {
           this.$Message.error(res.data.message);
