@@ -15,7 +15,7 @@
             style="width: 200px"
           ></DatePicker>
         </div>
-        <div>
+        <div style="margin-left:20px;">
           <span>审核状态</span>
           <RadioGroup v-model="authenFrom.creatorAuditStatusType" type="button">
               <Radio label="">全部</Radio>
@@ -28,33 +28,43 @@
           <span>申请领域</span>
           <RadioGroup v-model="authenFrom.applyLabelType" type="button">
               <Radio label="ApplyArticlesLabel">全部领域</Radio>
-              <!-- <Radio label="ApplyVideoLabel">视频</Radio> -->
           </RadioGroup>
-          <Select v-model="model1" style="width:200px">
-              <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          <Select v-model="authenFrom.applyLabelType" style="width:200px;margin:0 20px;">
+              <Option v-for="item in articlesList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
-          <Select v-model="model1" style="width:200px">
-              <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          <Select v-model="authenFrom.columnId" style="width:200px">
+              <Option v-for="item in conditionList" :value="item.id" :key="item.name">{{ item.name }}</Option>
           </Select>
           <div style="margin-left:20px;display:inline-block;">
-            <Input style="width:300px;"> </Input>
-            <Button type="success" icon="ios-search">搜索</Button>
+            <Input style="width:300px;margin-right:10px;"> </Input>
+            <Button type="success" icon="ios-search" @click="labelReviewPage(1)">搜索</Button>
           </div>
         </div>
       </div>
     </div>
     <div class="tr-content">
       <p class="tr-title">申请领域标签列表</p>
-      <Table border :columns="authenticationList" :data="authenticationData.content"></Table>
+      <Table border :loading='tabLoading' :columns="authenticationList" :data="authenticationData.content"></Table>
       <Page style="margin-top:10px;float:right;" :page-size='15' :total="authenticationData.totalElements" @on-change='labelReviewPage' />
     </div>
+     <Modal
+        title="提示"
+        v-model="noPass"
+        >
+        <Input type="textarea" v-model="reason" placeholder="请输入不通过的原因"></Input>
+        <div slot="footer">
+          <Button type="text" @click='noPass = false'>取消</Button>
+          <Button type="success" @click="passOrNot('Fail'),noPass = false" :disabled="reason === '' ? true : false">确定</Button>
+        </div>
+    </Modal>
   </div>
 </template>
 
 <script>
 import {
   labelReviewPage,
-  passOrNot
+  passOrNot,
+  findArticles
 } from "@/api/data";
 export default {
   name: 'count_to_page',
@@ -124,27 +134,38 @@ export default {
         {
           title: '操作',
           render: (h, params) => {
+            let dis = params.row.auditStatusType.code === 'Fail' || params.row.auditStatusType.code === 'Adopt';
             return h('div', [
               h('Button', {
                 props: {
-                  type: 'success'
+                  type: 'success',
+                  disabled: dis
                 },
                 style: {
                   marginRight: '10px'
                 },
                 on: {
                   click: () => {
-                    this.passOrNot()
+                    this.id = params.row.id;
+                    this.$Modal.info({
+                      title: '提示',
+                      content:'是否通过该用户申请的领域标签？',
+                      onOk: () =>{
+                        this.passOrNot('Adopt');
+                      }
+                    })
                   }
                 }
               }, '通过'),
               h('Button', {
                 props: {
-                  type: 'error'
+                  type: 'error',
+                  disabled: dis
                 },
                 on: {
                   click: () => {
-                    this.passOrNot()
+                    this.id = params.row.id;
+                    this.noPass = true;
                   }
                 }
               }, '不通过')
@@ -164,22 +185,40 @@ export default {
         size: '10'
       },
       selectTime: '',
-      viodeList: [
-        
-      ]
+      viodeList: [],
+      noPass: false,
+      reason: '',
+      id: '',
+      tabLoading: false,
+      btLoading: false,
+      articlesList: [
+        {
+          label: '文章',
+          value: 'ApplyArticlesLabel'
+        },
+        {
+          label: '视频',
+          value: 'ApplyVideoLabel'
+        }
+      ],
+      conditionList: []
     }
   },
   created() {
     this.labelReviewPage(1);
+    this.getCondition();
   },
   methods: {
     labelReviewPage(page) {
       this.authenFrom.page = page;
+      this.tabLoading = true;
       labelReviewPage(this.authenFrom).then(res => {
         if (res.status === 200 && res.data.code === '200') {
           this.authenticationData = res.data.data;
+          this.tabLoading = false;
         } else {
           this.$Message.error(res.data.message);
+          this.tabLoading = false;
         }
       })
     },
@@ -189,15 +228,38 @@ export default {
       this.authenFrom.startApplyDate = starTime.substring(0, starTime.length - 1)
       this.authenFrom.endApplyDate = endTime.substring(0, endTime.length - 1)
     },
-    passOrNot() {
-      passOrNot().then(res => {
+    passOrNot(val) {
+      let params = {
+          id: this.id,
+          creatorAuditStatusType: val
+      };
+      if (val === 'Fail') {
+        params = {
+          reason: this.reason,
+          id: this.id,
+          creatorAuditStatusType: val
+        }
+      }
+      passOrNot(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
-          this.$Message.success('')
+          if (val === 'Fail') { 
+            this.$Message.success('该用户申请创作者领域已驳回');
+          } else {
+            this.$Message.success('该用户申请创作者领域通过成功');
+          }
+          this.labelReviewPage(1);
         } else {
           this.$Message.error(res.data.message);
         }
       })
-    }
+    },
+    getCondition () {
+      findArticles().then(res => {
+        if (res.data.code === '200') {
+          this.conditionList = res.data.data
+        }
+      })
+    },
   },
   mounted () {
   }

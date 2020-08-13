@@ -3,27 +3,6 @@
     <div class="tr-head">
       <p class="tr-title">筛选</p>
       <div class="tr-from">
-        <div>
-          <span>申请时间</span>
-          <DatePicker
-            v-model="selectTime"
-            @on-change="changeDate"
-            format="yyyy年MM月dd日"
-            type="daterange"
-            placement="bottom-end"
-            placeholder="请选择申请时间"
-            style="width: 200px"
-          ></DatePicker>
-        </div>
-        <div>
-          <span>审核状态</span>
-          <RadioGroup v-model="auditStatus" type="button">
-            <Radio label="全部"></Radio>
-            <Radio label="等待审核"></Radio>
-            <Radio label="审核通过"></Radio>
-            <Radio label="审核不通过"></Radio>
-          </RadioGroup>
-        </div>
         <div style="margin-top:20px;">
           <span>发布类型</span>
           <RadioGroup v-model="releaseType" type="button" @on-change="releaseTypeChange">
@@ -34,7 +13,7 @@
           </RadioGroup>
         </div>
         <div style="margin-top:20px;">
-          <Input v-model="authenticationFrom.queryValue" style="width:300px;"></Input>
+          <Input placeholder="请输入关键字，标题"v-model="authenticationFrom.queryValue" style="width:300px;"></Input>
           <Button type="success" icon="ios-search" @click="findArticlesResult(1)">搜索</Button>
         </div>
       </div>
@@ -167,7 +146,7 @@ export default {
                 {
                   on: {
                     click: () => {
-                      this.setGroundingType(params.row.id);
+                      this.setGroundingType(params.row);
                     }
                   }
                 },
@@ -179,7 +158,6 @@ export default {
       ],
       authenticationData: [],
       selectTime: "",
-      auditStatus: "全部",
       releaseType: "PublishArticle",
       releaseBtText: "发布文章",
       authenticationFrom: {
