@@ -4,7 +4,7 @@
       <p class="tr-title">筛选</p>
       <div class="tr-from">
         <div style="margin-top:20px;">
-          <span>发布类型</span>
+          <span style="margin-right:10px;">发布类型</span>
           <RadioGroup v-model="releaseType" type="button" @on-change="releaseTypeChange">
             <Radio label="PublishArticle">文章</Radio>
             <Radio label="PublishVideo">视频</Radio>
@@ -14,7 +14,7 @@
         </div>
         <div style="margin-top:20px;">
           <Input placeholder="请输入关键字，标题"v-model="authenticationFrom.queryValue" style="width:300px;"></Input>
-          <Button type="success" icon="ios-search" @click="findArticlesResult(1)">搜索</Button>
+          <Button style="margin-left:10px;" type="success" icon="ios-search" @click="findArticlesResult(1)">搜索</Button>
         </div>
       </div>
     </div>
@@ -110,9 +110,6 @@ export default {
           key: "pubDate"
         },
         {
-          title: "审核状态"
-        },
-        {
           title: "操作",
           width: 250,
           render: (h, params) => {
@@ -131,7 +128,7 @@ export default {
                 "Button",
                 {
                   style: {
-                    marginLeft: '10px;'
+                    margin: '0 10px'
                   },
                   on: {
                     click: () => {
@@ -144,6 +141,10 @@ export default {
               h(
                 "Button",
                 {
+                  props: {
+                    loading: params.row.loading,
+                    type: 'error'
+                  },
                   on: {
                     click: () => {
                       this.setGroundingType(params.row);
@@ -167,7 +168,8 @@ export default {
         queryValue: "",
         page: "1",
         size: "15"
-      }
+      },
+      tableLoading: false
     };
   },
   created() {
@@ -216,6 +218,7 @@ export default {
           row.groundingType.name === "Dismount" ? "Grounding" : "Dismount",
         id: row.id
       };
+      this.$set(row, 'loading', true);
       setGroundingType(params).then(res => {
         if (res.status === 200 && res.data.code === "200") {
           if (row.groundingType.name === "Dismount") {
@@ -223,8 +226,10 @@ export default {
           } else {
             this.$Message.success("下架成功");
           }
+          this.$set(row, 'loading', false);
           this.findArticlesResult(1);
         } else {
+          this.$set(row, 'loading', false);
           this.$Message.error(res.data.message);
         }
       });

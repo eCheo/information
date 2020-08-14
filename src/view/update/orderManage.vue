@@ -152,8 +152,8 @@ export default {
         changeDate (date) {
             let starTime = date[0].replace(/([^\u0000-\u00FF])/g, '-')
             let endTime = date[1].replace(/([^\u0000-\u00FF])/g, '-')
-            this.orderSeach.startDate = starTime.substring(0, starTime.length - 1) +'59:59:59'
-            this.orderSeach.endDate = endTime.substring(0, endTime.length - 1) +'59:59:59'
+            this.orderSeach.startDate = starTime.substring(0, starTime.length - 1)
+            this.orderSeach.endDate = endTime.substring(0, endTime.length - 1)
         }
     }
 };

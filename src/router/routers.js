@@ -205,8 +205,20 @@ export default [
         name: 'ordermanage',
         meta: {
           icon: 'md-clipboard',
-          title: '订单管理'
+          title: '订单管理',
+          showAlways: true
         },
+        children: [
+          {
+            path: 'orderdetails',
+            name: 'orderdetails',
+            meta: {
+              icon: 'md-clipboard',
+              title: '订单详情'
+            },
+            component: () => import('@/view/update/orderdetails.vue')
+          },
+        ],
         component: () => import('@/view/update/orderManage.vue')
       }
     ]
