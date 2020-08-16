@@ -261,3 +261,27 @@ export const userUpdate = data => {
     data: data
   })
 }
+// 是否禁用账户
+export const setMemberDisable = data => {
+  return axios.request({
+    url: '/api/backend/member/setMemberDisable.json',
+    method: 'post',
+    data: data
+  })
+}
+// 积分获取
+export const findBackEndIntegralAcquisition = data => {
+  return axios.request({
+    url: '/api/backend/member/findBackEndIntegralAcquisition.json',
+    method: 'post',
+    data: data
+  })
+}
+// 用户反馈列表
+export const findByNickName = data => {
+  return axios.request({
+    url: '/api/backend/help/findByNickName.json',
+    method: 'post',
+    data: data
+  })
+}

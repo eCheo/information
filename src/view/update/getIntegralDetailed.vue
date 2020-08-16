@@ -64,7 +64,7 @@ export default {
       integralFrom: {
         nikeName: '',
         page: '1',
-        size: '15'
+        size: '10'
       }
     }
   },

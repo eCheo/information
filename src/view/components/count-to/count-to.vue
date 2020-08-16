@@ -33,7 +33,7 @@
               <Option v-for="item in conditionList" :value="item.id" :key="item.name">{{ item.name }}</Option>
           </Select>
           <div style="margin-left:20px;display:inline-block;">
-            <Input style="width:300px;margin-right:10px;"> </Input>
+            <Input v-model="authenFrom.queryValue" style="width:300px;margin-right:10px;"> </Input>
             <Button type="success" icon="ios-search" @click="labelReviewPage(1)">搜索</Button>
           </div>
         </div>
@@ -118,7 +118,7 @@ export default {
               },
               on: {
                 click: () => {
-                  this.$router.push({path: '/components/count/countdetails', query: {id: params.row.id}})
+                  this.$router.push({path: '/components/count/countdetails', query: {id: params.row.id, mId: params.row.memberId}})
                 }
               }
             }, '查看')

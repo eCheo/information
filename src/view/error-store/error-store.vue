@@ -4,7 +4,7 @@
       <div class="us-box">
         <div>
           <span>用户名</span>
-          <Input style="width: 200px" v-model="userName" placeholder="请输入用户名"></Input>
+          <Input style="width: 200px" v-model="userInfo.LIKE_nickName" placeholder="请输入用户名"></Input>
         </div>
         <div>
           <span>选择时间</span>
@@ -33,12 +33,11 @@
 </template>
 
 <script>
-import { findPageByCondition } from '@/api/data'
+import { findPageByCondition, setMemberDisable } from '@/api/data'
 export default {
   data() {
     return {
       selectTime: '',
-      userName: '',
       userList: [
         {
           title: '头像',
@@ -83,14 +82,26 @@ export default {
         },
         {
           title: '账户禁用',
-          key: ''
+          render: (h, params) => {
+            return h('i-switch', {
+              props: {
+                  trueColor: '#19be6b',
+                  value: params.row.isDisable
+              },
+              on: {
+                'on-change': () => {
+                  this.setMemberDisable(params.row);
+                }
+              }  
+            })
+          }
         },
       ],
       userData: {},
       userInfo: {
-        userName: '',
-        startDate: '',
-        endDate: '',
+        LIKE_nickName: '',
+        GTE_registerDate: '',
+        LTE_registerDate: '',
         page: '1',
         size: '10'
       }
@@ -103,14 +114,32 @@ export default {
     changeDate (date) {
             let starTime = date[0].replace(/([^\u0000-\u00FF])/g, '-')
             let endTime = date[1].replace(/([^\u0000-\u00FF])/g, '-')
-            this.orderSeach.startDate = starTime.substring(0, starTime.length - 1)
-            this.orderSeach.endDate = endTime.substring(0, endTime.length - 1)
+            this.userInfo.GTE_registerDate = starTime.substring(0, starTime.length - 1)
+            this.userInfo.LTE_registerDate = endTime.substring(0, endTime.length - 1)
     },
     findPageByCondition(page) {
       this.userInfo.page = page;
       findPageByCondition(this.userInfo).then(res => {
         if (res.status === 200 && res.data.code === '200') {
           this.userData = res.data.data;
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      })
+    },
+    setMemberDisable(row) {
+      let params = {
+        id: row.id,
+        isDisable: !row.isDisable
+      }
+      setMemberDisable(params).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          if (!row.isDisable) { 
+            this.$Message.success('账户禁用成功');
+          } else {
+            this.$Message.success('账户启用成功');
+          }
+          this.findPageByCondition(1);
         } else {
           this.$Message.error(res.data.message);
         }

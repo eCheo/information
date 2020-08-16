@@ -281,13 +281,13 @@ export default [
         component: () => import('@/view/excel/export-excel.vue')
       },
       {
-        path: 'export-excel',
-        name: 'export-excel',
+        path: 'userfeedback',
+        name: 'userfeedback',
         meta: {
           icon: 'md-download',
           title: '用户反馈'
-        }
-        // component: () => import('@/view/excel/export-excel.vue')
+        },
+        component: () => import('@/view/excel/userFeedback.vue')
       },
       {
         path: 'export-excel',
@@ -297,26 +297,6 @@ export default [
           title: '举报列表'
         }
         // component: () => import('@/view/excel/export-excel.vue')
-      }
-    ]
-  },
-  {
-    path: '/tools_methods',
-    name: 'tools_methods',
-    meta: {
-      hideInBread: true
-    },
-    component: Main,
-    children: [
-      {
-        path: 'tools_methods_page',
-        name: 'tools_methods_page',
-        meta: {
-          icon: 'ios-hammer',
-          title: '工具方法',
-          beforeCloseName: 'before_close_normal'
-        },
-        component: () => import('@/view/tools-methods/tools-methods.vue')
       }
     ]
   },

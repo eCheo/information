@@ -35,25 +35,55 @@ export default {
             userInfo: {},
             authenticationList: [
                 {
-                    title: '类型'
+                    title: '类型',
+                    render: (h, params) => {
+                        return h('p', {}, params.row.type.message)
+                    }
                 },
                 {
-                    title: '标题'
+                    title: '标题',
+                    key: 'title'
                 },
                 {
-                    title: '封面'
+                    title: '封面',
+                    render: (h, params) => {
+                        if (params.row.videoImagePath !== null && params.row.type.message === '视频') {
+                            return h('img', {
+                                    style: {
+                                        maxWidth: '150px'
+                                        },
+                                        attrs: {
+                                        src: params.row.videoImagePath
+                                        }
+                                    })
+                        } else if(params.row.imagePaths !== null && params.row.type.message === '文章'){
+                            return h('img', {
+                                        style: {
+                                        maxWidth: '150px'
+                                        },
+                                        attrs: {
+                                        src: params.row.imagePaths[0]
+                                        }
+                                    })
+                        } else {
+                            return h('p',{}, '---')
+                        }
+                    }
                 },
                 {
-                    title: '发布时间'
+                    title: '发布时间',
+                    key: 'pubDate'
                 },
                 {
-                    title: '发布内容'
-                },
-                {
-                    title: '审核状态'
-                },
-                {
-                    title: '操作'
+                    title: '发布内容',
+                    render: (h, params) => {
+                        return h('p', {
+                            style: {
+                                cursor: 'pointer',
+                                textDecoration: 'underline'
+                            }
+                        }, '查看详情')
+                    }
                 }
             ],
             authenticationData: [],
@@ -79,9 +109,12 @@ export default {
         },
         findBackEndArticlesPageByCondition(page) {
             let params = {
-                EQ_memberId: this.$route.query.id,
+                EQ_memberId: this.$route.query.mId,
                 size: '10',
-                page: page
+                page: page,
+                sort: 'pubDate,desc',
+                EQ_isDelete: 'false',
+                IN_type: 'PublishArticle,PublishVideo'
             }
             this.tabLoading = true;
             findBackEndArticlesPageByCondition(params).then(res => {

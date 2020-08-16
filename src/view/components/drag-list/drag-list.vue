@@ -29,7 +29,9 @@
         >{{releaseBtText}}</Button>
       </div>
       <Table border :columns="authenticationList" :loading='tableLoading' :data="authenticationData.content"></Table>
-      <Page style="margin-top:10px;float:right;" :page-size='15' :total="authenticationData.totalElements" @on-change='findArticlesResult' />
+      <div style="text-align:right;">
+        <Page style="margin-top:10px;" :page-size='15' :total="authenticationData.totalElements" @on-change='findArticlesResult' />
+      </div>
     </div>
   </div>
 </template>
@@ -125,6 +127,9 @@ export default {
           render: (h, params) => {
             return h("div", [
               h("Button", {
+                props: {
+                  type: 'success'
+                },
                 on: {
                   click: () => {
                     this.$router.push({path:'/components/drag/addArticle', query:{type: this.releaseType, id: params.row.id}})

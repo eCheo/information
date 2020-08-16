@@ -7,39 +7,55 @@
 </template>
 
 <script>
+import { findBackEndIntegralAcquisition } from "@/api/data";
 export default {
   data () {
     return {
       integralList: [
         {
           title: '活动编号',
-          key: 'no'
+          key: 'id'
         },
         {
           title: '活动名称',
-          key: 'name'
+          render: (h, params) => {
+            return h('p', {}, params.row.integralType.message)
+          }
         },
         {
           title: '限制',
-          key: 'limit'
+          key: 'limit',
+          render: (h, params) => {
+            return h('p', {}, params.row.limit === null ? '---' : params.row.limit)
+          }
         },
         {
           title: '最多可获取积分',
-          key: 'limitInte'
+          key: 'limitInte',
+          render: (h, params) => {
+            return h('p', {}, params.row.highestAvailable === null ? '---' : params.row.highestAvailable)
+          }
         }
       ],
-      integralData: [
-        {
-          no: '0035432',
-          name: '绑定手机号',
-          limit: '1次',
-          limitInte: '+163积分'
-        }
-      ]
+      integralData: []
     }
   },
   created () {
-    console.log(this.$store.state.user)
+    this.findBackEndIntegralAcquisition();
+  },
+  methods: {
+    findBackEndIntegralAcquisition() {
+      let params = {
+         sort: 'id,asc'
+      }
+      findBackEndIntegralAcquisition(params).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.integralData = res.data.data;
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      })
+    }
   }
 }
 </script>
