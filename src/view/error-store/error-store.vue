@@ -1,39 +1,145 @@
 <template>
   <div>
-    <Card>
-      iview-admin会自动将你程序中的错误收集起来，你可以将错误日志发给后端保存起来。如果你不需要这个功能，将'./src/config/index.js'里的plugin的'error-store'属性删掉即可。
-      另外在开发环境下，你程序中的错误都会被收集起来，这样可能不利于你排查错误，你可以将'./src/config/index.js'的'error-store'的'developmentOff'设为true。
-      如果你只是想收集错误日志，不希望登录用户看到错误日志，你可以不提供查看日志的入口，只需将'./src/config/index.js'的'error-store'的'showInHeader'设为false。
-    </Card>
-    <Card style="margin-top: 20px;">
-      <Row>
-        <i-col span="8">
-          <Button @click="click" style="display: block">点击测试触发程序错误</Button>
-          <Button @click="ajaxClick" style="margin-top:10px;">点击测试触发ajax接口请求错误</Button>
-        </i-col>
-        <i-col span="16">
-          ajax接口请求是请求easy-mock的一个不存在接口，所以服务端会报404错误，错误收集机制会收集这个错误，测试的时候有一定网络延迟，所以点击按钮之后稍等一会才会收集到错误。
-        </i-col>
-      </Row>
-    </Card>
+    <div class="us-top">
+      <div class="us-box">
+        <div>
+          <span>用户名</span>
+          <Input style="width: 200px" v-model="userName" placeholder="请输入用户名"></Input>
+        </div>
+        <div>
+          <span>选择时间</span>
+          <DatePicker
+              :transfer="true"
+              v-model="selectTime"
+              @on-change="changeDate"
+              format="yyyy年MM月dd日"
+              type="daterange"
+              placement="bottom-end"
+              placeholder="请选择时间"
+              style="width: 200px"
+            ></DatePicker>
+        </div>
+        <div>
+          <Button style="margin-left:10px;" type="success" icon="ios-search" @click="findPageByCondition('1')">搜索</Button>
+        </div>
+      </div>
+    </div>
+    <div class="us-bottom">
+      <p>用户列表</p>
+      <hr size='1' color='#e9e9e9' style="margin:10px 0;" />
+      <Table border :columns="userList" :data="userData.content"></Table>
+    </div>
   </div>
 </template>
 
 <script>
-import { errorReq } from '@/api/data'
+import { findPageByCondition } from '@/api/data'
 export default {
-  name: 'error_store_page',
+  data() {
+    return {
+      selectTime: '',
+      userName: '',
+      userList: [
+        {
+          title: '头像',
+          align: 'center',
+          render: (h, params) => {
+            return h('img', {
+              style: {
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%'
+              },
+              attrs: {
+                  src: params.row.headImgPath
+              }
+            })
+          }
+        },
+        {
+          title: '用户ID',
+          key: 'id'
+        },
+        {
+          title: "用户昵称",
+          key: 'nickName'
+        },
+        {
+          title: '性别',
+          render: (h, params) => {
+            return h('p', {}, params.row.sex === null ? '---' : params.row.sex.message)
+          }
+        },
+        {
+          title: '区域',
+          key: 'address',
+          render: (h, params) => {
+            return h('p', {}, params.row.address === null ? '---' : params.row.address)
+          }
+        },
+        {
+          title: '注册时间',
+          key: 'registerDate'
+        },
+        {
+          title: '账户禁用',
+          key: ''
+        },
+      ],
+      userData: {},
+      userInfo: {
+        userName: '',
+        startDate: '',
+        endDate: '',
+        page: '1',
+        size: '10'
+      }
+    }
+  },
+  created() {
+    this.findPageByCondition('1');
+  },
   methods: {
-    click () {
-      console.log(admin)
+    changeDate (date) {
+            let starTime = date[0].replace(/([^\u0000-\u00FF])/g, '-')
+            let endTime = date[1].replace(/([^\u0000-\u00FF])/g, '-')
+            this.orderSeach.startDate = starTime.substring(0, starTime.length - 1)
+            this.orderSeach.endDate = endTime.substring(0, endTime.length - 1)
     },
-    ajaxClick () {
-      errorReq()
+    findPageByCondition(page) {
+      this.userInfo.page = page;
+      findPageByCondition(this.userInfo).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.userData = res.data.data;
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      })
     }
   }
 }
 </script>
 
-<style>
-
+<style lang="less" scoped>
+  .us-top {
+    background: #fff;
+    padding: 20px;
+    .us-box {
+      display: flex;
+      justify-content: space-between;
+      max-width: 1366px;
+      span {
+        margin-right: 15px;
+      }
+    }
+  }
+  .us-bottom {
+    background: #fff;
+    margin-top: 30px;
+    padding: 20px;
+    > p {
+      font-size: 16px;
+      font-weight: bold;
+    }
+  }
 </style>

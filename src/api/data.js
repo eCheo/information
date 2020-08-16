@@ -228,3 +228,11 @@ export const passOrNot = data => {
     data: data
   })
 }
+// 用户查询列表
+export const findPageByCondition = data => {
+  return axios.request({
+    url: '/api/backend/member/findPageByCondition.json',
+    method: 'post',
+    data: data
+  })
+}

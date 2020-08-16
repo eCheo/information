@@ -13,7 +13,7 @@
           </RadioGroup>
         </div>
         <div style="margin-top:20px;">
-          <Input placeholder="请输入关键字，标题"v-model="authenticationFrom.queryValue" style="width:300px;"></Input>
+          <Input placeholder="请输入关键字，标题" v-model="authenticationFrom.queryValue" style="width:300px;"></Input>
           <Button style="margin-left:10px;" type="success" icon="ios-search" @click="findArticlesResult(1)">搜索</Button>
         </div>
       </div>
@@ -103,11 +103,21 @@ export default {
         },
         {
           title: "栏目类型",
-          key: "columnName"
+          key: "columnName",
+          render: (h, params) => {
+            return h('p', {}, params.row.columnName === null ? '---' : params.row.columnName)
+          }
         },
         {
           title: "发布时间",
           key: "pubDate"
+        },
+        {
+          title: "审核状态",
+          key: 'status',
+          render: (h, params) => {
+            return h('p', {}, params.row.status === null ? '---' : params.row.status.message)
+          }
         },
         {
           title: "操作",

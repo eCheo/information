@@ -17,7 +17,7 @@
         </div>
         <div style="margin-left:20px;">
           <span>审核状态</span>
-          <RadioGroup v-model="authenFrom.creatorAuditStatusType" type="button">
+          <RadioGroup v-model="authenFrom.creatorAuditStatusType" type="button" @on-change='releaseTypeChange'>
               <Radio label="">全部</Radio>
               <Radio label="PendingReview">等待审核</Radio>
               <Radio label="Adopt">审核通过</Radio>
@@ -26,9 +26,6 @@
         </div>
         <div style="margin-top:20px;">
           <span>申请领域</span>
-          <RadioGroup v-model="authenFrom.applyLabelType" type="button">
-              <Radio label="ApplyArticlesLabel">全部领域</Radio>
-          </RadioGroup>
           <Select v-model="authenFrom.applyLabelType" style="width:200px;margin:0 20px;">
               <Option v-for="item in articlesList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
@@ -45,7 +42,9 @@
     <div class="tr-content">
       <p class="tr-title">申请领域标签列表</p>
       <Table border :loading='tabLoading' :columns="authenticationList" :data="authenticationData.content"></Table>
-      <Page style="margin-top:10px;float:right;" :page-size='15' :total="authenticationData.totalElements" @on-change='labelReviewPage' />
+      <div style="text-align:right;">
+         <Page style="margin-top:10px;" :page-size='15' :total="authenticationData.totalElements" @on-change='labelReviewPage' />
+      </div>
     </div>
      <Modal
         title="提示"
@@ -209,6 +208,10 @@ export default {
     this.getCondition();
   },
   methods: {
+    releaseTypeChange(label) {
+      this.authenFrom.creatorAuditStatusType = label;
+      this.labelReviewPage(1);
+    },
     labelReviewPage(page) {
       this.authenFrom.page = page;
       this.tabLoading = true;

@@ -50,9 +50,9 @@
         </div>
       </div>
     </div>
-    <div style="width:860px;margin:0 auto;" v-else-if="viewType === 'PublishVideo'">
+    <div style="width:860px;" v-else-if="viewType === 'PublishVideo'">
         <div>
-            <p>上传视频<span>请上传时长10-30分钟,支持主流的视频格式，超出限制的视频请到腾讯视频上传</span></p>
+            <p>*上传视频 <span>请上传时长10-30分钟,支持主流的视频格式，超出限制的视频请到腾讯视频上传</span></p>
             <Upload
                 ref="upload"
                 :show-upload-list="true"
@@ -65,7 +65,7 @@
                 :headers="headers"
                 type="drag"
                 action="http://47.56.186.16:8089/api/obs/upload.json"
-                style="width:200px;"
+                style="width:200px;border: none;"
             >
                 <Button icon="ios-cloud-upload-outline" @click="fileName ='PublishVideo'">上传文件</Button>
             </Upload>
@@ -99,14 +99,14 @@
                 style="display: inline-block;width:58px;"
                 v-if="uploadList.length < 4"
             >
-                <div style="width: 58px;height:58px;line-height: 58px;" @click="fileName = 'tp'">
+                <div style="width: 58px;height:58px;line-height: 58px;" @click="fileName = 'PublishVideoImag'">
                     <Icon type="ios-camera" size="20"></Icon>
                 </div>
             </Upload>
         </div>
         <div>
             <span>标题</span>
-            <Input v-model="title"></Input>
+            <Input class="video-input" v-model="title"></Input>
         </div>
         <div style="margin:20px 0;">
         <span>栏目类型</span>
@@ -120,6 +120,7 @@
         </div>
     </div>
     <div v-else-if="viewType === 'Topic'">
+      <Input style="margin-bottom: 20px;" v-model="title" placeholder="请输入标题"> </Input>
       <tinymce-editor ref="editor" :init='init' v-model="content" @on-change="handleChange"/>
       <p>*问题 给话题制造问题，给出两个对立的观点，让读者参与到话题的投票中，进行阅读的互动</p>
       <div class="top-box">
@@ -195,7 +196,7 @@ import 'tinymce/plugins/table'// 插入表格插件
 import 'tinymce/plugins/lists'// 列表插件
 import 'tinymce/plugins/wordcount'// 字数统计插件
 import Editor from "@tinymce/tinymce-vue";
-import { releaseArticle, findArticles, upload, findBackEndArticles} from '../../../api/data'
+import { releaseArticle, findArticles, upload, findBackEndArticle} from '../../../api/data'
 import store from '../../../store/module/user'
 export default {
   data () {
@@ -260,7 +261,7 @@ export default {
     if (Object.keys(this.$route.query).length !== 0) {
       this.viewType = this.$route.query.type;
       if (this.$route.query.id) {
-        this.findBackEndArticles(this.$route.query.id)
+        this.findBackEndArticle(this.$route.query.id)
       }
     }
   },
@@ -297,7 +298,8 @@ export default {
           columnId: this.condiId + '',
           title: this.title,
           videoPath: this.viodeUrl,
-          videoImagePath: this.videoImagePath
+          videoImagePath: this.videoImagePath,
+          id: this.$route.query.id
         }
       } else if (this.viewType === 'PublishArticle') {
         params = {
@@ -306,7 +308,8 @@ export default {
           columnId: this.condiId + '',
           type: 'PublishArticle',
           imagePaths: this.viewImg,
-          groundingType: status
+          groundingType: status,
+          id: this.$route.query.id
         }
       } else if (this.viewType === 'Topic') {
         params = {
@@ -316,7 +319,9 @@ export default {
           orthodoxButtonText: this.topicData.optionOne,
           opposingButtonText: this.topicData.optionTwo,
           content: this.content,
-          type: 'Topic'
+          title: this.title,
+          type: 'Topic',
+          id: this.$route.query.id
         }
       }
       if (this.$route.query.id) {
@@ -343,11 +348,11 @@ export default {
         }
       })
     },
-    findBackEndArticles(id) {
+    findBackEndArticle(id) {
       let params = {
         id: id
       }
-      findBackEndArticles(params).then(res => {
+      findBackEndArticle(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
           this.content = res.data.data.content;
           this.title = res.data.data.title;
@@ -378,9 +383,11 @@ export default {
     handleSuccess (res, file) {
       if (this.viewType === 'PublishVideo') {
         if (this.fileName === 'PublishVideo') {
-          this.viodeUrl = res.data.viewUrl
+          this.viodeUrl = res.data.viewUrl;
+        } else if(this.fileName === 'PublishVideoImag') {
+          this.videoImagePath = res.data.viewUrl;
         } else {
-          this.videoImagePath = res.data.viewUrl
+          this.videoImagePath = res.data.viewUrl;
         }
       } else {
         file.url = res.data.viewUrl;
@@ -403,7 +410,7 @@ export default {
       })
     },
     handleBeforeUpload () {
-      const check = this.uploadList.length < 5
+      const check = this.uploadList.length < 9
       if (!check) {
         this.$Notice.warning({
           title: 'Up to five pictures can be uploaded.'
@@ -465,7 +472,7 @@ export default {
         height: 150px;
         text-align: center;
         line-height: 150px;
-        border: 1px solid transparent;
+        // border: 1px solid transparent;
         border-radius: 4px;
         overflow: hidden;
         background: #fff;
@@ -494,5 +501,8 @@ export default {
         font-size: 20px;
         cursor: pointer;
         margin: 0 2px;
+    }
+    .video-input .ivu-input {
+      height: 76px;
     }
 </style>

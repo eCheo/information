@@ -88,13 +88,34 @@ export default [
     component: Main,
     children: [
       {
-        path: 'count_to_page',
-        name: 'count_to_page',
+        path: 'count',
+        name: 'count',
         meta: {
           icon: 'md-trending-up',
-          title: '审核创作者领域标签'
+          title: ''
         },
-        component: () => import('@/view/components/count-to/count-to.vue')
+        children: [
+          {
+            path: 'count_to_page',
+            name: 'count_to_page',
+            meta: {
+              icon: 'md-trending-up',
+              title: '审核创作者领域标签'
+            },
+            component: () => import('@/view/components/count-to/count-to.vue')
+          },
+          {
+            path: 'countdetails',
+            name: 'countdetails',
+            meta: {
+              icon: 'md-trending-up',
+              title: '查看发布内容',
+              hideInMenu: true
+            },
+            component: () => import('@/view/components/count-to/countDetails.vue')
+          }
+        ],
+        component: parentView
       },
       {
         path: 'drag',
@@ -201,25 +222,34 @@ export default [
         component: parentView
       },
       {
-        path: 'ordermanage',
-        name: 'ordermanage',
+        path: 'order',
+        name: 'order',
         meta: {
           icon: 'md-clipboard',
-          title: '订单管理',
-          showAlways: true
+          title: ''
         },
         children: [
+          {
+            path: 'ordermanage',
+            name: 'ordermanage',
+            meta: {
+              icon: 'md-clipboard',
+              title: '订单管理'
+            },
+            component: () => import('@/view/update/orderManage.vue')
+          },
           {
             path: 'orderdetails',
             name: 'orderdetails',
             meta: {
               icon: 'md-clipboard',
-              title: '订单详情'
+              title: '订单详情',
+              hideInMenu: true
             },
             component: () => import('@/view/update/orderdetails.vue')
           },
         ],
-        component: () => import('@/view/update/orderManage.vue')
+        component: parentView
       }
     ]
   },
@@ -302,8 +332,8 @@ export default [
         path: 'error_store_page',
         name: 'error_store_page',
         meta: {
-          icon: 'ios-bug',
-          title: '错误收集'
+          icon: 'md-contact',
+          title: '用户管理'
         },
         component: () => import('@/view/error-store/error-store.vue')
       }
@@ -322,10 +352,10 @@ export default [
         path: 'error_logger_page',
         name: 'error_logger_page',
         meta: {
-          icon: 'ios-bug',
-          title: '错误收集'
+          icon: 'md-contact',
+          title: '用户管理'
         },
-        component: () => import('@/view/single-page/error-logger.vue')
+        component: () => import('@/view/error-store/error-store.vue')
       }
     ]
   },

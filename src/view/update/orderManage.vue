@@ -95,7 +95,7 @@ export default {
                           },
                           on: {
                             click: ()=> {
-                              // this.$router.push('')
+                              this.$router.push('/update/order/orderdetails')
                             }
                           }
                         }, '查看详情')

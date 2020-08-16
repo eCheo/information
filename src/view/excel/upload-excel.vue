@@ -17,12 +17,12 @@
                 format="yyyy年MM月dd日"
                 type="daterange"
                 placement="bottom-end"
-                placeholder="Select date"
+                placeholder="请选择时间"
                 style="width: 200px"
               ></DatePicker>
               </li>
               <li class="kf-item">
-                <Button type="success" @click="getChartBackEndRoom">搜索</Button>
+                <Button type="success" @click="getChartBackEndRoom(1)">搜索</Button>
               </li>
             </ul>
           </div>
@@ -44,12 +44,12 @@
                 format="yyyy年MM月dd日"
                 type="daterange"
                 placement="bottom-end"
-                placeholder="Select date"
+                placeholder="请选择时间"
                 style="width: 200px"
               ></DatePicker>
               </li>
               <li class="kf-item">
-                <Button type="success" @click="findSystemMessage">搜索</Button>
+                <Button type="success" @click="findSystemMessage(1)">搜索</Button>
               </li>
             </ul>
           </div>
@@ -236,6 +236,9 @@ export default {
     list-style: none;
     display: inline-block;
     margin-right: 20px;
+    > span {
+      margin-right: 10px;
+    }
   }
 }
 .kf-tab {
