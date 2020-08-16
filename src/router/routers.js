@@ -88,15 +88,6 @@ export default [
     component: Main,
     children: [
       {
-        path: 'tree_select_page',
-        name: 'tree_select_page',
-        meta: {
-          icon: 'md-arrow-dropdown-circle',
-          title: '审核创作者认证'
-        },
-        component: () => import('@/view/components/tree-select/index.vue')
-      },
-      {
         path: 'count_to_page',
         name: 'count_to_page',
         meta: {
@@ -214,8 +205,20 @@ export default [
         name: 'ordermanage',
         meta: {
           icon: 'md-clipboard',
-          title: '订单管理'
+          title: '订单管理',
+          showAlways: true
         },
+        children: [
+          {
+            path: 'orderdetails',
+            name: 'orderdetails',
+            meta: {
+              icon: 'md-clipboard',
+              title: '订单详情'
+            },
+            component: () => import('@/view/update/orderdetails.vue')
+          },
+        ],
         component: () => import('@/view/update/orderManage.vue')
       }
     ]

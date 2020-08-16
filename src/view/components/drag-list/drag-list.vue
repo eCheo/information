@@ -3,29 +3,8 @@
     <div class="tr-head">
       <p class="tr-title">筛选</p>
       <div class="tr-from">
-        <div>
-          <span>申请时间</span>
-          <DatePicker
-            v-model="selectTime"
-            @on-change="changeDate"
-            format="yyyy年MM月dd日"
-            type="daterange"
-            placement="bottom-end"
-            placeholder="请选择申请时间"
-            style="width: 200px"
-          ></DatePicker>
-        </div>
-        <div>
-          <span>审核状态</span>
-          <RadioGroup v-model="auditStatus" type="button">
-            <Radio label="全部"></Radio>
-            <Radio label="等待审核"></Radio>
-            <Radio label="审核通过"></Radio>
-            <Radio label="审核不通过"></Radio>
-          </RadioGroup>
-        </div>
         <div style="margin-top:20px;">
-          <span>发布类型</span>
+          <span style="margin-right:10px;">发布类型</span>
           <RadioGroup v-model="releaseType" type="button" @on-change="releaseTypeChange">
             <Radio label="PublishArticle">文章</Radio>
             <Radio label="PublishVideo">视频</Radio>
@@ -34,8 +13,8 @@
           </RadioGroup>
         </div>
         <div style="margin-top:20px;">
-          <Input v-model="authenticationFrom.queryValue" style="width:300px;"></Input>
-          <Button type="success" icon="ios-search" @click="findArticlesResult(1)">搜索</Button>
+          <Input placeholder="请输入关键字，标题"v-model="authenticationFrom.queryValue" style="width:300px;"></Input>
+          <Button style="margin-left:10px;" type="success" icon="ios-search" @click="findArticlesResult(1)">搜索</Button>
         </div>
       </div>
     </div>
@@ -131,9 +110,6 @@ export default {
           key: "pubDate"
         },
         {
-          title: "审核状态"
-        },
-        {
           title: "操作",
           width: 250,
           render: (h, params) => {
@@ -149,7 +125,7 @@ export default {
                 "Button",
                 {
                   style: {
-                    marginLeft: '10px;'
+                    margin: '0 10px'
                   },
                   on: {
                     click: () => {
@@ -162,9 +138,13 @@ export default {
               h(
                 "Button",
                 {
+                  props: {
+                    loading: params.row.loading,
+                    type: 'error'
+                  },
                   on: {
                     click: () => {
-                      this.setGroundingType(params.row.id);
+                      this.setGroundingType(params.row);
                     }
                   }
                 },
@@ -176,7 +156,6 @@ export default {
       ],
       authenticationData: [],
       selectTime: "",
-      auditStatus: "全部",
       releaseType: "PublishArticle",
       releaseBtText: "发布文章",
       authenticationFrom: {
@@ -186,7 +165,8 @@ export default {
         queryValue: "",
         page: "1",
         size: "15"
-      }
+      },
+      tableLoading: false
     };
   },
   created() {
@@ -235,11 +215,18 @@ export default {
           row.groundingType.name === "Dismount" ? "Grounding" : "Dismount",
         id: row.id
       };
+      this.$set(row, 'loading', true);
       setGroundingType(params).then(res => {
         if (res.status === 200 && res.data.code === "200") {
-          this.$Message.success("上架成功");
+          if (row.groundingType.name === "Dismount") {
+            this.$Message.success("上架成功");
+          } else {
+            this.$Message.success("下架成功");
+          }
+          this.$set(row, 'loading', false);
           this.findArticlesResult(1);
         } else {
+          this.$set(row, 'loading', false);
           this.$Message.error(res.data.message);
         }
       });
@@ -265,10 +252,12 @@ export default {
   }
 };
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .tr-head {
     height: 169px;
     box-shadow: 0px 1px 1px 0px #e9e9e9;
+    padding: 20px;
+    background-color: #fff;
   .tr-from {
     display: flex;
     flex-wrap: wrap;
@@ -277,5 +266,17 @@ export default {
       width: 400px;
     }
   }
+}
+.tr-title {
+  font-size: 16px;
+  color: #333333;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.tr-content {
+  background-color: #fff;
+  margin-top: 20px;
+  padding:0 20px;
 }
 </style>

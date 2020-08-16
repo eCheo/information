@@ -67,7 +67,7 @@
                 action="http://47.56.186.16:8089/api/obs/upload.json"
                 style="width:200px;"
             >
-                <Button icon="ios-cloud-upload-outline" @click="fileName ='PublishVideo'">Upload files</Button>
+                <Button icon="ios-cloud-upload-outline" @click="fileName ='PublishVideo'">上传文件</Button>
             </Upload>
         </div>
         <div>

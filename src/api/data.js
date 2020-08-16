@@ -220,3 +220,11 @@ export const findBackEndOrder = data => {
     data: data
   })
 }
+// 审核领域标签是否通过
+export const passOrNot = data => {
+  return axios.request({
+    url: '/api/backend/member/passOrNot.json',
+    method: 'post',
+    data: data
+  })
+}
