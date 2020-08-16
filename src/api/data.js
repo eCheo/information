@@ -236,3 +236,28 @@ export const findPageByCondition = data => {
     data: data
   })
 }
+
+// 领域标签详情头部
+export const findMemberLabelReviewById = data => {
+  return axios.request({
+    url: '/api/backend/member/findMemberLabelReviewById.json',
+    method: 'post',
+    data: data
+  })
+}
+// 领域标签详情根据用户id 查询用户发布文章列表
+export const findBackEndArticlesPageByCondition = data => {
+  return axios.request({
+    url: '/api/backend/article/findBackEndArticlesPageByCondition.json',
+    method: 'post',
+    data: data
+  })
+}
+//修改用户资料
+export const userUpdate = data => {
+  return axios.request({
+    url: '/api/backend/member/update.json',
+    method: 'post',
+    data: data
+  })
+}

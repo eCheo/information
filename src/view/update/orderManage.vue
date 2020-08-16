@@ -41,12 +41,14 @@
     <div class="kf-tab">
       <p>订单列表</p>
       <Table border :columns="orderList" :data="orderData.content"></Table>
-      <Page
-        style="margin-top:10px;float:right;"
-        :page-size="15"
-        :total="orderData.totalElements"
-        @on-change="findBackEndOrder"
-      />
+      <div style="text-align:right;">
+        <Page
+          style="margin-top:10px;"
+          :page-size="10"
+          :total="orderData.totalElements"
+          @on-change="findBackEndOrder"
+        />
+      </div>
     </div>
   </div>
 </template>

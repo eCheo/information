@@ -1,121 +1,152 @@
 <template>
-  <div>
-    <Row>
-      <i-col>
-        <Card>
-          <Row>
-            <i-col span="8">
-              <Button type="primary" @click="showModal">显示可拖动弹窗</Button>
-              <br/>
-              <Button v-draggable="buttonOptions" class="draggable-btn">这个按钮也是可以拖动的</Button>
-            </i-col>
-            <i-col span="16">
-              <div class="intro-con">
-                &lt;Modal v-draggable="options" v-model="visible"&gt;标题&lt;/Modal&gt;
-                <pre class="code-con">
-    options = {
-      trigger: '.ivu-modal-body',
-      body: '.ivu-modal'
-    }
-                </pre>
-              </div>
-            </i-col>
-          </Row>
-        </Card>
-      </i-col>
-      <Modal v-draggable="options" v-model="modalVisible">
-        拖动这里即可拖动整个弹窗
-      </Modal>
-    </Row>
-    <Row style="margin-top: 10px;">
-      <i-col>
-        <Card>
-          <Row>
-            <i-col span="8">
-              <Input style="width: 60%" v-model="inputValue">
-                <Button slot="append" v-clipboard="clipOptions">copy</Button>
-              </Input>
-            </i-col>
-            <i-col span="16">
-              <div class="intro-con">
-                &lt;Input style="width: 60%" v-model="inputValue"&gt;
-                  <br/>
-                  &nbsp;&nbsp;&nbsp;&lt;Button slot="append" v-clipboard="clipOptions"&gt;copy&lt;/Button&gt;
-                  <br/>
-                &lt;/Input&gt;
-                <pre class="code-con">
-    clipOptions: {
-      value: this.inputValue,
-      success: (e) => {
-        this.$Message.success('复制成功')
-      },
-      error: () => {
-        this.$Message.error('复制失败')
-      }
-    }
-                </pre>
-              </div>
-            </i-col>
-          </Row>
-        </Card>
-      </i-col>
-      <Modal v-draggable="options" v-model="modalVisible">
-        拖动这里即可拖动整个弹窗
-      </Modal>
-    </Row>
+  <div style="height:100%;">
+    <div class="xt-top">
+      系统设置
+    </div>
+    <div class="xt-bottom">
+      <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index">
+                <template v-if="item.status === 'finished'">
+                  <Upload
+                    ref="upload"
+                    :show-upload-list="false"
+                    :on-success="handleSuccess"
+                    :format="['jpg','png']"
+                    :max-size="5042"
+                    :on-format-error="handleFormatError"
+                    :on-exceeded-size="handleMaxSize"
+                    :before-upload="handleBeforeUpload"
+                    multiple
+                    :headers="headers"
+                    type="drag"
+                    action="http://47.56.186.16:8089/api/obs/upload.json"
+                    style="display: inline-block;"
+                    v-if="uploadList.length < 4"
+                >
+                    <img style="width:250px;height:250px;border-radius:50%;" :src='userInfo.avatorImgPath' />
+                </Upload>
+                </template>
+                <template v-else>
+                  <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+                </template>
+            </div>
+            <Upload
+                ref="upload"
+                :show-upload-list="false"
+                :on-success="handleSuccess"
+                :format="['jpg','png']"
+                :max-size="5042"
+                :on-format-error="handleFormatError"
+                :on-exceeded-size="handleMaxSize"
+                :before-upload="handleBeforeUpload"
+                multiple
+                :headers="headers"
+                type="drag"
+                action="http://47.56.186.16:8089/api/obs/upload.json"
+                style="display: inline-block;"
+            >
+                <img style="width:250px;height:250px;border-radius:50%;" :src='userInfo.avatorImgPath' />
+            </Upload>
+            <div>
+              <Input v-model="name" style="width:200px;"> </Input><span style="margin-left:10px;cursor:pointer;" @click="userUpdate">修改</span>
+            </div>
+    </div>
   </div>
 </template>
 
 <script>
+import { userUpdate } from "@/api/data";
 export default {
-  name: 'directive_page',
   data () {
     return {
-      modalVisible: false,
-      options: {
-        trigger: '.ivu-modal-body',
-        body: '.ivu-modal',
-        recover: true
-      },
-      buttonOptions: {
-        trigger: '.draggable-btn',
-        body: '.draggable-btn'
-      },
-      statu: 1,
-      inputValue: '这是输入的内容'
+      uploadList: '',
+      headers: {},
+      name: ''
+    }
+  },
+  mounted() {
+    if (this.$refs.upload.fileList) {
+      this.uploadList = this.$refs.upload.fileList
+    }
+    this.headers = {
+      Authorization: sessionStorage.getItem('tokenType') + ' ' + sessionStorage.getItem('token')
+    }
+    this.name = this.userInfo.userName;
+  },
+  methods: {
+    handleRemove (file) {
+      const fileList = this.$refs.upload.fileList || [];
+      this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
+    },
+    handleSuccess (res, file) {
+      let params = {
+        headImgPath: res.data.viewUrl
+      }
+      userUpdate(params).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.$store.dispatch('getUserInfo');
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      })
+    },
+    handleFormatError (file) {
+      this.$Notice.warning({
+        title: '格式错误',
+        desc: '请上传jpg和png类型的图片'
+      })
+    },
+    handleMaxSize (file) {
+      this.$Notice.warning({
+        title: '提示',
+        desc: '请上传小于5mb的图片'
+      })
+    },
+    handleBeforeUpload () {
+      const check = this.uploadList.length < 1
+      if (!check) {
+        this.$Notice.warning({
+          title: '最多上传一张图片'
+        })
+      }
+      return check
+    },
+    userUpdate() {
+      let params = {
+        nickName: this.name
+      }
+      userUpdate(params).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.$Message.success('修改成功');
+          this.$store.dispatch('getUserInfo');
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      })
     }
   },
   computed: {
-    clipOptions () {
-      return {
-        value: this.inputValue,
-        success: (e) => {
-          this.$Message.success('复制成功')
-        },
-        error: () => {
-          this.$Message.error('复制失败')
-        }
-      }
-    }
-  },
-  methods: {
-    showModal () {
-      this.modalVisible = true
+    userInfo() {
+      return this.$store.state.user
     }
   }
 }
 </script>
 
-<style>
-.intro-con{
-  min-height: 140px;
+<style lang='less' scoped>
+.xt-top {
+  background: #fff;
+  padding: 20px;
+  font-size: 18px;
+  font-weight: bold;
 }
-.draggable-btn{
+.xt-bottom {
+  background: #fff;
+  padding: 20px;
   margin-top: 20px;
+  height: calc(100% - 20px);
+  text-align: center;
 }
-.code-con{
-  width: 400px;
-  background: #F9F9F9;
-  padding-top: 10px;
+.ivu-upload-drag { 
+  border: none;
 }
 </style>

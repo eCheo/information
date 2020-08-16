@@ -76,7 +76,10 @@ export default {
         },
         {
           title: '有效期',
-          key: 'expirationDate'
+          key: 'expirationDate',
+          render: (h, params) => {
+            return h ('p', {}, params.row.startDate+ '—' +params.row.expirationDate)
+          }
         },
         {
           title: '上架状态',
@@ -174,7 +177,11 @@ export default {
       }
       goodsGrounding(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
-          this.$Message.success('商品上架成功');
+          if (row.type === "Dismount") {
+            this.$Message.success("商品上架成功");
+          } else {
+            this.$Message.success("商品下架成功");
+          }
           this.findGoodsPage('1');
         } else {
           this.$Message.error(res.data.message);

@@ -15,7 +15,9 @@
       <p>积分变更列表</p>
       <hr style="margin:20px 0;" color="#e9e9e9" />
       <Table border :columns="integralList" :data="integralData.content"></Table>
-      <Page style="margin-top:10px;float:right;" :page-size='15' :total="integralData.totalElements" @on-change='findIntegral' />
+      <div style="text-align:right;">
+        <Page style="margin-top:10px;" :page-size='10' :total="integralData.totalElements" @on-change='findIntegral' />
+      </div>
     </div>
   </div>
 </template>
@@ -54,7 +56,7 @@ export default {
         startTime: '',
         endTime: '',
         page: '1',
-        size: '15'
+        size: '10'
       }
     }
   },

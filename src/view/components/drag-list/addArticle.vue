@@ -196,7 +196,7 @@ import 'tinymce/plugins/table'// 插入表格插件
 import 'tinymce/plugins/lists'// 列表插件
 import 'tinymce/plugins/wordcount'// 字数统计插件
 import Editor from "@tinymce/tinymce-vue";
-import { releaseArticle, findArticles, upload, findBackEndArticle} from '../../../api/data'
+import { releaseArticle, findArticles, upload, findArticlesDetails} from '../../../api/data'
 import store from '../../../store/module/user'
 export default {
   data () {
@@ -257,11 +257,11 @@ export default {
      "tinymce-editor": Editor
   },
   created () {
-    this.getCondition()
+    this.getCondition();
     if (Object.keys(this.$route.query).length !== 0) {
       this.viewType = this.$route.query.type;
       if (this.$route.query.id) {
-        this.findBackEndArticle(this.$route.query.id)
+        this.findArticlesDetails(this.$route.query.id)
       }
     }
   },
@@ -275,17 +275,6 @@ export default {
     }
   },
   methods: {
-    findArticlesDetails() {
-      let params = {
-        id: this.$route.query.id
-      }
-      findArticlesDetails({id: this.$route.query.id}).then(res => {
-        if (res.data.code === '200') {
-          this.content = res.data.data.content;
-          this.title = res.data.data.title;
-        }
-      })
-    },
     handleChange (html, text) {
       this.content = html
     },
@@ -348,11 +337,11 @@ export default {
         }
       })
     },
-    findBackEndArticle(id) {
+    findArticlesDetails(id) {
       let params = {
         id: id
       }
-      findBackEndArticle(params).then(res => {
+      findArticlesDetails(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
           this.content = res.data.data.content;
           this.title = res.data.data.title;

@@ -372,7 +372,7 @@ export default [
         name: 'directive_page',
         meta: {
           icon: 'ios-navigate',
-          title: '指令'
+          title: '系统设置'
         },
         component: () => import('@/view/directive/directive.vue')
       }

@@ -43,7 +43,7 @@
       <p class="tr-title">申请领域标签列表</p>
       <Table border :loading='tabLoading' :columns="authenticationList" :data="authenticationData.content"></Table>
       <div style="text-align:right;">
-         <Page style="margin-top:10px;" :page-size='15' :total="authenticationData.totalElements" @on-change='labelReviewPage' />
+         <Page style="margin-top:10px;" :page-size='10' :total="authenticationData.totalElements" @on-change='labelReviewPage' />
       </div>
     </div>
      <Modal
@@ -118,7 +118,7 @@ export default {
               },
               on: {
                 click: () => {
-                  
+                  this.$router.push({path: '/components/count/countdetails', query: {id: params.row.id}})
                 }
               }
             }, '查看')
