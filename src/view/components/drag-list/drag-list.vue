@@ -39,7 +39,8 @@
 import {
   findArticlesResult,
   setGroundingType,
-  deleteArticles
+  deleteArticles,
+  informationExamine
 } from "@/api/data";
 export default {
   name: "drag_list_page",
@@ -125,6 +126,36 @@ export default {
           title: "操作",
           width: 250,
           render: (h, params) => {
+            if (this.releaseType === 'BrokeTheNews') {
+              let isDis = params.row.status.name === 'Approved' || params.row.status.name === 'AuditFailed';
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'success',
+                    disabled: isDis
+                  },
+                  style: {
+                    marginRight: '10px'
+                  },
+                  on: {
+                    click: () => {
+                      this.informationExamine(params.row, 'Approved');
+                    }
+                  }
+                }, '通过'),
+                h('Button', {
+                  props: {
+                    type: 'error',
+                    disabled: isDis
+                  },
+                  on: {
+                    click: () => {
+                      this.informationExamine(params.row, 'AuditFailed');
+                    }
+                  }
+                }, '不通过')
+              ])
+            } else {
             return h("div", [
               h("Button", {
                 props: {
@@ -166,6 +197,7 @@ export default {
                 params.row.groundingType.name === "Dismount" ? "上架" : "下架"
               )
             ]);
+             }
           }
         }
       ],
@@ -255,6 +287,24 @@ export default {
           this.$Message.error(res.data.message);
         }
       });
+    },
+    informationExamine(row, status) {
+      let params = {
+        id: row.id,
+        status: status
+      }
+      informationExamine(params).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          if (status === 'Approved') {
+            this.$Message.success('爆料通过成功');
+          } else {
+            this.$Message.success('爆料拒绝成功');
+          }
+            this.findArticlesResult(1);
+        } else {  
+          this.$Message.error(res.data.message);
+        }
+      })
     }
   },
   mounted() {},

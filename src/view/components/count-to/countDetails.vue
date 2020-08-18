@@ -13,7 +13,18 @@
             <div>
                 <p style="text-align:right;font-size:14px;">审核时间:{{userInfo.auditDate}}</p>
                 <div>
-
+                    <ul class="th-list">
+                        <li class="th-item">用户ID</li>
+                        <li class="th-item">手机号</li>
+                        <li class="th-item">申请领域</li>
+                        <li class="th-item">审核状态</li>
+                    </ul>
+                    <ul class="td-list">
+                        <li class="td-item">{{userInfo.memberDto.memberId || '---'}}</li>
+                        <li class="td-item">{{userInfo.memberDto.phone}}</li>
+                        <li class="td-item">{{userInfo.columnName}}</li>
+                        <li class="td-item">{{userInfo.auditStatusType.message}}</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -153,5 +164,36 @@ export default {
         background: #fff;
         padding: 20px;
         margin-top: 20px;
+    }
+    ul li {
+        list-style: none;
+    }
+    .th-list {
+        background: #e9e9e9;
+        width: 100%;
+        margin: 0;
+        display: flex;
+        font-size: 14px;
+        justify-content: space-between;
+        .th-item {
+            padding: 20px;
+            min-width: 150px;
+            box-sizing: border-box;
+        }
+    }
+    .td-list {
+        width: 100%;
+        margin: 0;
+        display: flex;
+        font-size: 14px;
+        justify-content: space-between;
+        border-bottom: 1px solid #e9e9e9;
+        border-right: 1px solid #e9e9e9;
+        border-left: 1px solid #e9e9e9;
+        .td-item {
+            padding: 20px;
+            min-width: 150px;
+            box-sizing: border-box;
+        }
     }
 </style>

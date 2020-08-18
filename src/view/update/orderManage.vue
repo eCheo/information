@@ -163,7 +163,6 @@ export default {
 
 <style lang="less" scoped>
 .kf-top {
-  height: 200px;
   padding: 20px;
   background: #fff;
 }

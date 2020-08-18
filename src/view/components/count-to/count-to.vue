@@ -33,7 +33,7 @@
               <Option v-for="item in conditionList" :value="item.id" :key="item.name">{{ item.name }}</Option>
           </Select>
           <div style="margin-left:20px;display:inline-block;">
-            <Input v-model="authenFrom.queryValue" style="width:300px;margin-right:10px;"> </Input>
+            <Input v-model="authenFrom.queryValue" style="width:300px;margin-right:10px;" placeholder="请输入用户ID、昵称、手机号" </Input>
             <Button type="success" icon="ios-search" @click="labelReviewPage(1)">搜索</Button>
           </div>
         </div>
@@ -132,6 +132,7 @@ export default {
         },
         {
           title: '操作',
+          width: 200,
           render: (h, params) => {
             let dis = params.row.auditStatusType.code === 'Fail' || params.row.auditStatusType.code === 'Adopt';
             return h('div', [

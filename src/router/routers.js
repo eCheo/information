@@ -144,6 +144,15 @@ export default [
           }
         ],
         component: parentView
+      },
+      {
+        path: 'addcolumn',
+        name: 'addcolumn',
+        meta: {
+          icon: 'ios-infinite',
+          title: '添加修改栏目'
+        },
+        component: () => import('@/view/components/drag-list/addColumn.vue')
       }
     ]
   },
@@ -290,13 +299,13 @@ export default [
         component: () => import('@/view/excel/userFeedback.vue')
       },
       {
-        path: 'export-excel',
-        name: 'export-excel',
+        path: 'reportlist',
+        name: 'reportlist',
         meta: {
           icon: 'md-download',
           title: '举报列表'
-        }
-        // component: () => import('@/view/excel/export-excel.vue')
+        },
+        component: () => import('@/view/excel/reportlist.vue')
       }
     ]
   },

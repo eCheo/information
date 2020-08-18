@@ -285,3 +285,19 @@ export const findByNickName = data => {
     data: data
   })
 }
+// 爆料审核
+export const informationExamine = data => {
+  return axios.request({
+    url: '/api/backend/article/informationExamine.json',
+    method: 'post',
+    data: data
+  })
+}
+// 举报列表
+export const findReportBackEndList = data => {
+  return axios.request({
+    url: '/api/backend/article/findReportBackEndList.json',
+    method: 'post',
+    data: data
+  })
+}
