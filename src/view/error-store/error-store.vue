@@ -28,6 +28,14 @@
       <p>用户列表</p>
       <hr size='1' color='#e9e9e9' style="margin:10px 0;" />
       <Table border :columns="userList" :data="userData.content"></Table>
+      <div style="text-align:right;">
+        <Page
+          style="margin-top:10px;"
+          :page-size="10"
+          :total="userData.totalElements"
+          @on-change="findPageByCondition"
+        />
+      </div>
     </div>
   </div>
 </template>
