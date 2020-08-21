@@ -43,7 +43,7 @@
       <p class="tr-title">申请领域标签列表</p>
       <Table border :loading='tabLoading' :columns="authenticationList" :data="authenticationData.content"></Table>
       <div style="text-align:right;">
-         <Page style="margin-top:10px;" :page-size='10' :total="authenticationData.totalElements" @on-change='labelReviewPage' />
+         <Page style="margin-top:10px;" :page-size='10' :current='authenFrom.page' :total="authenticationData.totalElements" @on-change='labelReviewPage' />
       </div>
     </div>
      <Modal
@@ -181,7 +181,7 @@ export default {
         columnId: '',
         applyLabelType: '',
         queryValue: '',
-        page: '1',
+        page: 1,
         size: '10'
       },
       selectTime: '',

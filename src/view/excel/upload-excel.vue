@@ -29,7 +29,7 @@
           <div class="kf-tab">
             <p>用户列表</p>
             <Table border :columns="userList" :data="userData.content"></Table>
-            <Page style="margin-top:10px;float:right;" :page-size='15' :total="userData.totalElements" @on-change='getChartBackEndRoom' />
+            <Page style="margin-top:10px;float:right;" :page-size='15' :current='userFrom.page' :total="userData.totalElements" @on-change='getChartBackEndRoom' />
           </div>
         </TabPane>
         <TabPane label="系统通知">
@@ -56,7 +56,7 @@
           <div class="kf-tab">
             <p>用户列表</p>
             <Table border :columns="infoList" :data="infoData.content"></Table>
-            <Page style="margin-top:10px;float:right;" :page-size='15' :total="infoData.totalElements" @on-change='findSystemMessage' />
+            <Page style="margin-top:10px;float:right;" :page-size='15' :current='infoFrom.page' :total="infoData.totalElements" @on-change='findSystemMessage' />
           </div>
         </TabPane>
     </Tabs>

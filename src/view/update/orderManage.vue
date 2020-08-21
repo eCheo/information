@@ -45,6 +45,7 @@
         <Page
           style="margin-top:10px;"
           :page-size="10"
+          :current='orderSeach.page'
           :total="orderData.totalElements"
           @on-change="findBackEndOrder"
         />
@@ -87,7 +88,7 @@ export default {
                 },
                 {
                     title: '操作',
-                    render: (h, parmas) => {
+                    render: (h, params) => {
                       return h('div', [
                         h('span', {
                           style: {
@@ -97,7 +98,7 @@ export default {
                           },
                           on: {
                             click: ()=> {
-                              this.$router.push('/update/order/orderdetails')
+                              this.$router.push({path: '/update/order/orderdetails', query: {id: params.row.id}})
                             }
                           }
                         }, '查看详情')

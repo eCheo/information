@@ -301,3 +301,11 @@ export const findReportBackEndList = data => {
     data: data
   })
 }
+// 订单详情
+export const findBackEndOrderById = data => {
+  return axios.request({
+    url: '/api/backend/good/findBackEndOrderById.json',
+    method: 'post',
+    data: data
+  })
+}

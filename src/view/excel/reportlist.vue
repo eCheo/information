@@ -30,6 +30,7 @@
                 <Page
                 style="margin-top:10px;"
                 :page-size="10"
+                :current='reportInfo.page'
                 :total="reportData.totalElements"
                 @on-change="findReportBackEndList"
                 />

@@ -32,6 +32,7 @@
         <Page
           style="margin-top:10px;"
           :page-size="10"
+          :current='userInfo.page'
           :total="userData.totalElements"
           @on-change="findPageByCondition"
         />
@@ -110,8 +111,9 @@ export default {
         LIKE_nickName: '',
         GTE_registerDate: '',
         LTE_registerDate: '',
-        page: '1',
-        size: '10'
+        page: 1,
+        size: '10',
+        EQ_memberType: 'front'
       }
     }
   },

@@ -32,7 +32,7 @@
             <p style="font-size:16px;margin-bottom:20px">发布列表</p>
             <Table border :loading='tabLoading' :columns="authenticationList" :data="authenticationData.content"></Table>
             <div style="text-align:right;">
-                <Page style="margin-top:10px;" :page-size='10' :total="authenticationData.totalElements" @on-change='findBackEndArticlesPageByCondition' />
+                <Page style="margin-top:10px;" :page-size='10' :current='page' :total="authenticationData.totalElements" @on-change='findBackEndArticlesPageByCondition' />
             </div>
         </div>
     </div>
@@ -98,7 +98,8 @@ export default {
                 }
             ],
             authenticationData: [],
-            tabLoading: false
+            tabLoading: false,
+            page: 1
         }
     },
     created() {
@@ -119,6 +120,7 @@ export default {
             })
         },
         findBackEndArticlesPageByCondition(page) {
+            this.page = page;
             let params = {
                 EQ_memberId: this.$route.query.mId,
                 size: '10',

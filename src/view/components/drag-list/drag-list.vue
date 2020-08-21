@@ -30,7 +30,7 @@
       </div>
       <Table border :columns="authenticationList" :loading='tableLoading' :data="authenticationData.content"></Table>
       <div style="text-align:right;">
-        <Page style="margin-top:10px;" :page-size='15' :total="authenticationData.totalElements" @on-change='findArticlesResult' />
+        <Page style="margin-top:10px;" :page-size='15' :current='authenticationFrom.page' :total="authenticationData.totalElements" @on-change='findArticlesResult' />
       </div>
     </div>
   </div>

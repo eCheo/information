@@ -16,7 +16,7 @@
       <hr style="margin:20px 0;" color="#e9e9e9" />
       <Table border :columns="integralList" :data="integralData.content"></Table>
       <div style="text-align:right;">
-        <Page style="margin-top:10px;" :page-size='10' :total="integralData.totalElements" @on-change='findIntegral' />
+        <Page style="margin-top:10px;" :page-size='10' :current='integralFrom.page' :total="integralData.totalElements" @on-change='findIntegral' />
       </div>
     </div>
   </div>

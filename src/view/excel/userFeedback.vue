@@ -24,7 +24,7 @@
       <hr style="margin:20px 0;" color="#e9e9e9" />
       <Table border :columns="feedbackList" :data="feedbackData.content"></Table>
       <div style="text-align:right;">
-        <Page style="margin-top:10px;" :page-size='10' :total="feedbackData.totalElements" @on-change='findByNickName' />
+        <Page style="margin-top:10px;" :page-size='10' :current='feedbackInfo.page' :total="feedbackData.totalElements" @on-change='findByNickName' />
       </div>
     </div>
   </div>

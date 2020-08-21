@@ -5,8 +5,11 @@
           <Button style="margin-left:10px;" type="success">添加</Button>
       </div>
       <div class="ac-bt">
-
+          <Table border :columns="columnList" :data="columnData"></Table>
       </div>
+      <Modal v-model="modal" title='修改栏目'>
+          <Input > </Input>
+      </Modal>
     </div>
 </template>
 
@@ -15,18 +18,41 @@ import {findArticles} from '../../../api/data';
 export default {
     data() {
         return{
-            name: ''
+            name: '',
+            columnList: [
+                {
+                    title: '栏目名称',
+                    key: 'name'
+                },
+                {
+                    title: '操作',
+                    render: (h, params) => {
+                        return h('p', {
+                            style: {
+                                cursor: 'pointer'
+                            },
+                            on: {
+                                click: () => {
+                                    this.modal = true;
+                                }
+                            }
+                        } ,'修改')
+                    }
+                }
+            ],
+            columnData: [],
+            modal: false
         }
     },
     created() {
-
+        this.findArticles();
     },
     methods: {
         findArticles() {
             findArticles().then(res => {
                  if (res.data.code === '200') {
-                    this.conditionList = res.data.data
-                    this.condiId = this.conditionList[0].id
+                    this.columnData = res.data.data
+                    // this.condiId = this.conditionList[0].id
                 }
             })
         }

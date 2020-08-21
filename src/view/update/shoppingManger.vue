@@ -43,7 +43,9 @@
       </div>
       <hr style="margin:20px 0;" color="#e9e9e9" />
       <Table border :loading='tableLoading' :columns="integralList" :data="integralData.content"></Table>
-      <Page style="margin-top:10px;float:right;" :page-size='15' :total="integralData.totalElements" @on-change='findGoodsPage' />
+      <div style="text-align:right;">
+        <Page style="margin-top:10px;" :page-size='15' :current='integralFrom.page' :total="integralData.totalElements" @on-change='findGoodsPage' />
+      </div>
     </div>
   </div>
 </template>
