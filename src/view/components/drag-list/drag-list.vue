@@ -30,7 +30,7 @@
       </div>
       <Table border :columns="authenticationList" :loading='tableLoading' :data="authenticationData.content"></Table>
       <div style="text-align:right;">
-        <Page style="margin-top:10px;" :page-size='15' :current='authenticationFrom.page' :total="authenticationData.totalElements" @on-change='findArticlesResult' />
+        <Page style="margin-top:10px;" :page-size='10' :current='authenticationFrom.page' :total="authenticationData.totalElements" @on-change='findArticlesResult' />
       </div>
     </div>
   </div>
@@ -211,7 +211,7 @@ export default {
         type: "PublishArticle",
         queryValue: "",
         page: "1",
-        size: "15"
+        size: "10"
       },
       tableLoading: false
     };

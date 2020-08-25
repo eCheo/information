@@ -196,7 +196,7 @@ export const findArticlesDetails = data => {
     data: data
   })
 }
-
+// 评论列表一级评论
 export const findBackEndComment = data => {
   return axios.request({
     url: '/api/backend/article/findBackEndCommentList.json',
@@ -305,6 +305,14 @@ export const findReportBackEndList = data => {
 export const findBackEndOrderById = data => {
   return axios.request({
     url: '/api/backend/good/findBackEndOrderById.json',
+    method: 'post',
+    data: data
+  })
+}
+// 添加修改栏目
+export const addArticlesColumn = data => {
+  return axios.request({
+    url: '/api/backend/article/addArticlesColumn.json',
     method: 'post',
     data: data
   })
