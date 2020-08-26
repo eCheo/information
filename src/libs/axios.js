@@ -69,7 +69,7 @@ class HttpRequest {
     const instance = axios.create()
     if (options.url === '/api/backend/member/login.json') {
       options.headers = {
-        Authorization: 'Basic TW9iaWxlOkFuZHJvaWQtSU9T',
+        Authorization: 'Basic TW9iaWxlSDU6Rm5xaGtBd25vTEU9',
         'Content-Type': 'application/json'
       }
     } else {

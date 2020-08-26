@@ -63,16 +63,16 @@ export default {
             })
         },
         addArticlesColumn() {
-            addArticlesColumn(this.columnInfo).then(res => {
+            addArticlesColumn(this.coloumnInfo).then(res => {
                 if (res.status === 200 && res.data.code === '200') {
-                    if (this.columnInfo.id === '') {
-                        this.$Message.success('添加成功');
-                    } else {
+                    if (this.modal) {
                         this.$Message.success('修改成功');
+                    } else {
+                        this.$Message.success('添加成功');
                     }
                     this.findArticles();
                 } else {
-                    this.$Message.success(res.data.message);
+                    this.$Message.error(res.data.message);
                 }
             })
         }
