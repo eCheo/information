@@ -20,7 +20,7 @@
             ></DatePicker>
         </div>
         <div>
-          <Button style="margin-left:10px;" type="success" icon="ios-search" @click="findPageByCondition('1')">搜索</Button>
+          <Button style="margin-left:10px;" type="success" icon="ios-search" @click="findPageByCondition(1)">搜索</Button>
         </div>
       </div>
     </div>
@@ -118,7 +118,7 @@ export default {
     }
   },
   created() {
-    this.findPageByCondition('1');
+    this.findPageByCondition(1);
   },
   methods: {
     changeDate (date) {

@@ -5,29 +5,9 @@
     </div>
     <div class="xt-bottom">
       <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index">
-                <template v-if="item.status === 'finished'">
-                  <Upload
-                    ref="upload"
-                    :show-upload-list="false"
-                    :on-success="handleSuccess"
-                    :format="['jpg','png']"
-                    :max-size="5042"
-                    :on-format-error="handleFormatError"
-                    :on-exceeded-size="handleMaxSize"
-                    :before-upload="handleBeforeUpload"
-                    multiple
-                    :headers="headers"
-                    type="drag"
-                    action="http://47.56.186.16:8089/api/obs/upload.json"
-                    style="display: inline-block;"
-                    v-if="uploadList.length < 4"
-                >
-                    <img style="width:250px;height:250px;border-radius:50%;" :src='userInfo.avatorImgPath' />
-                </Upload>
-                </template>
-                <template v-else>
+                <div class="progress" v-if="item.status !== 'finished'">
                   <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
-                </template>
+                </div>
             </div>
             <Upload
                 ref="upload"
@@ -42,7 +22,7 @@
                 :headers="headers"
                 type="drag"
                 action="http://47.56.186.16:8089/api/obs/upload.json"
-                style="display: inline-block;"
+                style="display: inline-block;width:250px;"
             >
                 <img style="width:250px;height:250px;border-radius:50%;" :src='userInfo.avatorImgPath' />
             </Upload>
@@ -148,5 +128,17 @@ export default {
 }
 .ivu-upload-drag { 
   border: none;
+}
+.demo-upload-list {
+  position: relative;
+  .progress {
+    position: absolute;
+    width: 250px;
+    height: 257px;
+    line-height: 257px;
+    left: 42%;
+    z-index: 99;
+    background-color: rgba(0, 0, 0, 0.38);
+  }
 }
 </style>

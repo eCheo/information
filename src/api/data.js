@@ -172,7 +172,7 @@ export const upload = data => {
     data: data
   })
 }
-
+// 获取客服消息列表
 export const getChartBackEndRoom = data => {
   return axios.request({
     url: '/api/backend/message/getChartBackEndRoom.json',
@@ -305,6 +305,22 @@ export const findReportBackEndList = data => {
 export const findBackEndOrderById = data => {
   return axios.request({
     url: '/api/backend/good/findBackEndOrderById.json',
+    method: 'post',
+    data: data
+  })
+}
+// 添加修改栏目
+export const addArticlesColumn = data => {
+  return axios.request({
+    url: '/api/backend/article/addArticlesColumn.json',
+    method: 'post',
+    data: data
+  })
+}
+// 删除系统通知
+export const deleteComment = data => {
+  return axios.request({
+    url: '/api/backend/article/deleteComment.json',
     method: 'post',
     data: data
   })
