@@ -29,12 +29,15 @@
       <p>全部评论</p>
       <div class="kf-acl">
         <ul class="kf-list">
-          <li class="kf-item" :class="id === item.id ? 'kf-bg' : ''" v-for="(item,index) in articleList" :key="index" @click="id = item.id">
+          <li class="kf-item" :class="id === item.id ? 'kf-bg' : ''" v-for="(item,index) in articleList" :key="index" @click="findBackEndComment(item)">
             <p>{{item.title}}</p>
             <div style="margin-top:10px;">
               <span>{{item.pubDate}}</span>
               <span style="float:right;">{{item.commentCount}}评论</span>
             </div>
+          </li>
+          <li style="padding: 20px; text-align: center;">
+            <Page :current='page' :total="total" simple @on-change='findBackEndArticle' />
           </li>
         </ul>
         <div>
@@ -52,11 +55,13 @@ export default {
       selectTime: "",
       commentList: [],
       articleList: {},
-      id: ''
+      id: '',
+      total: 0,
+      page: 1
     };
   },
   created() {
-    this.findBackEndArticle();
+    this.findBackEndArticle(1);
   },
   methods: {
     changeDate(date) {
@@ -65,13 +70,14 @@ export default {
       this.userFrom.startTime = starTime.substring(0, starTime.length - 1);
       this.userFrom.endTime = endTime.substring(0, endTime.length - 1);
     },
-    findBackEndComment() {
+    findBackEndComment(item) {
+      this.id = item.id
       let params = {
         page: "1",
         size: "10",
         articlesId: this.id
       };
-      findBackEndComment().then(res => {
+      findBackEndComment(params).then(res => {
         if (res.status === 200 && res.data.code === "200") {
           this.commentList = res.data.data;
         } else {
@@ -79,14 +85,16 @@ export default {
         }
       });
     },
-    findBackEndArticle() {
+    findBackEndArticle(page) {
+      this.page = page;
       let params = {
-        page: "1",
+        page: page,
         size: "6"
       };
       findBackEndArticle(params).then(res => {
         if (res.status === 200 && res.data.code === "200") {
           this.articleList = res.data.data.content;
+          this.total = res.data.data.totalElements;
         } else {
           this.$Message.error(res.data.message);
         }
@@ -125,7 +133,7 @@ export default {
 .kf-acl {
   display: flex;
   .kf-list {
-    width: 250px;
+    width: 265px;
     list-style: none;
     .kf-item {
       width: inherit;
@@ -135,6 +143,9 @@ export default {
       p {
         font-size: 16px;
         color: #333333;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       span {
         color: #666666;
