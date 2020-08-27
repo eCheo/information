@@ -111,7 +111,7 @@ export default {
                 orderNo: '',
                 startDate: '',
                 endDate: '',
-                page: '1',
+                page: 1,
                 size: '10',
                 name: '',
                 nickName: '',

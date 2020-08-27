@@ -40,7 +40,7 @@ export default {
             nickName: '',
             startTime: '',
             endTime: '',
-            page: '1',
+            page: 1,
             size: '10'
         },
         feedbackList: [

@@ -147,14 +147,14 @@ export default {
         EQ_goodsGroundingType: '',
         LIKE_name: '',
         EQ_id: '',
-        page: '1',
+        page: 1,
         size: '15'
       },
       tableLoading: true
     }
   },
   created() {
-    this.findGoodsPage()
+    this.findGoodsPage(1)
   },
   methods: {
     findGoodsPage(page) {
@@ -198,7 +198,7 @@ export default {
       deleteGoods(params).then(res => {
          if (res.status === 200 && res.data.code === '200') { 
            this.$Message.success('商品删除成功');
-           this.findGoodsPage('1');
+           this.findGoodsPage(1);
          } else {
            this.$Message.error(res.data.message);
            this.tableLoading = false;

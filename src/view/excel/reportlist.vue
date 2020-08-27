@@ -50,7 +50,7 @@ export default {
                 startTime: '',
                 endTime: '',
                 type: 'Users',
-                page: '1',
+                page: 1,
                 size: '10'
             },
             reportData: {},

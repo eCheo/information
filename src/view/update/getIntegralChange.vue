@@ -55,7 +55,7 @@ export default {
         nikeName: '',
         startTime: '',
         endTime: '',
-        page: '1',
+        page: 1,
         size: '10'
       }
     }

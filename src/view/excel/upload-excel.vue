@@ -54,22 +54,26 @@
             </ul>
           </div>
           <div class="kf-tab">
-            <p>用户列表</p>
+            <div style="font-size:16px;margin-bottom:20px;">
+              <span>系统通知列表</span>
+              <Button type="success" style="float:right;">添加消息</Button>
+            </div>
             <Table border :columns="infoList" :data="infoData.content"></Table>
             <Page style="margin-top:10px;float:right;" :page-size='15' :current='infoFrom.page' :total="infoData.totalElements" @on-change='findSystemMessage' />
           </div>
         </TabPane>
     </Tabs>
     <Modal v-model="chatModal">
-        <p>时间</p>
+        <p style="text-align:center;">小叮当</p>
         <div class="chat">
 
         </div>
+        <div slot="footer"></div>
    </Modal>
   </div>
 </template>
 <script>
-import {getChartBackEndRoom, findSystemMessage} from "@/api/data"
+import {getChartBackEndRoom, findSystemMessage, deleteComment} from "@/api/data"
 export default {
   data () {
     return {
@@ -142,7 +146,7 @@ export default {
         nickName: '',
         startTime: '',
         endTime: '',
-        page: '1',
+        page: 1,
         size: '10'
       },
       selectTime: '',
@@ -166,7 +170,12 @@ export default {
           render: (h, params) => {
             return h( 'Button', {
               props: {
-                type: 'success'
+                type: 'error'
+              },
+              on: {
+                click: ()=> {
+                  this.deleteComment(params.row.id);
+                }
               }
             }, '删除')
           }
@@ -176,10 +185,13 @@ export default {
       infoFrom: {
         GTE_pubDate: '',
         LTE_pubDate: '',
-        page: '1',
+        page: 1,
         size: '15'
       }
     }
+  },
+  created() {
+    this.getChartBackEndRoom(1);
   },
   methods: {
     getChartBackEndRoom(page) {
@@ -213,6 +225,18 @@ export default {
       let endTime = date[1].replace(/([^\u0000-\u00FF])/g, '-')
       this.infoFrom.GTE_pubDate = starTime.substring(0, starTime.length - 1)
       this.infoFrom.LTE_pubDate = endTime.substring(0, endTime.length - 1)
+    },
+    deleteComment(id) {
+      let params = {
+        id: id
+      }
+      deleteComment(params).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.$Message.success('删除成功');
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      })
     }
   },
   created () {
@@ -244,5 +268,10 @@ export default {
   background-color: #fff;
   margin-top: 20px;
   padding: 15px;
+}
+.chat {
+  background-color: #e9e9e9;
+  width:100%;
+  height: 200px;
 }
 </style>

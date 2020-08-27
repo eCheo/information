@@ -1,20 +1,20 @@
 <template>
     <div>
       <div class="us-box">
-          <Input style="width: 200px" v-model="coloumnInfo.name" placeholder="请输入栏目名称"></Input>
-          <Button style="margin-left:10px;" type="success">添加</Button>
+          <Input style="width: 200px" v-model="columnInfo.name" placeholder="请输入栏目名称"></Input>
+          <Button style="margin-left:10px;" type="success" @click="addArticlesColumn">添加</Button>
       </div>
       <div class="ac-bt">
           <Table border :columns="columnList" :data="columnData"></Table>
       </div>
-      <Modal v-model="modal" title='修改栏目'>
-          <Input v-model="coloumnInfo.name"> </Input>
+      <Modal v-model="modal" title='修改栏目' @on-ok='addArticlesColumn'>
+          <Input v-model="columnInfo.name"> </Input>
       </Modal>
     </div>
 </template>
 
 <script>
-import {findArticles} from '../../../api/data';
+import {findArticles, addArticlesColumn} from '../../../api/data';
 export default {
     data() {
         return{
@@ -34,6 +34,8 @@ export default {
                             on: {
                                 click: () => {
                                     this.modal = true;
+                                    this.columnInfo.name = params.row.name;
+                                    this.columnInfo.id = params.row.id;
                                 }
                             }
                         } ,'修改')
@@ -42,8 +44,9 @@ export default {
             ],
             columnData: [],
             modal: false,
-            coloumnInfo: {
-                name: ''
+            columnInfo: {
+                name: '',
+                id: ''
             }
         }
     },

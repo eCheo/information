@@ -210,8 +210,8 @@ export default {
         endDate: "",
         type: "PublishArticle",
         queryValue: "",
-        page: "1",
-        size: "10"
+        page: 1,
+        size: "15"
       },
       tableLoading: false
     };

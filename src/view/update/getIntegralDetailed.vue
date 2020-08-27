@@ -63,7 +63,7 @@ export default {
       time: '',
       integralFrom: {
         nikeName: '',
-        page: '1',
+        page: 1,
         size: '10'
       }
     }
