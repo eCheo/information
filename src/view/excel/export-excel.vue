@@ -40,24 +40,60 @@
             <Page :current='page' :total="total" simple @on-change='findBackEndArticle' />
           </li>
         </ul>
-        <div>
-          ssss
+        <div v-if="commentList.length > 0 && id !== ''" style="width:100%;">
+          <div class="ex-pl" v-for="(item,index) in commentList" :key="index">
+            <div>
+              <img class="ex-img" :src="item.headImgPath" />
+            </div>
+            <div class="ex-ct">
+              <p>{{item.nickName}}</p>
+              <p>{{item.content}}</p>
+              <p>{{item.commentDate}}</p>
+            </div>
+            <div class="ex-hf">
+              <Button type="success" @click="replay(item, 'Reply')">回复</Button>
+            </div>
+            <div class="ex-hhf" style="width:100%;" v-for="(it, index) in replySonList" :key="index">
+              <span v-if="!it.replyBackEndMemberDto">
+                {{it.memberBackEndDto.nickName}}<a style="color:#05b55c;">回复</a>{{item.nickName}}：{{it.content}}
+              </span>
+              <span v-else>
+                {{it.replyBackEndMemberDto.nickName}}<i style="color:#05b55c;">回复</i>{{it.memberBackEndDto.nickName}}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="no-data" v-else-if="commentList.length === 0 && id !== ''">
+          <p>暂无聊天记录</p>
         </div>
       </div>
     </div>
+    <Modal v-model="modalShow">
+      <p>回复{{nickName}}</p>
+      <Input v-model="replayContent" :maxlength="500" show-word-limit type="textarea" style="width: 200px" />
+      <Button type="success" @click="articlesCommentOrReplay">回复</Button>
+      <div slot="footer">
+        
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
-import { findBackEndComment, findBackEndArticle } from "@/api/data";
+import { findBackEndComment, findBackEndArticle, articlesCommentOrReplay, findBackEndReplyList} from "@/api/data";
 export default {
   data() {
     return {
       selectTime: "",
       commentList: [],
       articleList: {},
+      replySonList: [],
       id: '',
       total: 0,
-      page: 1
+      page: 1,
+      modalShow: false,
+      nickName: '',
+      replayOneInfo: {},
+      replayContent: ''
     };
   },
   created() {
@@ -71,7 +107,7 @@ export default {
       this.userFrom.endTime = endTime.substring(0, endTime.length - 1);
     },
     findBackEndComment(item) {
-      this.id = item.id
+      this.id = item.id;
       let params = {
         page: "1",
         size: "10",
@@ -79,7 +115,10 @@ export default {
       };
       findBackEndComment(params).then(res => {
         if (res.status === 200 && res.data.code === "200") {
-          this.commentList = res.data.data;
+          this.commentList = res.data.data.content;
+          this.commentList.forEach(item => {
+            this.findBackEndReplyList(item.id);
+          })
         } else {
           this.$Message.error(res.data.message);
         }
@@ -99,6 +138,41 @@ export default {
           this.$Message.error(res.data.message);
         }
       });
+    },
+    articlesCommentOrReplay() {
+      let params = {
+        articlesId: this.id,
+        content: this.replayContent,
+        type: this.replayOneInfo.type,
+        commentId: this.replayOneInfo.id
+      }
+      articlesCommentOrReplay(params).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.$Message.success('回复成功');
+          this.findBackEndComment()
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      })
+    },
+    findBackEndReplyList(id) {
+      let params = {
+        EQ_parentId: id
+      }
+      findBackEndReplyList(params).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.replySonList = res.data.data.content;
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      })
+    },
+    replay(item, type) {
+      this.modalShow = true;
+      this.replayContent = '';
+      this.replayOneInfo = item;
+      this.replayOneInfo.type = type;
+      this.nickName = item.nickName;
     }
   }
 };
@@ -157,6 +231,41 @@ export default {
     .kf-item:hover {
       background-color: #e9e9e9;
     }
+  }
+}
+.no-data {
+    margin: 46px 0 0 20px;
+    text-align: center;
+    font-size: 16px;
+}
+.ex-pl {
+  display: flex;
+  padding: 5px 20px 15px 20px;
+  border: 1px solid #e9e9e9;
+  flex-wrap: wrap;
+  .ex-img {
+      border-radius: 50%;
+      width: 58px;
+  }
+  .ex-ct {
+    font-size: 14px;
+    width: 88%;
+    margin-left: 15px;
+    p {
+      color: #666666;
+    }
+    p:nth-child(2) {
+      color: #333333;
+    }
+  }
+  .ex-hf {
+    line-height: 69px;
+  }
+  .ex-hhf {
+    padding-top: 10px;
+    color: #666666;
+    margin-left: 69px;
+    border-top: 1px solid #e9e9e9;
   }
 }
 </style>
