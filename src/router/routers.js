@@ -206,7 +206,7 @@ export default [
         name: 'shop',
         meta: {
           icon: 'md-clipboard',
-          title: ''
+          title: '商城管理'
         },
         children: [
           {
@@ -235,7 +235,7 @@ export default [
         name: 'order',
         meta: {
           icon: 'md-clipboard',
-          title: ''
+          title: '订单管理'
         },
         children: [
           {
@@ -299,13 +299,34 @@ export default [
         component: () => import('@/view/excel/export-excel.vue')
       },
       {
-        path: 'userfeedback',
-        name: 'userfeedback',
+        path: 'user',
+        name: 'user',
         meta: {
           icon: 'md-download',
           title: '用户反馈'
         },
-        component: () => import('@/view/excel/userFeedback.vue')
+        children: [
+          {
+            path: 'userfeedback',
+            name: 'userfeedback',
+            meta: {
+              icon: 'md-download',
+              title: '用户反馈'
+            },
+            component: () => import('@/view/excel/userFeedback.vue')
+          },
+          {
+            path: 'userfeeddetails',
+            name: 'userfeeddetails',
+            meta: {
+              icon: 'md-download',
+              title: '反馈详情',
+              hideInMenu: true
+            },
+            component: () => import('@/view/excel/userfeeddetails.vue')
+          },
+        ],
+        component: parentView
       },
       {
         path: 'reportlist',

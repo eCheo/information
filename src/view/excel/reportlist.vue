@@ -40,7 +40,7 @@
             <Input v-model="reportContentReson" type="textarea" placeholder="请输入下架原因" style="width: 200px" />
             <div slot="footer">
                 <Button type="text" @click="showModal.content = false">取消</Button>
-                <Button type="success" @click="setGroundingType(paramsRow)">确定</Button>
+                <Button type="success" @click="articlesGroundingPushSystemMessage(paramsRow)">确定</Button>
             </div>
         </Modal>
         <Modal v-model="showModal.plModal" title="确定删除？" :closable="false">
@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import {findReportBackEndList, setGroundingType, commentDetelePushSystemMessage} from "@/api/data"
+import {findReportBackEndList, articlesGroundingPushSystemMessage, commentDetelePushSystemMessage} from "@/api/data"
 export default {
     data() {
         return {
@@ -133,7 +133,7 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.setGroundingType(params.row);
+                                        this.articlesGroundingPushSystemMessage(params.row);
                                     }
                                 }  
                             }, '上架')
@@ -218,14 +218,14 @@ export default {
             this.reportInfo.type = label;
             this.findReportBackEndList(1);
         },
-        setGroundingType(row) {
+        articlesGroundingPushSystemMessage(row) {
             let params = {
                 groundingType:
                 row.groundingType.name === "Dismount" ? "Grounding" : "Dismount",
                 id: row.articleId,
                 reason: this.reportContentReson
             };
-            setGroundingType(params).then(res => {
+            articlesGroundingPushSystemMessage(params).then(res => {
                 if (res.status === 200 && res.data.code === '200') {
                     if (row.groundingType.name === "Dismount") {
                         this.$Message.success("上架成功");

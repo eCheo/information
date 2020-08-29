@@ -88,6 +88,12 @@ export default {
                         style: {
                             cursor: 'pointer',
                             textDecoration: 'underline'
+                        },
+                        on: {
+                          click: ()=> {
+                            this.$router.push('/excel/user/userfeeddetails/');
+                            sessionStorage.setItem('ufeedId', params.row.id);
+                          }
                         }
                     }, '查看')
                 }

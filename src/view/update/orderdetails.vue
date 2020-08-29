@@ -46,8 +46,7 @@
           规格型号
         </div>
         <div>
-          无
-          <!-- {{JSON.parse(orderDetails.specificationDetailsDto.attribute)}} -->
+          {{orderDetails.xinh}}
         </div>
       </li>
       <li class="or-item">
@@ -100,21 +99,34 @@
       </li>
     </ul>
     <div class="or-wuliu">
-      <p>物流状态</p>
+      <p>物流状态 <Icon size='14' v-if="orderDetails.exchangeStatus.name === 'ToBeReceived'" type="md-add" style="cursor:pointer" @click="addModal = true" /></p>
       <div class="or-ws" v-for="(item, index) in orderDetails.logisticsDto" :key='index'>
         <p style="margin-bottom:5px;">{{item.logistics}}</p>
         <p>{{item.logisticsDate}}</p>
       </div>
     </div>
+    <Modal v-model="addModal" :mask-closable='false' title="添加物流信息">
+      <p>物流内容</p>
+      <Input v-model="logInfo.logistics"></Input>
+      <div slot="footer">
+        <Button type="text" @click="addModal = false">取消</Button>
+        <Button type="success" @click="createLogistics">确定</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 
 <script>
-import {findBackEndOrderById} from "@/api/data"
+import {findBackEndOrderById, createLogistics} from "@/api/data"
 export default {
   data() {
     return {
-      orderDetails: {}
+      orderDetails: {},
+      addModal: false,
+      logInfo: {
+        logistics: '',
+        orderId: this.$route.query.id
+      }
     }
   },
   created() {
@@ -128,9 +140,27 @@ export default {
       findBackEndOrderById(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
           this.orderDetails = res.data.data;
-          // this.orderDetails.specificationDetailsDto
+          let obj = JSON.parse(this.orderDetails.specificationDetailsDto.attribute);
+          let list = [];
+          for(let key in obj) {
+            list.push(key+ ':' +obj[key])
+          }
+          this.orderDetails.xinh = list.join(',')
         } else {
           this.$Message.error(res.data.message);
+        }
+      })
+    },
+    createLogistics() {
+      createLogistics(this.logInfo).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.$Message.success('更新物流信息成功');
+          this.addModal = false;
+          this.findBackEndOrderById();
+          this.logInfo.logistics = '';
+        } else {
+          this.$Message.error(res.data.message);
+          this.addModal = false;
         }
       })
     }

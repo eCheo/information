@@ -6,7 +6,7 @@
             <ul class="kf-list">
               <li class="kf-item">
                 <span>用户名字</span>
-                <Input style="width:200px;"> </Input>
+                <Input style="width:200px;" v-model="userFrom.nickName"> </Input>
               </li>
               <li class="kf-item">
                 <span>选择时间</span>
@@ -354,6 +354,7 @@ export default {
     },
     // 获取聊天记录
     findChatRecordPageByCondition() {
+      this.chatList = []
       let params = {
         EQ_chatRoomId: this.chatInfo.id,
         page: 1,

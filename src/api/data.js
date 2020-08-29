@@ -453,3 +453,27 @@ export const createOrUpdateProblem = data => {
     data: data
   })
 }
+// 添加物流信息
+export const createLogistics = data => {
+  return axios.request({
+    url: '/api/backend/good/createLogistics.json',
+    method: 'post',
+    data: data
+  })
+}
+// 举报列表上下架文章
+export const articlesGroundingPushSystemMessage = data => {
+  return axios.request({
+    url: '/api/backend/article/articlesGroundingPushSystemMessage.json',
+    method: 'post',
+    data: data
+  })
+}
+// 反馈详情
+export const findById = data => {
+  return axios.request({
+    url: '/api/backend/help/findById.json',
+    method: 'post',
+    data: data
+  })
+}

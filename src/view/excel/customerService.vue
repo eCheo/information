@@ -29,7 +29,7 @@ export default {
         return {
             customerList: [
                 {
-                    title: 'id',
+                    title: '客服Id',
                     key: 'customerId'
                 },
                 {

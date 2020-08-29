@@ -28,12 +28,8 @@
       </FormItem>
       <Table border :columns="specsList" :data="specsData">
         <template slot-scope="{ row, index }" slot="image" style="text-align:center;">
-                <!-- <template v-if="item.status === 'finished'">
+                <!-- <template v-if="row.status === 'finished'">
                     <img :src="row.image">
-                    <div class="demo-upload-list-cover">
-                        <Icon type="ios-eye-outline" @click.native="handleView(item.name)"></Icon>
-                        <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
-                    </div>
                 </template>
                 <template v-else>
                     <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
@@ -57,14 +53,49 @@
                     <p>上传图片</p>
                 </div>
             </Upload>
-            <img style="width:50px;height:50px" v-else :src="row.image">
+            <div v-else class="ad-img">
+              <Icon type="md-close" size='14' color='#ed4014' class="ad-icon" @click="row.image = ''" />
+              <img style="width:50px;height:50px"  :src="row.image">
+            </div>
         </template>
       </Table>
       <FormItem label='有效期' prop='date'>
            <DatePicker @on-change='changeDate' :value="formValidate.date" format="yyyy年MM月dd日" type="daterange" placement="bottom-end" placeholder="Select date" style="width: 350px"></DatePicker>
       </FormItem>
+      <FormItem label='商品图片'>
+        <div class="demo-upload-list" v-for="(item, index) in formValidate.goodImagesList" :key="index">
+          <template v-if="item.status === 'finished'">
+            <img :src="item.url" style="width:250px;height:250px;" />
+            <div class="demo-upload-list-cover">
+              <!-- <Icon type="ios-eye-outline" @click.native="handleView(item.name)"></Icon> -->
+              <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+            </div>
+          </template>
+          <template v-else>
+            <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+          </template>
+        </div>
+        <Upload
+          ref="goodImg"
+          :show-upload-list="false"
+          :on-success="handleSuccessGood"
+          :format="['jpg','png']"
+          :max-size="5042"
+          :on-format-error="handleFormatErrorGood"
+          :on-exceeded-size="handleMaxSizeGood"
+          multiple
+          :headers="headers"
+          type="drag"
+          action="http://47.56.186.16:8089/api/obs/upload.json"
+          style="display: inline-block;width:58px;"
+        >
+          <div style="width: 58px;height:58px;line-height: 58px;">
+            <Icon type="ios-camera" size="20"></Icon>
+          </div>
+        </Upload>
+      </FormItem>
       <FormItem label='商品描述' prop='goodDescribe'>
-        <Input v-model="formValidate.goodDescribe" type="textarea" :rows="4"/>
+        <tinymce-editor ref="editor" :init='init' v-model="formValidate.goodDescribe" @on-change="handleChange"/>
       </FormItem>
       <div style="margin-top:20px;">
         <Button type="success" @click="upGoods">确认</Button>
@@ -75,23 +106,32 @@
 </template>
 
 <script>
-import { createGoods, findBackEndGoods, updateGoods } from '@/api/data'
+import tinymce from 'tinymce/tinymce'
+import 'tinymce/themes/silver'
+import 'tinymce/icons/default'
+import 'tinymce/plugins/image'// 插入上传图片插件
+import 'tinymce/plugins/media'// 插入视频插件
+import 'tinymce/plugins/table'// 插入表格插件
+import 'tinymce/plugins/lists'// 列表插件
+import 'tinymce/plugins/wordcount'// 字数统计插件
+import Editor from "@tinymce/tinymce-vue";
+import { createGoods, findBackEndGoods, updateGoods, upload } from '@/api/data'
 import store from '../../store/module/user'
 export default {
   data () {
     return {
       formValidate: {
-        name: 'hh',
-        money: '50',
+        name: '',
+        money: '',
         specsName: '',
         sonName: '',
-        integral: '20',
+        integral: '',
         specificationDetailsDtos: [],
         date: '',
-        startDate: '2020-06-11',
-        expirationDate: '2020-07-11',
-        goodImagesList: ['https://i0.hdslb.com/bfs/archive/7da891bf650caf6c7ba320d0dfd52917d4b74b28.png'],
-        goodDescribe: '商品:小米手环'
+        startDate: '',
+        expirationDate: '',
+        goodImagesList: [],
+        goodDescribe: ''
       },
       deleteSonNameEmp: '',
       ruleValidate: {},
@@ -119,8 +159,42 @@ export default {
       sonMap: new Map(),
       setList: new Set(),
       headers: {},
-      upObj: {}
+      upObj: {},
+      init: {
+        language_url: "/tinymce/langs/zh_CN.js",
+        language: "zh_CN",
+        skin_url: '/tinymce/skins/ui/oxide',
+        height: 430,
+        plugins:"link lists image code table colorpicker textcolor wordcount contextmenu",
+        toolbar:"bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify|bullist numlist |outdent indent blockquote | undo redo | link unlink image code | removeformat",
+        branding: false,
+        menubar: false,
+        images_upload_handler: (blobInfo, success, failure) => {
+          const file = blobInfo.blob();
+          if (file.size > 5242880) {
+            this.$Message.error("图片请不要大于 5MB");
+          } else {
+            try {
+             let params = new FormData();
+             params.append('filename', file.name);
+             params.append('file', file)
+              upload(params).then(res => {
+                if (res.status === 200 && res.data.code === '200') {
+                  success(res.data.data.viewUrl);
+                } else {
+                  failure(res.data.message)
+                }
+              })
+            } catch {
+              failure('上传图片失败')
+            }
+          }
+        }
+      }
     }
+  },
+   components: {
+     "tinymce-editor": Editor
   },
   created() {
     if (this.$route.query.id) {
@@ -129,10 +203,14 @@ export default {
   },
   mounted () {
     this.headers = {
-      Authorization: store.state.tokenType + ' ' + store.state.token
+      Authorization: sessionStorage.getItem('tokenType') + ' ' + store.state.token
     }
+    this.formValidate.goodImagesList = this.$refs.goodImg.fileList;
   },
   methods: {
+    handleChange (html, text) {
+      this.formValidate.goodDescribe = html
+    },
     findBackEndGoods(id) {
       this.specsList = this.specsListEmp;
       findBackEndGoods({id: id}).then(res => {
@@ -148,6 +226,14 @@ export default {
           this.specification.forEach(item => {
             this.specsList.unshift({key: item.key, title: item.key});
           })
+          if (this.formValidate.goodImagesList.length > 0) {
+            let obj = {};
+            for (let i = 0; i< this.formValidate.goodImagesList.length; i++) {
+              obj.url = this.formValidate.goodImagesList[i];
+              obj.status = 'finished'
+              this.formValidate.goodImagesList.splice(i, 1, obj)
+            }
+          }
           this.formValidate.date = [res.data.data.startDate, res.data.data.expirationDate]
         } else {
           this.$Message.error(res.data.message);
@@ -347,25 +433,37 @@ export default {
       this.formValidate.expirationDate = endTime.substring(0, endTime.length - 1)
     },
     handleRemove (file) {
-      const fileList = this.$refs.upload.fileList
-      this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
+      const fileList = this.$refs.goodImg.fileList
+      this.$refs.goodImg.fileList.splice(fileList.indexOf(file), 1)
     },
     handleSuccess (res, file) {
       this.upObj.image = res.data.viewUrl
     },
     handleFormatError (file) {
       this.$Notice.warning({
-        title: 'The file format is incorrect',
-        desc:
-          'File format of ' +
-          file.name +
-          ' is incorrect, please select jpg or png.'
+        title: '图片格式错误',
+        desc:'图片格式错误'
       })
     },
     handleMaxSize (file) {
       this.$Notice.warning({
-        title: 'Exceeding file size limit',
-        desc: 'File  ' + file.name + ' is too large, no more than 2M.'
+        title: '失败',
+        desc: '图片不能超过5mb'
+      })
+    },
+    handleSuccessGood (res, file) {
+      this.formValidate.goodImagesList.push(res.data.viewUrl)
+    },
+    handleFormatErrorGood (file) {
+      this.$Notice.warning({
+        title: '图片格式错误',
+        desc:'图片格式错误'
+      })
+    },
+    handleMaxSizeGood (file) {
+      this.$Notice.warning({
+        title: '失败',
+        desc: '图片不能超过5mb'
       })
     },
     handleBeforeUpload () {
@@ -433,4 +531,51 @@ export default {
     margin-right: 0;
   }
 }
+.ad-img {
+  width: 50px;
+  height: 50px;
+  position: relative;
+}
+.ad-icon {
+    position: absolute;
+    right: 0;
+    cursor: pointer;
+    font-size: 14px;
+}
+.demo-upload-list{
+        display: inline-block;
+        width: 150px;
+        height: 150px;
+        text-align: center;
+        line-height: 150px;
+        // border: 1px solid transparent;
+        border-radius: 4px;
+        overflow: hidden;
+        background: #fff;
+        position: relative;
+        box-shadow: 0 1px 1px rgba(0,0,0,.2);
+        margin-right: 4px;
+    }
+    .demo-upload-list img{
+        width: 100%;
+        height: 100%;
+    }
+    .demo-upload-list-cover{
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,.6);
+    }
+    .demo-upload-list:hover .demo-upload-list-cover{
+        display: block;
+    }
+    .demo-upload-list-cover i{
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+        margin: 0 2px;
+    }
 </style>

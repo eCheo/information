@@ -63,7 +63,7 @@ export default {
             })
         },
         addArticlesColumn() {
-            addArticlesColumn(this.coloumnInfo).then(res => {
+            addArticlesColumn(this.columnInfo).then(res => {
                 if (res.status === 200 && res.data.code === '200') {
                     if (this.modal) {
                         this.$Message.success('修改成功');

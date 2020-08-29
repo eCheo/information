@@ -8,7 +8,7 @@
           </Radio>
           <Radio label="year">
               <span>每年</span>
-              <DatePicker :value='setDate' :disabled="settingTime === 'long'" type="date" format="MM-dd" :options="options3" placeholder="月/日" style="width: 200px" @on-change='test'></DatePicker>清除积分池所有积分
+              <DatePicker :value='setDate' :disabled="settingTime === 'long'" type="date" format="MM-dd" placeholder="月/日" style="width: 200px" @on-change='test'></DatePicker>清除积分池所有积分
           </Radio>
       </RadioGroup>
     </div>
@@ -39,11 +39,6 @@ export default {
       settingTime: 'long',
       month: '',
       day: '',
-      options3: {
-          disabledDate (date) {
-            return date && date.valueOf() < Date.now() - 86400000;
-          }
-      },
       setDate: ''
     }
   },

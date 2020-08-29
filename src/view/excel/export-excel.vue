@@ -70,7 +70,7 @@
           </div>
         </div>
         <div class="no-data" v-else-if="commentList.content.length === 0 && articleId !== ''">
-          <p>暂无聊天记录</p>
+          <p>暂无评论</p>
         </div>
       </div>
     </div>

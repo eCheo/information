@@ -89,12 +89,16 @@ export default {
                 {
                     title: '操作',
                     render: (h, params) => {
+                      let isShow = params.row.exchangeStatus.name === 'ToBeReceived'
+                      let isShow2 = params.row.exchangeStatus.name === "Cancel" 
                       return h('div', [
                         h('span', {
                           style: {
                             cursor: 'pointer',
                             color: '#2D8cF0',
-                            textDecoration: 'underline'
+                            marginRight: '10px',
+                            textDecoration: 'underline',
+                            display: isShow ? 'none' :'inline-block'
                           },
                           on: {
                             click: () => {
@@ -107,7 +111,8 @@ export default {
                             cursor: 'pointer',
                             color: '#2D8cF0',
                             textDecoration: 'underline',
-                            margin: '0 10px'
+                            marginRight: '10px',
+                            display: isShow2 ? 'none' : 'inline-block'
                           },
                           on: {
                             click: () => {
@@ -158,6 +163,10 @@ export default {
                 {
                     label: '已完成',
                     value: 'Completed'
+                },
+                {
+                    label: '已取消',
+                    value: 'Cancel'
                 }
             ],
             selectTime: ''
@@ -184,6 +193,7 @@ export default {
           deliverGoods(params).then(res => {
             if (res.status === 200 && res.data.code === '200') {
                     this.$Message.success('发货成功');
+                    this.findBackEndOrder(1);
                 } else {
                     this.$Message.error(res.data.message);
                 }
@@ -196,6 +206,7 @@ export default {
           cancelGoods(params).then(res => {
             if (res.status === 200 && res.data.code === '200') {
                     this.$Message.success('取消发货成功');
+                    this.findBackEndOrder(1);
                 } else {
                     this.$Message.error(res.data.message);
                 }
