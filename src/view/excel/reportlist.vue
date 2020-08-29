@@ -36,6 +36,9 @@
                 />
             </div>
         </div>
+        <Modal v-model="showModal.content" title="确定下架？" :closable="false" @on-ok='this.setGroundingType(paramsRow)'>
+            <Input v-model="reportContentReson" type="textarea" placeholder="请输入下架原因" style="width: 200px" />
+        </Modal>
     </div>
 </template>
 
@@ -44,6 +47,9 @@ import {findReportBackEndList, setGroundingType} from "@/api/data"
 export default {
     data() {
         return {
+            showModal: {
+                content: false
+            },
             selectTime: '',
             reportInfo: {
                 queryValue: '',
@@ -126,7 +132,8 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.setGroundingType(params.row);
+                                        this.showModal.content = true;
+                                        this.paramsRow = params.row;
                                     }
                                 }  
                             }, '下架')
@@ -152,7 +159,7 @@ export default {
                     key: 'pubDate'
                 },
                 {
-                    title: '账户禁用',
+                    title: '操作',
                     render: (h, params) => {
                         return h('Button', {
                         props: {
@@ -167,7 +174,9 @@ export default {
                     }
                 }
             ],
-            rtList: []
+            rtList: [],
+            reportContentReson: '',
+            paramsRow: {}
         }
     },
     created() {
@@ -198,7 +207,8 @@ export default {
             let params = {
                 groundingType:
                 row.groundingType.name === "Dismount" ? "Grounding" : "Dismount",
-                id: row.id
+                id: row.id,
+                reason: reason
             };
             setGroundingType(params).then(res => {
                 if (res.status === 200 && res.data.code === '200') {

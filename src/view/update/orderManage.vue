@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import {findBackEndOrder} from "@/api/data"
+import {findBackEndOrder, deliverGoods, cancelGoods} from "@/api/data"
 export default {
     data() {
         return {
@@ -90,6 +90,31 @@ export default {
                     title: '操作',
                     render: (h, params) => {
                       return h('div', [
+                        h('span', {
+                          style: {
+                            cursor: 'pointer',
+                            color: '#2D8cF0',
+                            textDecoration: 'underline'
+                          },
+                          on: {
+                            click: () => {
+                              this.deliverGoods(params.row.id)
+                            }
+                          }
+                        }, '发货'),
+                        h('span', {
+                          style: {
+                            cursor: 'pointer',
+                            color: '#2D8cF0',
+                            textDecoration: 'underline',
+                            margin: '0 10px'
+                          },
+                          on: {
+                            click: () => {
+                              this.cancelGoods(params.row.id);
+                            }
+                          }
+                        }, '取消'),
                         h('span', {
                           style: {
                             cursor: 'pointer',
@@ -151,6 +176,30 @@ export default {
                     this.$Message.error(res.data.message);
                 }
             })
+        },
+        deliverGoods(id) {
+          let params = {
+            id: id
+          }
+          deliverGoods(params).then(res => {
+            if (res.status === 200 && res.data.code === '200') {
+                    this.$Message.success('发货成功');
+                } else {
+                    this.$Message.error(res.data.message);
+                }
+          })
+        },
+        cancelGoods(id) {
+          let params = {
+            id: id
+          }
+          cancelGoods(params).then(res => {
+            if (res.status === 200 && res.data.code === '200') {
+                    this.$Message.success('取消发货成功');
+                } else {
+                    this.$Message.error(res.data.message);
+                }
+          })
         },
         changeDate (date) {
             let starTime = date[0].replace(/([^\u0000-\u00FF])/g, '-')

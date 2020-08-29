@@ -325,3 +325,19 @@ export const deleteComment = data => {
     data: data
   })
 }
+// 发货
+export const deliverGoods = data => {
+  return axios.request({
+    url: '/api/backend/good/deliverGoods.json',
+    method: 'post',
+    data: data
+  })
+}
+// 取消发货
+export const cancelGoods = data => {
+  return axios.request({
+    url: '/api/backend/good/cancelGoods.json',
+    method: 'post',
+    data: data
+  })
+}
