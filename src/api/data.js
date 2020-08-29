@@ -317,6 +317,22 @@ export const addArticlesColumn = data => {
     data: data
   })
 }
+// 回复评论或子评论
+export const articlesCommentOrReplay = data => {
+  return axios.request({
+    url: '/api/backend/article/articlesCommentOrReplay.json',
+    method: 'post',
+    data: data
+  })
+}
+// 查询子评论
+export const findBackEndReplyList = data => {
+  return axios.request({
+    url: '/api/backend/article/findBackEndReplyList.json',
+    method: 'post',
+    data: data
+  })
+}
 // 删除系统通知
 export const deleteComment = data => {
   return axios.request({
