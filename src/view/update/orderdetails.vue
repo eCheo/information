@@ -43,10 +43,11 @@
       </li>
       <li class="or-item">
         <div style="width:100px;">
-          颜色分类
+          规格型号
         </div>
         <div>
           无
+          <!-- {{JSON.parse(orderDetails.specificationDetailsDto.attribute)}} -->
         </div>
       </li>
       <li class="or-item">
@@ -127,6 +128,7 @@ export default {
       findBackEndOrderById(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
           this.orderDetails = res.data.data;
+          // this.orderDetails.specificationDetailsDto
         } else {
           this.$Message.error(res.data.message);
         }
@@ -143,7 +145,6 @@ ul li {
 .orderde {
   background-color: #fff;
   padding: 20px;
-  height: 100%;
 }
 .or-list .or-item {
   // display: block;

@@ -36,19 +36,31 @@
                 />
             </div>
         </div>
-        <Modal v-model="showModal.content" title="确定下架？" :closable="false" @on-ok='this.setGroundingType(paramsRow)'>
+        <Modal v-model="showModal.content" title="确定下架？" :closable="false">
             <Input v-model="reportContentReson" type="textarea" placeholder="请输入下架原因" style="width: 200px" />
+            <div slot="footer">
+                <Button type="text" @click="showModal.content = false">取消</Button>
+                <Button type="success" @click="setGroundingType(paramsRow)">确定</Button>
+            </div>
+        </Modal>
+        <Modal v-model="showModal.plModal" title="确定删除？" :closable="false">
+            <Input v-model="plReso" type="textarea" placeholder="请输入删除原因" style="width: 200px" />
+            <div slot="footer">
+                <Button type="text" @click="showModal.plModal = false">取消</Button>
+                <Button type="success" @click="commentDetelePushSystemMessage">确定</Button>
+            </div>
         </Modal>
     </div>
 </template>
 
 <script>
-import {findReportBackEndList, setGroundingType} from "@/api/data"
+import {findReportBackEndList, setGroundingType, commentDetelePushSystemMessage} from "@/api/data"
 export default {
     data() {
         return {
             showModal: {
-                content: false
+                content: false,
+                plModal: false
             },
             selectTime: '',
             reportInfo: {
@@ -167,7 +179,8 @@ export default {
                         },
                         on: {
                             click: () => {
-                                // this.setMemberDisable(params.row);
+                                this.showModal.plModal = true;
+                                this.plId = params.row.commentId;
                             }
                         }  
                         }, '删除')
@@ -176,7 +189,9 @@ export default {
             ],
             rtList: [],
             reportContentReson: '',
-            paramsRow: {}
+            paramsRow: {},
+            plId: '',
+            plReso: ''
         }
     },
     created() {
@@ -207,8 +222,8 @@ export default {
             let params = {
                 groundingType:
                 row.groundingType.name === "Dismount" ? "Grounding" : "Dismount",
-                id: row.id,
-                reason: reason
+                id: row.articleId,
+                reason: this.reportContentReson
             };
             setGroundingType(params).then(res => {
                 if (res.status === 200 && res.data.code === '200') {
@@ -216,9 +231,25 @@ export default {
                         this.$Message.success("上架成功");
                     } else {
                         this.$Message.success("下架成功");
+                        this.showModal.content = false;
                     }
                     this.findReportBackEndList(1);
                 } else {
+                    this.$Message.error(res.data.message);
+                }
+            })
+        },
+        commentDetelePushSystemMessage() {
+            let params = {
+                id: this.plId,
+                reason: this.plReso
+            }
+            commentDetelePushSystemMessage(params).then(res => {
+                if (res.status === 200 && res.data.code === '200') {
+                    this.$Message.success('删除成功');
+                    this.showModal.plModal = false;
+                    this.findReportBackEndList(1);
+                } else {    
                     this.$Message.error(res.data.message);
                 }
             })

@@ -243,7 +243,7 @@ export default {
             }
           }
         }
-     },
+      },
      topicData: {
        title: '',
        viewpointOne: '',

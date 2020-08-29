@@ -58,7 +58,7 @@ export default {
                 {
                     title: '封面',
                     render: (h, params) => {
-                        if (params.row.videoImagePath !== null && params.row.type.message === '视频') {
+                        if (params.row.videoImagePath !== null && params.row.type.name === 'PublishVideo') {
                             return h('img', {
                                     style: {
                                         maxWidth: '150px'
@@ -67,7 +67,7 @@ export default {
                                         src: params.row.videoImagePath
                                         }
                                     })
-                        } else if(params.row.imagePaths !== null && params.row.type.message === '文章'){
+                        } else if(params.row.imagePaths !== null && params.row.type.name === 'PublishArticle'){
                             return h('img', {
                                         style: {
                                         maxWidth: '150px'

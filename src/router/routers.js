@@ -272,6 +272,15 @@ export default [
     component: Main,
     children: [
       {
+        path: 'customerservice',
+        name: 'customerservice',
+        meta: {
+          icon: 'md-add',
+          title: '客服列表'
+        },
+        component: () => import('@/view/excel/customerService.vue')
+      },
+      {
         path: 'upload-excel',
         name: 'upload-excel',
         meta: {
@@ -306,6 +315,35 @@ export default [
           title: '举报列表'
         },
         component: () => import('@/view/excel/reportlist.vue')
+      }
+    ]
+  },
+  {
+    path: '/error_logger',
+    name: 'error_logger',
+    meta: {
+      icon: 'ios-stats',
+      title: '帮助管理'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'helplist',
+        name: 'helplist',
+        meta: {
+          icon: 'md-add',
+          title: '帮助列表'
+        },
+        component: () => import('@/view/help/helpList.vue')
+      },
+      {
+        path: 'problem',
+        name: 'problem',
+        meta: {
+          icon: 'md-add',
+          title: '问题分类列表'
+        },
+        component: () => import('@/view/help/problemList.vue')
       }
     ]
   },

@@ -29,7 +29,7 @@
       <p>全部评论</p>
       <div class="kf-acl">
         <ul class="kf-list">
-          <li class="kf-item" :class="id === item.id ? 'kf-bg' : ''" v-for="(item,index) in articleList" :key="index" @click="findBackEndComment(item)">
+          <li class="kf-item" :class="articleId === item.id ? 'kf-bg' : ''" v-for="(item,index) in articleList" :key="index" @click="findBackEndComment(1,item.id)">
             <p>{{item.title}}</p>
             <div style="margin-top:10px;">
               <span>{{item.pubDate}}</span>
@@ -40,8 +40,8 @@
             <Page :current='page' :total="total" simple @on-change='findBackEndArticle' />
           </li>
         </ul>
-        <div v-if="commentList.length > 0 && id !== ''" style="width:100%;">
-          <div class="ex-pl" v-for="(item,index) in commentList" :key="index">
+        <div v-if="commentList.content.length > 0 && articleId !== ''" style="width:100%;">
+          <div class="ex-pl" v-for="(item,index) in commentList.content" :key="index">
             <div>
               <img class="ex-img" :src="item.headImgPath" />
             </div>
@@ -55,15 +55,21 @@
             </div>
             <div class="ex-hhf" style="width:100%;" v-for="(it, index) in replySonList" :key="index">
               <span v-if="!it.replyBackEndMemberDto">
-                {{it.memberBackEndDto.nickName}}<a style="color:#05b55c;">回复</a>{{item.nickName}}：{{it.content}}
+                <!-- <img class="ex-img" :src="it.memberBackEndDto.headImgPath" /> -->
+                {{it.memberBackEndDto.nickName}}：{{it.content}}
               </span>
               <span v-else>
-                {{it.replyBackEndMemberDto.nickName}}<i style="color:#05b55c;">回复</i>{{it.memberBackEndDto.nickName}}
+                <!-- <img class="ex-img" :src="it.replyBackEndMemberDto.headImgPath" /> -->
+                {{it.memberBackEndDto.nickName}}<a style="color:#05b55c;">回复</a>{{it.replyBackEndMemberDto.nickName}}：{{it.content}}
               </span>
+              <Button style="float:right" type="success" @click="replay(it, 'ReplyReply')">回复</Button>
             </div>
           </div>
+          <div style="text-align:right;margin-top:20px;">
+            <Page :current='commentPage' :total="commentList.totalElements" simple @on-change='findBackEndComment(commentPage, this.articleId)' />
+          </div>
         </div>
-        <div class="no-data" v-else-if="commentList.length === 0 && id !== ''">
+        <div class="no-data" v-else-if="commentList.content.length === 0 && articleId !== ''">
           <p>暂无聊天记录</p>
         </div>
       </div>
@@ -84,16 +90,20 @@ export default {
   data() {
     return {
       selectTime: "",
-      commentList: [],
+      commentList: {
+        content: []
+      },
       articleList: {},
       replySonList: [],
-      id: '',
+      articleId: '',
       total: 0,
       page: 1,
       modalShow: false,
       nickName: '',
       replayOneInfo: {},
-      replayContent: ''
+      replayContent: '',
+      commentId: '',
+      commentPage: 1
     };
   },
   created() {
@@ -106,24 +116,27 @@ export default {
       this.userFrom.startTime = starTime.substring(0, starTime.length - 1);
       this.userFrom.endTime = endTime.substring(0, endTime.length - 1);
     },
-    findBackEndComment(item) {
-      this.id = item.id;
+    // 查询文章评论
+    findBackEndComment(page,id) {
+      this.articleId = id;
+      this.commentPage = page;
       let params = {
-        page: "1",
-        size: "10",
-        articlesId: this.id
+        page: page,
+        size: "5",
+        articlesId: this.articleId
       };
       findBackEndComment(params).then(res => {
         if (res.status === 200 && res.data.code === "200") {
-          this.commentList = res.data.data.content;
-          this.commentList.forEach(item => {
-            this.findBackEndReplyList(item.id);
+          this.commentList = res.data.data;
+          this.commentList.content.forEach(item => {
+            this.findBackEndReplyList(1,item.id);
           })
         } else {
           this.$Message.error(res.data.message);
         }
       });
     },
+    // 查询文章
     findBackEndArticle(page) {
       this.page = page;
       let params = {
@@ -141,7 +154,7 @@ export default {
     },
     articlesCommentOrReplay() {
       let params = {
-        articlesId: this.id,
+        articlesId: this.articleId,
         content: this.replayContent,
         type: this.replayOneInfo.type,
         commentId: this.replayOneInfo.id
@@ -149,14 +162,17 @@ export default {
       articlesCommentOrReplay(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
           this.$Message.success('回复成功');
-          this.findBackEndComment()
+          this.findBackEndComment(this.page, this.articleId)
         } else {
           this.$Message.error(res.data.message);
         }
       })
     },
-    findBackEndReplyList(id) {
+    // 查询子评论
+    findBackEndReplyList(page,id) {
       let params = {
+        page: 1,
+        size: '5',
         EQ_parentId: id
       }
       findBackEndReplyList(params).then(res => {
@@ -172,7 +188,7 @@ export default {
       this.replayContent = '';
       this.replayOneInfo = item;
       this.replayOneInfo.type = type;
-      this.nickName = item.nickName;
+      this.nickName = type === 'ReplyReply' ? item.replyBackEndMemberDto ? item.replyBackEndMemberDto.nickName :  item.memberBackEndDto.nickName : item.nickName;
     }
   }
 };
@@ -246,10 +262,11 @@ export default {
   .ex-img {
       border-radius: 50%;
       width: 58px;
+      height: 58px;
   }
   .ex-ct {
     font-size: 14px;
-    width: 88%;
+    width: 87%;
     margin-left: 15px;
     p {
       color: #666666;
@@ -262,9 +279,9 @@ export default {
     line-height: 69px;
   }
   .ex-hhf {
-    padding-top: 10px;
+    padding: 10px 36px 0 0;
     color: #666666;
-    margin-left: 69px;
+    margin:0 0 15px 69px;
     border-top: 1px solid #e9e9e9;
   }
 }

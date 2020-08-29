@@ -183,7 +183,7 @@ export const getChartBackEndRoom = data => {
 
 export const findSystemMessage = data => {
   return axios.request({
-    url: '/api/backend/message/findSystemMessagePageByCondition.json',
+    url: '/api/backend/message/findBackEndSystemMessagePageByCondition.json',
     method: 'post',
     data: data
   })
@@ -353,6 +353,102 @@ export const deliverGoods = data => {
 export const cancelGoods = data => {
   return axios.request({
     url: '/api/backend/good/cancelGoods.json',
+    method: 'post',
+    data: data
+  })
+}
+// 积分规则设置
+export const updateSchedule = data => {
+  return axios.request({
+    url: '/api/backend/schedule/updateSchedule.json',
+    method: 'post',
+    data: data
+  })
+}
+// 积分规则设置页面查询
+export const findSchedule = data => {
+  return axios.request({
+    url: '/api/backend/schedule/findSchedule.json',
+    method: 'post',
+    data: data
+  })
+}
+// 查询客服列表
+export const findCustomerListByCondition = data => {
+  return axios.request({
+    url: '/api/backend/message/findCustomerListByCondition.json',
+    method: 'post',
+    data: data
+  })
+}
+// 修改客服信息
+export const updateCustomer = data => {
+  return axios.request({
+    url: '/api/backend/message/updateCustomer.json',
+    method: 'post',
+    data: data
+  })
+}
+// 添加系统通知
+export const createSystemMessage = data => {
+  return axios.request({
+    url: '/api/backend/message/createSystemMessage.json',
+    method: 'post',
+    data: data
+  })
+}
+// 删除被举报评论 
+export const commentDetelePushSystemMessage = data => {
+  return axios.request({
+    url: '/api/backend/article/commentDetelePushSystemMessage.json',
+    method: 'post',
+    data: data
+  })
+}
+// 获取聊天记录
+export const findChatRecordPageByCondition = data => {
+  return axios.request({
+    url: '/api/backend/message/findChatRecordPageByCondition.json',
+    method: 'post',
+    data: data
+  })
+}
+// 获取帮助详情
+export const findHelpBackEndResultPage = data => {
+  return axios.request({
+    url: '/api/backend/help/findHelpBackEndResultPage.json',
+    method: 'post',
+    data: data
+  })
+}
+// 获取帮助详情
+export const findHelpById = data => {
+  return axios.request({
+    url: '/api/backend/help/findHelpById.json',
+    method: 'post',
+    data: data
+  })
+}
+// 新增/修改帮助
+export const createOrUpdateHelp = data => {
+  return axios.request({
+    url: '/api/backend/help/createOrUpdateHelp.json',
+    method: 'post',
+    data: data
+  })
+}
+// 查询问题分类
+export const findProblemTypeListByCondition = data => {
+  return axios.request({
+    url: '/api/backend/help/findProblemTypeListByCondition.json',
+    method: 'post',
+    data: data
+  })
+}
+// 新增修改问题分类
+export const createOrUpdateProblem = data => {
+  return axios.request({
+    url: '/api/backend/help/createOrUpdateProblem.json',
     method: 'post',
     data: data
   })
