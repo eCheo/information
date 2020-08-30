@@ -99,7 +99,7 @@
       </li>
     </ul>
     <div class="or-wuliu">
-      <p>物流状态 <span style="cursor:pointer;color:#19be6b;margin-left:10px;" @click="addModal = true">新增物流信息</span></p>
+      <p>物流状态 <span v-if="orderDetails.exchangeStatus.name === 'ToBeReceived'" style="cursor:pointer;color:#19be6b;margin-left:10px;" @click="addModal = true">新增物流信息</span></p>
       <div class="or-ws" v-for="(item, index) in orderDetails.logisticsDto" :key='index'>
         <p style="margin-bottom:5px;">{{item.logistics}}</p>
         <p>{{item.logisticsDate}}</p>

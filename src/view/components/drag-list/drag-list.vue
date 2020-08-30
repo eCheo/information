@@ -40,7 +40,9 @@ import {
   findArticlesResult,
   setGroundingType,
   deleteArticles,
-  informationExamine
+  informationExamine,
+  cancelArticlesTop,
+  setArticlesTop
 } from "@/api/data";
 export default {
   name: "drag_list_page",
@@ -123,6 +125,15 @@ export default {
           }
         },
         {
+          title: '是否置顶',
+          key: 'whetherTop',
+          render: (h, params) => {
+            let te = params.row.whetherTop ? '是':'否';
+            let text = this.releaseType === 'PublishArticle' ? te : '---';
+            return h('p', {}, text)
+          }
+        },
+        {
           title: "操作",
           width: 250,
           render: (h, params) => {
@@ -195,7 +206,45 @@ export default {
                   }
                 },
                 params.row.groundingType.name === "Dismount" ? "上架" : "下架"
-              )
+              ),
+              h('div', {
+                  style: {
+                    display: this.releaseType === 'PublishArticle' ? 'block' : 'none',
+                    marginTop: '10px'
+                  }
+                },[
+                h(
+                "Button",
+                {
+                  props: {
+                    loading: params.row.loading,
+                    type: 'success',
+                    disabled: params.row.whetherTop
+                  },
+                  style: {
+                    marginRight: '10px'
+                  },
+                  on: {
+                    click: () => {
+                      this.setArticlesTop(params.row.id);
+                    }
+                  }
+                }, '置顶'),
+                h(
+                "Button",
+                {
+                  props: {
+                    loading: params.row.loading,
+                    type: 'error',
+                    disabled: !params.row.whetherTop
+                  },
+                  on: {
+                    click: () => {
+                      this.cancelArticlesTop(params.row.id);
+                    }
+                  }
+                }, '取消置顶')
+              ])
             ]);
              }
           }
@@ -302,6 +351,32 @@ export default {
           }
             this.findArticlesResult(1);
         } else {  
+          this.$Message.error(res.data.message);
+        }
+      })
+    },
+    setArticlesTop(id) {
+      let params = {
+        id: id
+      }
+      setArticlesTop(params).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.$Message.success('置顶成功');
+          this.findArticlesResult(1);
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      })
+    },
+    cancelArticlesTop(id) {
+      let params = {
+        id: id
+      }
+      cancelArticlesTop(params).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.$Message.success('取消置顶成功');
+          this.findArticlesResult(1);
+        } else {
           this.$Message.error(res.data.message);
         }
       })

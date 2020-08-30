@@ -270,7 +270,7 @@ export default {
   mounted () {
     tinymce.init({})
     if (this.$refs.upload.fileList) {
-      this.uploadList = this.$refs.upload.fileList
+      this.uploadList = this.$refs.upload.fileList;
     }
     if(this.$refs.fmUpload.fileList) {
       this.fmUploadList = this.$refs.fmUpload.fileList
@@ -358,6 +358,8 @@ export default {
           if (this.viewType === 'PublishVideo') {
             this.videoImagePath = res.data.data.videoImagePath;
             this.viodeUrl = res.data.data.videoPath;
+            let name = res.data.data.videoPath.substring(res.data.data.videoPath.lastIndexOf('/')+1, res.data.data.videoPath.length)
+            this.vidoeList.push({'url':res.data.data.videoPath, name:name})
             this.fmUploadList.push({'url': res.data.data.videoImagePath, 'status': 'finished'})
           }        
           if (res.data.data.imagePaths.length > 0) {
@@ -450,7 +452,7 @@ export default {
     handleMaxSizefm (file) {
       this.$Notice.warning({
         title: 'Exceeding file size limit',
-        desc: 'File  ' + file.name + ' is too large, no more than 2M.'
+        desc: 'File  ' + file.name + ' is too large, no more than 10M.'
       })
     }
   },

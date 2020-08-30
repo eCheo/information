@@ -501,3 +501,19 @@ export const loginOut = data => {
     data: data
   })
 }
+// 设置置顶
+export const setArticlesTop = data => {
+  return axios.request({
+    url: '/api/backend/article/setArticlesTop.json',
+    method: 'post',
+    data: data
+  })
+}
+// 取消置顶
+export const cancelArticlesTop = data => {
+  return axios.request({
+    url: '/api/backend/article/cancelArticlesTop.json',
+    method: 'post',
+    data: data
+  })
+}

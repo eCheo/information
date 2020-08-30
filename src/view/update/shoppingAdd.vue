@@ -48,7 +48,7 @@
                 type="drag"
                 action="http://47.56.186.16:8089/api/obs/upload.json"
                 style="display: inline-block;width:58px;">
-                <div style="width: 58px;height:58px;line-height: 58px;" @click="upObj = row">
+                <div style="width: 58px;height:58px;line-height: 58px;" @click="upObj = row, upIndex = index">
                     <span>+</span>
                     <p>上传图片</p>
                 </div>
@@ -141,7 +141,20 @@ export default {
       specsListEmp: [
         {
           title: '价格',
-          key: 'money'
+          key: 'money',
+          render: (h, params) => {
+            return h('InputNumber', {
+              props: {
+                value: params.row.money,
+                formatter: value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              },
+              on: {
+                'on-change': (value) => {
+                  this.specsData[params.row._index].money = value;
+                }
+              }
+            })
+          }
         },
         {
           title: '图片',
@@ -149,17 +162,42 @@ export default {
         },
         {
           title: '库存',
-          key: 'stock'
+          key: 'stock',
+          render: (h, params) => {
+            return h('InputNumber', {
+              props: {
+                value: params.row.stock
+              },
+              on: {
+                'on-change': (value) => {
+                  this.specsData[params.row._index].stock = value;
+                }
+              }
+            })
+          }
         },
         {
           title: '积分',
-          key: 'integral'
+          key: 'integral',
+          render: (h, params) => {
+            return h('InputNumber', {
+              props: {
+                value: params.row.integral
+              },
+              on: {
+                'on-change': (value) => {
+                  this.specsData[params.row._index].integral = value;
+                }
+              }
+            })
+          }
         }
       ],
       sonMap: new Map(),
       setList: new Set(),
       headers: {},
       upObj: {},
+      upIndex: 0,
       init: {
         language_url: "/tinymce/langs/zh_CN.js",
         language: "zh_CN",
@@ -335,10 +373,10 @@ export default {
             var tableValue = tableAttr[1]
             data[tableTitle] = tableValue
             specification[tableTitle] = tableValue
-            data.money = '20'
-            data.image = 'https://i0.hdslb.com/bfs/archive/7da891bf650caf6c7ba320d0dfd52917d4b74b28.png'
-            data.integral = '60'
-            data.stock = '100'
+            data.money = ''
+            data.image = ''
+            data.integral = ''
+            data.stock = ''
             if (this.isTableTitleExit(tableTitle)) continue
             this.specsList.unshift({ key: tableTitle, title: tableTitle })
           }
@@ -408,7 +446,7 @@ export default {
       }
     },
     upGoods () {
-      this.formValidate.specificationDetailsDtos = JSON.parse(JSON.stringify(this.specsData))
+      this.formValidate.specificationDetailsDtos = JSON.parse(JSON.stringify(this.specsData));
       if (this.$route.query.id) {
         updateGoods(this.formValidate).then(res => {
           if (res.data.code === '200') {
@@ -441,7 +479,12 @@ export default {
       this.formValidate.goodImagesList.splice(this.formValidate.goodImagesList.indexOf(file.url), 1);
     },
     handleSuccess (res, file) {
-      this.upObj.image = res.data.viewUrl
+      this.upObj.image = res.data.viewUrl;
+      for(let i = 0; i < this.specsData.length; i++) {
+          if (i === this.upIndex) {
+            this.specsData[i].image = res.data.viewUrl;
+          }
+      }
     },
     handleFormatError (file) {
       this.$Notice.warning({

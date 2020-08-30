@@ -90,7 +90,7 @@ export default {
             custInfo: {
                 customerTel: '',
                 message: '',
-                id: this.custUpdateId
+                customerId: this.custUpdateId
             },
             loading: false,
             custUpdateList: [],
