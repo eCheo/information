@@ -174,7 +174,7 @@ export default {
                 style: {
                   color: '#ed4014'
                 }
-              }, '待回复')
+              }, '待回复'+ params.row.unReadCount + '条消息')
             }
           }
         },
@@ -189,7 +189,7 @@ export default {
                 click: () => {
                   this.chatModal = true;
                   this.chatInfo = params.row;
-                  this.findChatRecordPageByCondition();
+                  this.findChatRecordPageByCondition(1);
                 }
               }
             }, '回复')
@@ -299,7 +299,6 @@ export default {
   },
   mounted() {
     tinymce.init({});
-    this.heartbeat();
   },
   methods: {
     handleChange (html, text) {
@@ -353,12 +352,12 @@ export default {
       })
     },
     // 获取聊天记录
-    findChatRecordPageByCondition() {
+    findChatRecordPageByCondition(page) {
       this.chatList = []
       let params = {
         EQ_chatRoomId: this.chatInfo.id,
-        page: 1,
-        size: '6',
+        page: page,
+        size: '50',
         sort: 'pubDate,desc'
       }
       this.spinShow = true;
@@ -373,12 +372,18 @@ export default {
                 whetherOwn: true
               }
               this.chatList.unshift(info);
+               setTimeout(() => {
+                document.getElementById('top').scrollTop = document.getElementById('op').scrollHeight;
+              }, 200);
             } else {
               info = {
                 headImgPath: item.headImgPath,
                 content: item.content
               }
               this.chatList.unshift(info);
+               setTimeout(() => {
+                document.getElementById('top').scrollTop = document.getElementById('op').scrollHeight;
+              }, 200);
             }
           })
           this.spinShow = false;
@@ -418,7 +423,7 @@ export default {
               }
               _that.chatList.push(info);
               setTimeout(() => {
-                document.getElementById('top').scrollTop = 400;
+                document.getElementById('top').scrollTop = document.getElementById('op').scrollHeight;
               }, 200);
             } else {
               let info = {
@@ -429,7 +434,7 @@ export default {
               _that.chatList.push(info);
               _that.chatContent = '';
               setTimeout(() => {
-                document.getElementById('top').scrollTop = 400;
+                document.getElementById('top').scrollTop = document.getElementById('op').scrollHeight;
               }, 200);
             }
           }
@@ -438,19 +443,14 @@ export default {
             // onError(evt)
       };
     },
-    // 保持连接
-    heartbeat() {
-      setTimeout(() => {
-        this.heartbeat()
-      }, 480000);
-      const ws = new WebSocket('ws://47.56.186.16:8099/ws?=' + this.token);
-      ws.onopen = function(evt) {
-        let params = {
-          actionType: 'Heartbeat'
-        }
-        ws.send(JSON.stringify(params))
-      };
-    }
+    // menu() {
+    //   if (document.getElementById('top').scrollTop === 0) {
+    //     let count = 1;
+    //     document.getElementById('top').addEventListener('scroll', this.menu())
+    //     ++count;
+    //     this.findChatRecordPageByCondition(count);
+    //   }
+    // }
   },
   computed: {
     token() {

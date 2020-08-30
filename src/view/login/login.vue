@@ -40,12 +40,25 @@ export default {
               this.$router.push({
                 name: this.$config.homeName
               })
+              this.heartbeat();
           })
         } else {
           this.$Message.error(res.data.message)
           this.logLoading = false;
         }
       })
+    },
+    heartbeat() {
+      setTimeout(() => {
+        this.heartbeat()
+      }, 480000);
+      const ws = new WebSocket('ws://47.56.186.16:8099/ws?=' + this.$store.state.user.token);
+      ws.onopen = function(evt) {
+        let params = {
+          actionType: 'Heartbeat'
+        }
+        ws.send(JSON.stringify(params))
+      };
     }
   }
 }

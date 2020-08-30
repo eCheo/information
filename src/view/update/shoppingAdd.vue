@@ -63,9 +63,9 @@
            <DatePicker @on-change='changeDate' :value="formValidate.date" format="yyyy年MM月dd日" type="daterange" placement="bottom-end" placeholder="Select date" style="width: 350px"></DatePicker>
       </FormItem>
       <FormItem label='商品图片'>
-        <div class="demo-upload-list" v-for="(item, index) in formValidate.goodImagesList" :key="index">
+        <div class="demo-upload-list" v-for="(item, index) in goodImagesList" :key="index">
           <template v-if="item.status === 'finished'">
-            <img :src="item.url" style="width:250px;height:250px;" />
+            <img :src="item.url" />
             <div class="demo-upload-list-cover">
               <!-- <Icon type="ios-eye-outline" @click.native="handleView(item.name)"></Icon> -->
               <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
@@ -190,7 +190,8 @@ export default {
             }
           }
         }
-      }
+      },
+      goodImagesList: []
     }
   },
    components: {
@@ -205,7 +206,7 @@ export default {
     this.headers = {
       Authorization: sessionStorage.getItem('tokenType') + ' ' + store.state.token
     }
-    this.formValidate.goodImagesList = this.$refs.goodImg.fileList;
+    this.goodImagesList = this.$refs.goodImg.fileList;
   },
   methods: {
     handleChange (html, text) {
@@ -231,7 +232,7 @@ export default {
             for (let i = 0; i< this.formValidate.goodImagesList.length; i++) {
               obj.url = this.formValidate.goodImagesList[i];
               obj.status = 'finished'
-              this.formValidate.goodImagesList.splice(i, 1, obj)
+              this.goodImagesList.push(obj)
             }
           }
           this.formValidate.date = [res.data.data.startDate, res.data.data.expirationDate]
@@ -411,15 +412,17 @@ export default {
       if (this.$route.query.id) {
         updateGoods(this.formValidate).then(res => {
           if (res.data.code === '200') {
-            this.$Message.success('修改成功')
+            this.$Message.success('修改成功');
+            this.$router.push('/update/shop/shoppingManger');
           } else {
-            this.$Message.error(res.data.message)
+            this.$Message.error(res.data.message);
           }
         })
       } else {
         createGoods(this.formValidate).then(res => {
           if (res.data.code === '200') {
-            this.$Message.success('添加成功')
+            this.$Message.success('添加成功');
+            this.$router.push('/update/shop/shoppingManger');
           } else {
             this.$Message.error(res.data.message)
           }
@@ -433,8 +436,9 @@ export default {
       this.formValidate.expirationDate = endTime.substring(0, endTime.length - 1)
     },
     handleRemove (file) {
-      const fileList = this.$refs.goodImg.fileList
-      this.$refs.goodImg.fileList.splice(fileList.indexOf(file), 1)
+      const fileList = this.$refs.goodImg.fileList;
+      this.$refs.goodImg.fileList.splice(fileList.indexOf(file), 1);
+      this.formValidate.goodImagesList.splice(this.formValidate.goodImagesList.indexOf(file.url), 1);
     },
     handleSuccess (res, file) {
       this.upObj.image = res.data.viewUrl

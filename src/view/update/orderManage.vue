@@ -89,8 +89,7 @@ export default {
                 {
                     title: '操作',
                     render: (h, params) => {
-                      let isShow = params.row.exchangeStatus.name === 'ToBeReceived'
-                      let isShow2 = params.row.exchangeStatus.name === "Cancel" 
+                      let isShow = params.row.exchangeStatus.name !== 'Pending'
                       return h('div', [
                         h('span', {
                           style: {
@@ -112,7 +111,7 @@ export default {
                             color: '#2D8cF0',
                             textDecoration: 'underline',
                             marginRight: '10px',
-                            display: isShow2 ? 'none' : 'inline-block'
+                            display: isShow ? 'none' : 'inline-block'
                           },
                           on: {
                             click: () => {

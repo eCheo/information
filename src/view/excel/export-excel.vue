@@ -29,7 +29,7 @@
       <p>全部评论</p>
       <div class="kf-acl">
         <ul class="kf-list">
-          <li class="kf-item" :class="articleId === item.id ? 'kf-bg' : ''" v-for="(item,index) in articleList" :key="index" @click="findBackEndComment(1,item.id)">
+          <li class="kf-item" :class="articleId === item.id ? 'kf-bg' : ''" v-for="(item,index) in articleList" :key="index" @click="articleId = item.id,findBackEndComment(1)">
             <p>{{item.title}}</p>
             <div style="margin-top:10px;">
               <span>{{item.pubDate}}</span>
@@ -54,11 +54,11 @@
               <Button type="success" @click="replay(item, 'Reply')">回复</Button>
             </div>
             <div class="ex-more" v-if="item.replyCount > 0">
-              <p>当前有<span style="color:#19be6b;">{{item.replyCount}}条</span>回复<span style='cursor:pointer;color:#2d8cf0;' @click="findBackEndReplyList(1, item)">点击查看详情</span></p>
+              <p>当前有<span style="color:#19be6b;">{{item.replyCount}}条</span>回复<span style='cursor:pointer;color:#2d8cf0;' @click="commentInfo = item,findBackEndReplyList(1)">点击查看详情</span></p>
             </div>
           </div>
           <div style="text-align:right;margin-top:20px;">
-            <Page :current='commentPage' :page-size='6' :total="commentList.totalElements" simple @on-change='findBackEndComment(commentPage, this.articleId)' />
+            <Page :current='commentPage' :page-size='6' :total="commentList.totalElements" simple @on-change='findBackEndComment' />
           </div>
         </div>
         <div class="no-data" v-else-if="commentList.content.length === 0 && articleId !== ''">
@@ -99,7 +99,7 @@
       </div>
       <div slot="footer">
         <div style="text-align:right;margin-top:20px;">
-            <Page :current='replySonPage' :page-size='6' :total="replySonList.totalElements" simple @on-change='findBackEndComment(replySonPage, this.commentId)' />
+            <Page :current='replySonPage' :page-size='6' :total="replySonList.totalElements" simple @on-change='findBackEndReplyList' />
         </div>
       </div>
     </Modal>
@@ -142,8 +142,7 @@ export default {
       this.userFrom.endTime = endTime.substring(0, endTime.length - 1);
     },
     // 查询文章评论
-    findBackEndComment(page,id) {
-      this.articleId = id;
+    findBackEndComment(page) {
       this.commentPage = page;
       let params = {
         page: page,
@@ -186,7 +185,7 @@ export default {
           this.$Message.success('回复成功');
           this.findBackEndComment(this.commentPage, this.articleId);
           if (this.moreModal) {
-            this.findBackEndReplyList(this.replySonPage, this.commentInfo);
+            this.findBackEndReplyList(1);
           }
           this.modalShow = false;
         } else {
@@ -196,15 +195,15 @@ export default {
       })
     },
     // 查询子评论
-    findBackEndReplyList(page,item) {
+    findBackEndReplyList(page) {
       this.moreModal = true;
       this.spinShow = true;
-      this.commentId = item.id;
-      this.commentInfo = item;
+      // this.commentId = this.commentInfo.id;
+      this.replySonPage = page;
       let params = {
         page: this.replySonPage,
         size: '5',
-        EQ_parentId: item.id
+        EQ_parentId: this.commentInfo.id
       }
       findBackEndReplyList(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
@@ -321,7 +320,7 @@ export default {
   position: relative;
 }
  .ex-hhf {
-    padding: 10px 36px 0 0;
+    padding: 10px 36px 20px 0;
     color: #666666;
     margin:0 0 15px 0;
     border-bottom: 1px solid #e9e9e9;

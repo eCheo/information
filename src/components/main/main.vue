@@ -8,8 +8,11 @@
     <Layout>
       <Header class="header-con">
         <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
-          <user :message-unread-count="unreadCount" :user-avator="userAvator"/>
-          <error-store v-if="$config.plugin['error-store'] && $config.plugin['error-store'].showInHeader" :has-read="hasReadErrorPage" :count="errorCount"></error-store>
+          <Badge :count="unreadCount" style="float: revert;margin-right: 20px;" overflow-count="999">
+              <Icon type="ios-notifications-outline" size="26"></Icon>
+          </Badge>
+          <user :user-avator="userAvator"/>
+          <!-- <error-store v-if="$config.plugin['error-store'] && $config.plugin['error-store'].showInHeader" :has-read="hasReadErrorPage" :count="errorCount"></error-store> -->
           <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
         </header-bar>
       </Header>
@@ -40,6 +43,7 @@ import Language from './components/language'
 import ErrorStore from './components/error-store'
 import { mapMutations, mapActions, mapGetters } from 'vuex'
 import { getNewTagList, routeEqual } from '@/libs/util'
+import {getChartUnReadCount} from '@/api/data'
 import routers from '@/router/routers'
 import './main.less'
 export default {
@@ -57,7 +61,8 @@ export default {
   data () {
     return {
       collapsed: false,
-      isFullscreen: false
+      isFullscreen: false,
+      unreadCount: 0
     }
   },
   computed: {
@@ -85,9 +90,6 @@ export default {
     },
     hasReadErrorPage () {
       return this.$store.state.app.hasReadErrorPage
-    },
-    unreadCount () {
-      return this.$store.state.user.unreadCount
     }
   },
   methods: {
@@ -138,7 +140,19 @@ export default {
     },
     handleClick (item) {
       this.turnToPage(item)
-    }
+    },
+    // getChartUnReadCount() {
+    //   setTimeout(() => {
+    //     this.getChartUnReadCount();
+    //   }, 5000);
+    //   getChartUnReadCount().then(res => {
+    //     if (res.status === 200 && res.data.code === '200') {
+    //       this.unreadCount = res.data.data;
+    //     } else {
+    //       this.$Message.error(res.data.message);
+    //     }
+    //   })
+    // }
   },
   watch: {
     '$route' (newRoute) {

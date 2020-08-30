@@ -477,3 +477,11 @@ export const findById = data => {
     data: data
   })
 }
+// 获取私信未读数量
+export const getChartUnReadCount = data => {
+  return axios.request({
+    url: '/api/backend/message/getChartUnReadCount.json',
+    method: 'post',
+    data: data
+  })
+}

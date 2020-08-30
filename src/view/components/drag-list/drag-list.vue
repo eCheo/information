@@ -211,7 +211,7 @@ export default {
         type: "PublishArticle",
         queryValue: "",
         page: 1,
-        size: "15"
+        size: "10"
       },
       tableLoading: false
     };
