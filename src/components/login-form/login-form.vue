@@ -44,8 +44,8 @@ export default {
   data () {
     return {
       form: {
-        userName: 'news03',
-        password: '123456',
+        userName: '',
+        password: '',
         loginType: 'PASSWORD'
       }
     }

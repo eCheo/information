@@ -15,6 +15,7 @@
 <script>
 import './user.less'
 import { mapActions } from 'vuex'
+import {loginOut} from '@/api/data'
 export default {
   name: 'User',
   props: {
@@ -32,7 +33,7 @@ export default {
       'handleLogOut'
     ]),
     logout () {
-      this.handleLogOut().then(() => {
+     loginOut().then(() => {
         this.$router.push({
           name: 'login'
         })

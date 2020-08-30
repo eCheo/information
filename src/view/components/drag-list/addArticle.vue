@@ -72,11 +72,11 @@
         </div>
         <div>
             <p>封面</p>
-            <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index">
+            <div class="demo-upload-list" v-for="(item, index) in fmUploadList" :key="index">
                 <template v-if="item.status === 'finished'">
                   <img :src="item.url" style="width:250px;height:250px;" />
                   <div class="demo-upload-list-cover">
-                      <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+                      <Icon type="ios-trash-outline" @click.native="handleRemovefm(item)"></Icon>
                   </div>
                 </template>
                 <template v-else>
@@ -84,14 +84,13 @@
                 </template>
             </div>
             <Upload
-                ref="upload"
+                ref="fmUpload"
                 :show-upload-list="false"
-                :on-success="handleSuccess"
+                :on-success="handleSuccessfm"
                 :format="['jpg','png']"
                 :max-size="5042"
-                :on-format-error="handleFormatError"
-                :on-exceeded-size="handleMaxSize"
-                :before-upload="handleBeforeUpload"
+                :on-format-error="handleFormatErrorfm"
+                :on-exceeded-size="handleMaxSizefm"
                 multiple
                 :headers="headers"
                 type="drag"
@@ -250,7 +249,8 @@ export default {
        optionOne: '',
        viewpointTwo: '',
        optionTwo: ''
-     }
+     },
+      fmUploadList: []
     }
   },
   components: {
@@ -269,6 +269,9 @@ export default {
     tinymce.init({})
     if (this.$refs.upload.fileList) {
       this.uploadList = this.$refs.upload.fileList
+    }
+    if(this.$refs.fmUpload.fileList) {
+      this.fmUploadList = this.$refs.fmUpload.fileList
     }
     this.headers = {
       Authorization: sessionStorage.getItem('tokenType') + ' ' + sessionStorage.getItem('token')
@@ -350,6 +353,9 @@ export default {
           this.topicData.optionOne = res.data.data.orthodoxButtonText;
           this.topicData.viewpointTwo = res.data.data.opposingView;
           this.topicData.optionTwo = res.data.data.opposingButtonText;
+          this.videoImagePath = res.data.data.videoImagePath;
+          this.viodeUrl = res.data.data.videoPath;
+          this.fmUploadList.push({'url': res.data.data.videoImagePath, 'status': 'finished'})
           if (res.data.data.imagePaths.length > 0) {
             res.data.data.imagePaths.forEach(item => {
               this.uploadList.push({
@@ -358,6 +364,8 @@ export default {
               })
             });
           }
+        } else {
+          this.$Message.error(res.data.message);
         }
       })
     },
@@ -406,6 +414,37 @@ export default {
         })
       }
       return check
+    },
+    handleSuccessfm (res, file) {
+      if (this.viewType === 'PublishVideo') {
+        if (this.fileName === 'PublishVideo') {
+          this.viodeUrl = res.data.viewUrl;
+        } else if(this.fileName === 'PublishVideoImag') {
+          this.videoImagePath = res.data.viewUrl;
+        } else {
+          this.videoImagePath = res.data.viewUrl;
+        }
+      } else {
+        file.url = res.data.viewUrl;
+        this.viewImg.push(res.data.viewUrl);
+      }
+    },
+    handleRemovefm (file) {
+      const fileList = this.$refs.fmUpload.fileList || [];
+      this.$refs.fmUpload.fileList.splice(fileList.indexOf(file), 1);
+      this.videoImagePath = '';
+    },
+    handleFormatErrorfm (file) {
+      this.$Notice.warning({
+        title: '格式错误',
+        desc: '视频暂时只支持 avi or mp4.'
+      })
+    },
+    handleMaxSizefm (file) {
+      this.$Notice.warning({
+        title: 'Exceeding file size limit',
+        desc: 'File  ' + file.name + ' is too large, no more than 2M.'
+      })
     }
   },
   watch: {

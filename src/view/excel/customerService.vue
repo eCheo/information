@@ -7,12 +7,18 @@
         </div>
         <Modal v-model="cusModel" title="修改客服信息" :mask-closable='false'>
             <div>
+                <p>管理员名字</p>
+                <Select v-model="custUpdateId">
+                    <Option v-for="item in custUpdateList" :value="item.memberId" :key="item.memberId">{{ item.nickName }}</Option>
+                </Select>
+            </div>
+            <div style="margin:10px 0;">
                 <p>客服电话</p>
-                <Input v-model="custInfo.customerTel" style="width: 200px;"></Input>
+                <Input v-model="custInfo.customerTel" ></Input>
             </div>
             <div>
                 <p>私信推送消息</p>
-                <Input type="textarea" :rows='4' v-model="custInfo.message" style="width: 200px;"></Input>
+                <Input type="textarea" :rows='4' v-model="custInfo.message"></Input>
             </div>
             <div slot="footer">
                 <Button type="text" @click="cusModel = false">取消</Button>
@@ -23,7 +29,7 @@
 </template>
 
 <script>
-import {findCustomerListByCondition, updateCustomer} from "@/api/data";
+import {findCustomerListByCondition, updateCustomer, getBackEndCustomer} from "@/api/data";
 export default {
     data () {
         return {
@@ -65,6 +71,7 @@ export default {
                                     this.cusModel = true;
                                     this.custInfo.customerTel = params.row.customerTel;
                                     this.custInfo.message = params.row.message;
+                                    this.custUpdateId = params.row.customerId;
                                 }
                             }
                         }, '修改')
@@ -82,13 +89,17 @@ export default {
             cusModel: false,
             custInfo: {
                 customerTel: '',
-                message: ''
+                message: '',
+                id: this.custUpdateId
             },
-            loading: false
+            loading: false,
+            custUpdateList: [],
+            custUpdateId: ''
         }
     },
     created() {
         this.findCustomerListByCondition();
+        this.getBackEndCustomer();
     },
     methods: {
         findCustomerListByCondition() {
@@ -109,6 +120,15 @@ export default {
                     this.$Message.success('修改客服信息成功');
                     this.cusModel = false;
                     this.findCustomerListByCondition();
+                } else {
+                    this.$Message.error(res.data.message);
+                }
+            })
+        },
+        getBackEndCustomer() {
+            getBackEndCustomer().then(res => {
+                if (res.status === 200 && res.data.code === '200') {
+                    this.custUpdateList = res.data.data;
                 } else {
                     this.$Message.error(res.data.message);
                 }

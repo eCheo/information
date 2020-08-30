@@ -485,3 +485,19 @@ export const getChartUnReadCount = data => {
     data: data
   })
 }
+// 获取客服列表
+export const getBackEndCustomer = data => {
+  return axios.request({
+    url: '/api/backend/member/getBackEndCustomer.json',
+    method: 'post',
+    data: data
+  })
+}
+// 退出登录
+export const loginOut = data => {
+  return axios.request({
+    url: '/api/front/member/loginOut.json',
+    method: 'post',
+    data: data
+  })
+}
