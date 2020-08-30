@@ -47,11 +47,11 @@ export default {
       let params = {};
       if (this.settingTime === 'long') {
          params = {
-          isValid: this.settingTime === 'long' ? true : false
+          isValid: this.settingTime === 'long' ? false : true
         }
       } else {
           params = {
-            isValid: this.settingTime === 'long' ? true : false,
+            isValid: this.settingTime === 'long' ? false : true,
             month: this.month,
             day: this.day
         }
@@ -73,7 +73,7 @@ export default {
     findSchedule() {
       findSchedule().then(res => {
         if (res.status === 200 && res.data.code === '200') {
-          this.settingTime = res.data.data.isValid ? 'long' : 'year';
+          this.settingTime = res.data.data.isValid ? 'year' : 'long';
           this.month = res.data.data.month;
           this.day = res.data.data.day;
           let m = res.data.data.month > 9 ? res.data.data.month : '0' + res.data.data.month;
