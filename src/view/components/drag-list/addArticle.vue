@@ -57,6 +57,7 @@
                 ref="upload"
                 :show-upload-list="true"
                 :on-success="handleSuccess"
+                :default-file-list='vidoeList'
                 :format="['avi','mp4']"
                 :max-size="10240"
                 :on-format-error="handleFormatError"
@@ -250,7 +251,8 @@ export default {
        viewpointTwo: '',
        optionTwo: ''
      },
-      fmUploadList: []
+      fmUploadList: [],
+      vidoeList: []
     }
   },
   components: {
@@ -353,9 +355,11 @@ export default {
           this.topicData.optionOne = res.data.data.orthodoxButtonText;
           this.topicData.viewpointTwo = res.data.data.opposingView;
           this.topicData.optionTwo = res.data.data.opposingButtonText;
-          this.videoImagePath = res.data.data.videoImagePath;
-          this.viodeUrl = res.data.data.videoPath;
-          this.fmUploadList.push({'url': res.data.data.videoImagePath, 'status': 'finished'})
+          if (this.viewType === 'PublishVideo') {
+            this.videoImagePath = res.data.data.videoImagePath;
+            this.viodeUrl = res.data.data.videoPath;
+            this.fmUploadList.push({'url': res.data.data.videoImagePath, 'status': 'finished'})
+          }        
           if (res.data.data.imagePaths.length > 0) {
             res.data.data.imagePaths.forEach(item => {
               this.uploadList.push({
@@ -375,7 +379,10 @@ export default {
     },
     handleRemove (file) {
       const fileList = this.$refs.upload.fileList || [];
-      this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
+      this.$refs.upload.fileList.splice(fileList.indexOf(file), 1);
+      if (this.viewType === 'PublishVideo') {
+        this.viodeUrl = '';
+      }
     },
     handleSuccess (res, file) {
       if (this.viewType === 'PublishVideo') {
