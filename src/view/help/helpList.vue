@@ -44,7 +44,7 @@
             </div>
             <div>
                 <p>通知内容</p>
-                <tinymce-editor ref="editor" :init='init' v-model="helpInfo.content" @on-change="handleChange"/>
+                <tinymce-editor v-if="addModal" ref="editor" :init='init' v-model="helpInfo.content" @on-change="handleChange"/>
             </div>
             <div slot="footer">
                 <Button type="text" @click="addModal = false">取消</Button>

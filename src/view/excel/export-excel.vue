@@ -45,7 +45,7 @@
             <div>
               <img class="ex-img" :src="item.headImgPath" />
             </div>
-            <div class="ex-ct">
+            <div class="ex-ct" >
               <p>{{item.nickName}}</p>
               <p>{{item.content}}</p>
               <p>{{item.commentDate}}</p>
@@ -53,20 +53,12 @@
             <div class="ex-hf">
               <Button type="success" @click="replay(item, 'Reply')">回复</Button>
             </div>
-            <div class="ex-hhf" style="width:100%;" v-for="(it, index) in replySonList" :key="index">
-              <span v-if="!it.replyBackEndMemberDto">
-                <!-- <img class="ex-img" :src="it.memberBackEndDto.headImgPath" /> -->
-                {{it.memberBackEndDto.nickName}}：{{it.content}}
-              </span>
-              <span v-else>
-                <!-- <img class="ex-img" :src="it.replyBackEndMemberDto.headImgPath" /> -->
-                {{it.memberBackEndDto.nickName}}<a style="color:#05b55c;">回复</a>{{it.replyBackEndMemberDto.nickName}}：{{it.content}}
-              </span>
-              <Button style="float:right" type="success" @click="replay(it, 'ReplyReply')">回复</Button>
+            <div class="ex-more" v-if="item.replyCount > 0">
+              <p>当前有<span style="color:#19be6b;">{{item.replyCount}}条</span>回复<span style='cursor:pointer;color:#2d8cf0;' @click="findBackEndReplyList(1, item)">点击查看详情</span></p>
             </div>
           </div>
           <div style="text-align:right;margin-top:20px;">
-            <Page :current='commentPage' :total="commentList.totalElements" simple @on-change='findBackEndComment(commentPage, this.articleId)' />
+            <Page :current='commentPage' :page-size='6' :total="commentList.totalElements" simple @on-change='findBackEndComment(commentPage, this.articleId)' />
           </div>
         </div>
         <div class="no-data" v-else-if="commentList.content.length === 0 && articleId !== ''">
@@ -74,12 +66,41 @@
         </div>
       </div>
     </div>
-    <Modal v-model="modalShow">
+    <Modal v-model="modalShow" :mask-closable='false'>
       <p>回复{{nickName}}</p>
       <Input v-model="replayContent" :maxlength="500" show-word-limit type="textarea" style="width: 200px" />
       <Button type="success" @click="articlesCommentOrReplay">回复</Button>
       <div slot="footer">
         
+      </div>
+    </Modal>
+    <Modal v-model="moreModal" :mask-closable='false' title="回复详情">
+      <div class="ex-box">
+        <Spin size="large" fix v-if="spinShow"></Spin>
+        <div class="ex-pl">
+          <div>
+                <img class="ex-img" :src="commentInfo.headImgPath" />
+            </div>
+            <div class="ex-ct" style="width:auto;">
+                <p>{{commentInfo.nickName}}</p>
+                <p>{{commentInfo.content}}</p>
+                <p>{{commentInfo.commentDate}}</p>
+            </div>
+          </div>
+        <div class="ex-hhf" style="width:100%;" v-for="(it, index) in replySonList.content" :key="index">
+                <span v-if="!it.replyBackEndMemberDto">
+                  {{it.memberBackEndDto.nickName}}：{{it.content}}
+                </span>
+                <span v-else>
+                  {{it.memberBackEndDto.nickName}}<a style="color:#05b55c;">回复</a>{{it.replyBackEndMemberDto.nickName}}：{{it.content}}
+                </span>
+                <Button style="float:right" type="success" @click="replay(it, 'ReplyReply')">回复</Button>
+        </div>
+      </div>
+      <div slot="footer">
+        <div style="text-align:right;margin-top:20px;">
+            <Page :current='replySonPage' :page-size='6' :total="replySonList.totalElements" simple @on-change='findBackEndComment(replySonPage, this.commentId)' />
+        </div>
       </div>
     </Modal>
   </div>
@@ -94,7 +115,7 @@ export default {
         content: []
       },
       articleList: {},
-      replySonList: [],
+      replySonList: {},
       articleId: '',
       total: 0,
       page: 1,
@@ -103,7 +124,11 @@ export default {
       replayOneInfo: {},
       replayContent: '',
       commentId: '',
-      commentPage: 1
+      commentPage: 1,
+      moreModal: false,
+      spinShow: false,
+      replySonPage: 1,
+      commentInfo: {}
     };
   },
   created() {
@@ -128,9 +153,6 @@ export default {
       findBackEndComment(params).then(res => {
         if (res.status === 200 && res.data.code === "200") {
           this.commentList = res.data.data;
-          this.commentList.content.forEach(item => {
-            this.findBackEndReplyList(1,item.id);
-          })
         } else {
           this.$Message.error(res.data.message);
         }
@@ -162,24 +184,35 @@ export default {
       articlesCommentOrReplay(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
           this.$Message.success('回复成功');
-          this.findBackEndComment(this.page, this.articleId)
+          this.findBackEndComment(this.commentPage, this.articleId);
+          if (this.moreModal) {
+            this.findBackEndReplyList(this.replySonPage, this.commentInfo);
+          }
+          this.modalShow = false;
         } else {
           this.$Message.error(res.data.message);
+          this.modalShow = false;
         }
       })
     },
     // 查询子评论
-    findBackEndReplyList(page,id) {
+    findBackEndReplyList(page,item) {
+      this.moreModal = true;
+      this.spinShow = true;
+      this.commentId = item.id;
+      this.commentInfo = item;
       let params = {
-        page: 1,
+        page: this.replySonPage,
         size: '5',
-        EQ_parentId: id
+        EQ_parentId: item.id
       }
       findBackEndReplyList(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
-          this.replySonList = res.data.data.content;
+          this.replySonList = res.data.data;
+          this.spinShow = false;
         } else {
           this.$Message.error(res.data.message);
+          this.spinShow = false;
         }
       })
     },
@@ -278,11 +311,19 @@ export default {
   .ex-hf {
     line-height: 69px;
   }
-  .ex-hhf {
-    padding: 10px 36px 0 0;
-    color: #666666;
-    margin:0 0 15px 69px;
-    border-top: 1px solid #e9e9e9;
+  .ex-more {
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
   }
 }
+.ex-box {
+  position: relative;
+}
+ .ex-hhf {
+    padding: 10px 36px 0 0;
+    color: #666666;
+    margin:0 0 15px 0;
+    border-bottom: 1px solid #e9e9e9;
+  }
 </style>

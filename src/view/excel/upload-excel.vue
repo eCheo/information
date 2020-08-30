@@ -112,7 +112,7 @@
      </div>
       <div>
         <p>通知内容</p>
-        <tinymce-editor ref="editor" :init='init' v-model="content" @on-change="handleChange"/>
+        <tinymce-editor v-if="addModal" ref="editor" :init='init' v-model="content" @on-change="handleChange"/>
       </div>
    </Modal>
   </div>

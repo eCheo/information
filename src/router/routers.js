@@ -105,14 +105,39 @@ export default [
             component: () => import('@/view/components/count-to/count-to.vue')
           },
           {
-            path: 'countdetails',
-            name: 'countdetails',
+            path: '/',
+            name: '/',
             meta: {
               icon: 'md-trending-up',
               title: '查看发布内容',
-              hideInMenu: true
+              hideInMenu: true,
+              access: null
             },
-            component: () => import('@/view/components/count-to/countDetails.vue')
+            children: [
+              {
+                path: 'acldetails',
+                name: 'acldetails',
+                meta: {
+                  icon: 'md-trending-up',
+                  title: '详情',
+                  hideInMenu: true,
+                  access: null
+                },
+                component: () => import('@/view/components/count-to/aclDetails.vue')
+              },
+              {
+                path: 'countdetails',
+                name: 'countdetails',
+                meta: {
+                  icon: 'md-trending-up',
+                  title: '查看发布内容',
+                  hideInMenu: true,
+                  access: null
+                },
+                component: () => import('@/view/components/count-to/countDetails.vue')
+              }
+            ],
+            component: parentView
           }
         ],
         component: parentView
