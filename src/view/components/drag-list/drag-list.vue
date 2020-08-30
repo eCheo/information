@@ -54,7 +54,20 @@ export default {
       authenticationList: [
         {
           title: "标题",
-          key: "title"
+          key: "title",
+          render: (h, params)=> {
+            return h('div', {
+              style: {
+                cursor: this.releaseType === 'BrokeTheNews' ? 'pointer' :''
+              },
+              on: {
+                click: () => {
+                  if (this.releaseType !== 'BrokeTheNews') return;
+                  this.$router.push({path:'/components/drag/addArticle', query:{type: this.releaseType, id: params.row.id}})
+                }
+              }
+            }, params.row.title)
+          }
         },
         {
           title: "封面",

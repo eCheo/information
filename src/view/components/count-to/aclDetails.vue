@@ -11,7 +11,7 @@
                         </div>
                         <div class="ex-ct" >
                             <p>{{memberDto.nickName}}</p>
-                            <p>{{titleData.nowDate}}<span style="margin:0 6px;font-size:19px;">·</span><span>{{memberDto.videoAuthName}}</span></p>
+                            <p>{{titleData.nowDate}}<span style="margin:0 6px;font-size:19px;">·</span><span>{{memberDto.videoAuthName || memberDto.articlesAuthName}}</span></p>
                         </div>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                         </div>
                         <div class="ex-ct" >
                             <p>{{memberDto.nickName}}</p>
-                            <p>{{titleData.nowDate}}<span style="margin:0 6px;font-size:19px;">·</span><span>{{memberDto.videoAuthName}}</span></p>
+                            <p>{{titleData.nowDate}}<span style="margin:0 6px;font-size:19px;">·</span><span>{{memberDto.videoAuthName || memberDto.articlesAuthName}}</span></p>
                         </div>
                     </div>
                     <div v-html="titleData.content" style="margin-top:20px;">
