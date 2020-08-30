@@ -533,7 +533,7 @@ export default {
           } else {
             this.$Message.success('爆料拒绝成功');
           }
-            this.findArticlesResult(1);
+          this.$router.push('/components/drag/drag_list_page')
         } else {  
           this.$Message.error(res.data.message);
         }
