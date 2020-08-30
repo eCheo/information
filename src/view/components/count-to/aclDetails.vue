@@ -4,14 +4,14 @@
             <div class="vd-top">
                 <div id="dplayer" style="width:800px;height:400px;margin:0 auto;"></div>
                 <div style="width:800px;margin:0 auto;">
-                    <p style="font-size:18px;margin:20px 0 10px 0;">{{titleData.title}}</p>
+                    <p style="font-size:18px;margin:20px 0 10px 0;color:#333333;font-weight: bold;">{{titleData.title}}</p>
                     <div class="ex-pl">
                         <div>
-                            <img class="ex-img" :src="titleData.memberDto.headImgPath" />
+                            <img class="ex-img" :src="memberDto.headImgPath" />
                         </div>
                         <div class="ex-ct" >
-                            <p>{{titleData.memberDto.nickName}}</p>
-                            <p>{{titleData.nowDate}}<span style="margin:0 6px;font-size:19px;">·</span><span>{{titleData.memberDto.videoAuthName}}</span></p>
+                            <p>{{memberDto.nickName}}</p>
+                            <p>{{titleData.nowDate}}<span style="margin:0 6px;font-size:19px;">·</span><span>{{memberDto.videoAuthName}}</span></p>
                         </div>
                     </div>
                 </div>
@@ -37,7 +37,21 @@
             </div> -->
         </div>
         <div v-if="titleDetails.type.name === 'PublishArticle'">
+            <div class="vd-top">
+                <p style="font-size:18px;margin:20px 0 10px 0;color:#333333;font-weight: bold;">{{titleData.title}}</p>
+                    <div class="ex-pl">
+                        <div>
+                            <img class="ex-img" :src="memberDto.headImgPath" />
+                        </div>
+                        <div class="ex-ct" >
+                            <p>{{memberDto.nickName}}</p>
+                            <p>{{titleData.nowDate}}<span style="margin:0 6px;font-size:19px;">·</span><span>{{memberDto.videoAuthName}}</span></p>
+                        </div>
+                    </div>
+                    <div v-html="titleData.content" style="margin-top:20px;">
 
+                    </div>
+            </div>
         </div>
     </div>
 </template>
@@ -50,6 +64,7 @@ export default {
         return {
             titleDetails: JSON.parse(sessionStorage.getItem('titleObj')),
             titleData: {},
+            memberDto: {},
             dp: null
         }
     },
@@ -64,6 +79,7 @@ export default {
             findArticlesDetails(params).then(res => {
                 if (res.status === 200 && res.data.code === '200') {
                     this.titleData = res.data.data;
+                    this.memberDto = res.data.data.memberDto;
                     if (this.titleDetails.type.name === 'PublishVideo') {
                         let _that = this;
                         const dplayer = new DPlayer({
@@ -85,8 +101,10 @@ export default {
         }
     },
     destroyed() {
-        // sessionStorage.removeItem('titleObj');
-        this.dp.destroy()
+        sessionStorage.removeItem('titleObj');
+        if (this.titleDetails.type.name === 'PublishVideo') { 
+            this.dp.destroy()
+        }
     }
 }
 </script>
