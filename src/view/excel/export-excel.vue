@@ -37,7 +37,7 @@
             </div>
           </li>
           <li style="padding: 20px; text-align: center;">
-            <Page :current='page' :total="total" simple @on-change='findBackEndArticle' />
+            <Page :page-size='6' :current='page' :total="total" simple @on-change='findBackEndArticle' />
           </li>
         </ul>
         <div v-if="commentList.content.length > 0 && articleId !== ''" style="width:100%;">
@@ -162,7 +162,9 @@ export default {
       this.page = page;
       let params = {
         page: page,
-        size: "6"
+        size: "6",
+        EQ_isDelete: 'false',
+        EQ_groundingType: 'Grounding'
       };
       findBackEndArticle(params).then(res => {
         if (res.status === 200 && res.data.code === "200") {

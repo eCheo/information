@@ -62,33 +62,33 @@
             </div>
             <Table border :columns="infoList" :data="infoData.content"></Table>
             <div style="margin-top:10px;text-align:right;">
-              <Page :page-size='10' :current='infoFrom.page' :total="infoData.totalElements" @on-change='findSystemMessage' />
+              <Page :page-size='6' :current='infoFrom.page' :total="infoData.totalElements" @on-change='findSystemMessage' />
             </div>
           </div>
         </TabPane>
     </Tabs>
     <Modal v-model="chatModal" :mask-closable='false'>
         <p style="text-align:center;margin-bottom:15px;color:#333333;font-size:16px;">{{chatInfo.nickName}}</p>
-        <div class="chat" id="top">
-          <Spin size="large" fix v-if="spinShow"></Spin>
-          <p style="text-align:center;">{{chatInfo.pubDate}}</p>
-          <div id="op">
-            <div v-for="(item, index) in chatList" :key='index'>
-              <div v-if="!item.whetherOwn" class="ct-left">
-                <img :src="item.headImgPath">
-                <div class="ct-box">
-                  {{item.content}}
+          <div class="chat" id="top">
+            <Spin size="large" fix v-if="spinShow"></Spin>
+            <p style="text-align:center;">{{chatInfo.pubDate}}</p>
+            <Scroll :on-reach-top="handleReachEdge" loading-text='加载中' height='367'>
+                <div v-for="(item, index) in chatList" :key='index'>
+                  <div v-if="!item.whetherOwn" class="ct-left">
+                    <img :src="item.headImgPath">
+                    <div class="ct-box">
+                      {{item.content}}
+                    </div>
+                  </div>
+                  <div v-else class="ct-right">
+                    <div class="ct-rbox">
+                      {{item.content}}
+                    </div>
+                    <img :src="item.headImgPath">
+                  </div>
                 </div>
-              </div>
-              <div v-else class="ct-right">
-                <div class="ct-rbox">
-                  {{item.content}}
-                </div>
-                <img :src="item.headImgPath">
-              </div>
-            </div>
+             </Scroll>
           </div>
-        </div>
         <div slot="footer" style="text-align:left;">
           <Input type="textarea" v-model="chatContent" :rows='2' style="width:86%;margin-right:10px;"></Input>
           <Button type="success" @click="setChat">回复</Button>
@@ -189,7 +189,8 @@ export default {
                 click: () => {
                   this.chatModal = true;
                   this.chatInfo = params.row;
-                  this.findChatRecordPageByCondition(1);
+                  this.chatPage = 1;
+                  this.findChatRecordPageByCondition(this.chatPage);
                 }
               }
             }, '回复')
@@ -287,7 +288,10 @@ export default {
       addModal: false,
       chatContent: '',
       chatList: [],
-      spinShow: false
+      spinShow: false,
+      chatPage: 1,
+      maxPage: 1,
+      setUserId: ''
     }
   },
   components: {
@@ -353,17 +357,21 @@ export default {
     },
     // 获取聊天记录
     findChatRecordPageByCondition(page) {
-      this.chatList = []
+      if (page === 1) {
+        this.chatList = [];
+      }
+      this.chatPage = page;
       let params = {
         EQ_chatRoomId: this.chatInfo.id,
         page: page,
-        size: '50',
+        size: '6',
         sort: 'pubDate,desc'
       }
       this.spinShow = true;
       findChatRecordPageByCondition(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
           let info = {};
+          this.maxPage = res.data.data.totalPages;
           res.data.data.content.forEach(item => {
             if (item.whetherOwn) {
                 info = {
@@ -373,7 +381,7 @@ export default {
               }
               this.chatList.unshift(info);
                setTimeout(() => {
-                document.getElementById('top').scrollTop = document.getElementById('op').scrollHeight;
+                document.getElementById('top').scrollTop = document.getElementById('top').scrollHeight;
               }, 200);
             } else {
               info = {
@@ -382,7 +390,7 @@ export default {
               }
               this.chatList.unshift(info);
                setTimeout(() => {
-                document.getElementById('top').scrollTop = document.getElementById('op').scrollHeight;
+                document.getElementById('top').scrollTop = document.getElementById('top').scrollHeight;
               }, 200);
             }
           })
@@ -443,6 +451,15 @@ export default {
             // onError(evt)
       };
     },
+    handleReachEdge (dir) {
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                      if (this.chatPage > this.maxPage) return;
+                        this.findChatRecordPageByCondition(++this.chatPage)
+                        resolve();
+                    }, 2000);
+                });
+            }
     // menu() {
     //   if (document.getElementById('top').scrollTop === 0) {
     //     let count = 1;
