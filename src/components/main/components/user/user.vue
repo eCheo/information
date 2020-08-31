@@ -37,6 +37,9 @@ export default {
         this.$router.push({
           name: 'login'
         })
+        setToken('')
+        sessionStorage.removeItem('tokenType')
+        sessionStorage.removeItem('token')
       })
     },
     message () {
