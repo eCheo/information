@@ -46,7 +46,7 @@ class HttpRequest {
     instance.interceptors.response.use(res => {
       this.destroy(url)
       if (res.status === 200 && res.data.code === '208' && location.href.lastIndexOf('login') === -1) {
-        location.href = '/login'
+        router.push({name: 'login'})
       }
       const { data, status } = res
       return { data, status }

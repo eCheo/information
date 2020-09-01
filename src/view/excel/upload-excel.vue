@@ -502,8 +502,6 @@ export default {
   width:100%;
   height: 400px;
   padding: 10px 20px;
-  overflow: auto;
-  position: relative;
   .ct-left {
     width: 100%;
     margin-top: 20px;
