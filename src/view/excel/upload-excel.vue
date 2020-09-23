@@ -380,18 +380,18 @@ export default {
                 whetherOwn: true
               }
               this.chatList.unshift(info);
-               setTimeout(() => {
-                document.getElementById('top').scrollTop = document.getElementById('top').scrollHeight;
-              }, 200);
+              //  setTimeout(() => {
+              //   document.getElementById('top').scrollTop = document.getElementById('top').scrollHeight;
+              // }, 200);
             } else {
               info = {
                 headImgPath: item.headImgPath,
                 content: item.content
               }
               this.chatList.unshift(info);
-               setTimeout(() => {
-                document.getElementById('top').scrollTop = document.getElementById('top').scrollHeight;
-              }, 200);
+              //  setTimeout(() => {
+              //   document.getElementById('top').scrollTop = document.getElementById('top').scrollHeight;
+              // }, 200);
             }
           })
           this.spinShow = false;
@@ -430,9 +430,9 @@ export default {
                 content: data.data.content
               }
               _that.chatList.push(info);
-              setTimeout(() => {
-                document.getElementById('top').scrollTop = document.getElementById('op').scrollHeight;
-              }, 200);
+              // setTimeout(() => {
+              //   document.getElementById('top').scrollTop = document.getElementById('op').scrollHeight;
+              // }, 200);
             } else {
               let info = {
                 headImgPath: _that.$store.state.user.avatorImgPath,
@@ -441,9 +441,9 @@ export default {
               }
               _that.chatList.push(info);
               _that.chatContent = '';
-              setTimeout(() => {
-                document.getElementById('top').scrollTop = document.getElementById('op').scrollHeight;
-              }, 200);
+              // setTimeout(() => {
+              //   document.getElementById('top').scrollTop = document.getElementById('op').scrollHeight;
+              // }, 200);
             }
           }
       };
@@ -460,14 +460,6 @@ export default {
                     }, 2000);
                 });
             }
-    // menu() {
-    //   if (document.getElementById('top').scrollTop === 0) {
-    //     let count = 1;
-    //     document.getElementById('top').addEventListener('scroll', this.menu())
-    //     ++count;
-    //     this.findChatRecordPageByCondition(count);
-    //   }
-    // }
   },
   computed: {
     token() {

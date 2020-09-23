@@ -362,7 +362,7 @@ export default {
           } else {
             this.$Message.success('爆料拒绝成功');
           }
-            this.findArticlesResult(1);
+            this.findArticlesResult(this.authenticationFrom.page);
         } else {  
           this.$Message.error(res.data.message);
         }
