@@ -222,7 +222,7 @@ export default {
       this.replayContent = '';
       this.replayOneInfo = item;
       this.replayOneInfo.type = type;
-      this.nickName = type === 'ReplyReply' ? item.replyBackEndMemberDto ? item.replyBackEndMemberDto.nickName :  item.memberBackEndDto.nickName : item.nickName;
+      this.nickName = type === 'ReplyReply' &&  item.replyBackEndMemberDto.nickName ? item.memberBackEndDto.nickName : item.nickName;
     }
   }
 };

@@ -2,7 +2,7 @@
   <div>
     <Tabs type="card">
         <TabPane label="客服消息">
-          <div class="kf-top">
+          <!-- <div class="kf-top">
             <ul class="kf-list">
               <li class="kf-item">
                 <span>用户名字</span>
@@ -31,6 +31,55 @@
             <Table border :columns="userList" :data="userData.content"></Table>
             <div style="margin-top:10px;text-align:right;">
               <Page :page-size='10' :current='userFrom.page' :total="userData.totalElements" @on-change='getChartBackEndRoom' />
+            </div>
+          </div> -->
+          <div class="kf-chat">
+            <div class="kc-right">
+              <div class="kf-rtop">
+                <Input placeholder="搜索" style="width: auto">
+                    <Icon type="ios-search" slot="prefix" />
+                </Input>
+              </div>
+              <ul class="kf-clist"> 
+                <li class="kf-citem" v-for="(item,index) in userData.content" :key="index" @click="chatInfo = item">
+                    <Badge dot :count='1'>
+                       <Avatar size='large' shape="square" :src="item.headImgPath" />
+                    </Badge>
+                    <div class="kf-content">
+                        <p>{{item.nickName}} <span style="float:right;">{{item.pubDate}}</span></p>
+                        <p>{{item.content}}</p>
+                    </div>
+                </li>
+              </ul>
+            </div>
+            <div class="kc-left">
+              <div v-if="chatInfo.id">
+                <p style="text-align:center;margin-bottom:15px;color:#333333;font-size:16px;">{{chatInfo.nickName}}</p>
+                  <div class="chat" id="top">
+                    <Spin size="large" fix v-if="spinShow"></Spin>
+                    <p style="text-align:center;">{{chatInfo.pubDate}}</p>
+                    <Scroll :on-reach-top="handleReachEdge" loading-text='加载中' height='367'>
+                        <div v-for="(item, index) in chatList" :key='index'>
+                          <div v-if="!item.whetherOwn" class="ct-left">
+                            <img :src="item.headImgPath">
+                            <div class="ct-box">
+                              {{item.content}}
+                            </div>
+                          </div>
+                          <div v-else class="ct-right">
+                            <div class="ct-rbox">
+                              {{item.content}}
+                            </div>
+                            <img :src="item.headImgPath">
+                          </div>
+                        </div>
+                    </Scroll>
+                  </div>
+                </div>
+              <div style="text-align:left;">
+                <Input type="textarea" v-model="chatContent" :rows='2' style="width:86%;margin-right:10px;"></Input>
+                <Button type="success" @click="setChat">回复</Button>
+              </div>
             </div>
           </div>
         </TabPane>
@@ -68,31 +117,7 @@
         </TabPane>
     </Tabs>
     <Modal v-model="chatModal" :mask-closable='false'>
-        <p style="text-align:center;margin-bottom:15px;color:#333333;font-size:16px;">{{chatInfo.nickName}}</p>
-          <div class="chat" id="top">
-            <Spin size="large" fix v-if="spinShow"></Spin>
-            <p style="text-align:center;">{{chatInfo.pubDate}}</p>
-            <Scroll :on-reach-top="handleReachEdge" loading-text='加载中' height='367'>
-                <div v-for="(item, index) in chatList" :key='index'>
-                  <div v-if="!item.whetherOwn" class="ct-left">
-                    <img :src="item.headImgPath">
-                    <div class="ct-box">
-                      {{item.content}}
-                    </div>
-                  </div>
-                  <div v-else class="ct-right">
-                    <div class="ct-rbox">
-                      {{item.content}}
-                    </div>
-                    <img :src="item.headImgPath">
-                  </div>
-                </div>
-             </Scroll>
-          </div>
-        <div slot="footer" style="text-align:left;">
-          <Input type="textarea" v-model="chatContent" :rows='2' style="width:86%;margin-right:10px;"></Input>
-          <Button type="success" @click="setChat">回复</Button>
-        </div>
+        
    </Modal>
    <Modal v-model="addModal" :mask-closable='false' title="添加消息" @on-ok='createSystemMessage'>
      <RadioGroup v-model="pushTargetType">
@@ -430,9 +455,9 @@ export default {
                 content: data.data.content
               }
               _that.chatList.push(info);
-              // setTimeout(() => {
-              //   document.getElementById('top').scrollTop = document.getElementById('op').scrollHeight;
-              // }, 200);
+              setTimeout(() => {
+                document.getElementsByClassName('ivu-scroll-container')[0].scrollTop = document.getElementsByClassName('ivu-scroll-content')[0].scrollHeight;
+              }, 200);
             } else {
               let info = {
                 headImgPath: _that.$store.state.user.avatorImgPath,
@@ -441,9 +466,9 @@ export default {
               }
               _that.chatList.push(info);
               _that.chatContent = '';
-              // setTimeout(() => {
-              //   document.getElementById('top').scrollTop = document.getElementById('op').scrollHeight;
-              // }, 200);
+              setTimeout(() => {
+                document.getElementsByClassName('ivu-scroll-container')[0].scrollTop = document.getElementsByClassName('ivu-scroll-content')[0].scrollHeight;
+              }, 200);
             }
           }
       };
@@ -468,7 +493,11 @@ export default {
   }
 }
 </script>
-
+<style>
+  .chat .ivu-scroll-content {
+    padding-right: 20px;
+  }
+</style>
 <style lang="less" scoped>
 .kf-top {
   padding: 20px;
@@ -489,11 +518,56 @@ export default {
   margin-top: 20px;
   padding: 15px;
 }
+.kf-chat {
+  background-color: #fff;
+  border-radius: 4px;
+  display: flex;
+  height: 800px;
+  .kc-right {
+    background-color: rgb(237, 234, 232);
+    width: 300px;
+    .kf-rtop {
+      padding: 26px 0 15px 15px;
+      box-sizing: border-box;
+    }
+    .kf-citem {
+      padding: 15px;
+      display: flex;
+      .kf-chead {
+        width: 43px;
+        height: 43px;
+        border-radius: 2px;
+        vertical-align: middle;
+      }
+      .kf-content {
+        margin-left: 10px;
+        width: 100%;
+        p:first-child {
+          color: #333333;
+          margin-bottom: 10px;
+        }
+        p {
+          color: rgb(169, 177, 178);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+    }
+    .kf-citem:hover {
+      background-color: rgb(209, 207, 204)
+    }
+  }
+  .kc-left {
+    background-color: rgb(245, 245, 245);
+    min-width: 630px;
+  }
+}
 .chat {
   background-color: #e9e9e9;
   width:100%;
   height: 400px;
-  padding: 10px 20px;
+  padding: 10px 0 10px 20px; 
   .ct-left {
     width: 100%;
     margin-top: 20px;
