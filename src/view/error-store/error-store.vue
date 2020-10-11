@@ -149,7 +149,7 @@ export default {
           } else {
             this.$Message.success('账户启用成功');
           }
-          this.findPageByCondition(1);
+          this.findPageByCondition(this.userInfo.page);
         } else {
           this.$Message.error(res.data.message);
         }

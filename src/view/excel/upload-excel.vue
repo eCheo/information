@@ -406,18 +406,18 @@ export default {
                 whetherOwn: true
               }
               this.chatList.unshift(info);
-               setTimeout(() => {
-                document.getElementById('top').scrollTop = document.getElementById('top').scrollHeight;
-              }, 200);
+              //  setTimeout(() => {
+              //   document.getElementById('top').scrollTop = document.getElementById('top').scrollHeight;
+              // }, 200);
             } else {
               info = {
                 headImgPath: item.headImgPath,
                 content: item.content
               }
               this.chatList.unshift(info);
-               setTimeout(() => {
-                document.getElementById('top').scrollTop = document.getElementById('top').scrollHeight;
-              }, 200);
+              //  setTimeout(() => {
+              //   document.getElementById('top').scrollTop = document.getElementById('top').scrollHeight;
+              // }, 200);
             }
           })
           this.spinShow = false;
