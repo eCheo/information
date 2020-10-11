@@ -175,7 +175,7 @@ export const upload = data => {
 // 获取客服消息列表
 export const getChartBackEndRoom = data => {
   return axios.request({
-    url: '/api/backend/message/getChartBackEndRoom.json',
+    url: '/api/backend/message/findChatRoomAll.json',
     method: 'post',
     data: data
   })
