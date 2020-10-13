@@ -3,7 +3,7 @@
     <div class="top">
       <div class="top-item">
         <span>用户名</span>
-        <Input v-model="feedbackInfo.nikeName" style="width:200px"></Input>
+        <Input v-model="feedbackInfo.nickName" style="width:200px"></Input>
       </div>
       <div class="top-item">
         <span>选择时间</span>
@@ -22,7 +22,7 @@
     <div class="content">
       <p>反馈列表</p>
       <hr style="margin:20px 0;" color="#e9e9e9" />
-      <Table border :columns="feedbackList" :data="feedbackData.content"></Table>
+      <Table border :loading='loading' :columns="feedbackList" :data="feedbackData.content"></Table>
       <div style="text-align:right;">
         <Page style="margin-top:10px;" :page-size='10' :current='feedbackInfo.page' :total="feedbackData.totalElements" @on-change='findByNickName' />
       </div>
@@ -108,11 +108,14 @@ export default {
   methods: {
     findByNickName(page) {
         this.feedbackInfo.page = page;
+        this.loading = true;
         findByNickName(this.feedbackInfo).then(res => {
             if (res.status === 200 && res.data.code === '200') {
                 this.feedbackData = res.data.data;
+                this.loading = false;
             } else {
                 this.$Message.error(res.data.message);
+                this.loading = false;
             }
         })
     },

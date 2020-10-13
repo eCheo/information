@@ -48,7 +48,7 @@
             </div>
             <div slot="footer">
                 <Button type="text" @click="addModal = false">取消</Button>
-                <Button type="success" @click="createOrUpdateHelp">确定</Button>
+                <Button type="success" @click="createOrUpdateHelp" :disabled='btnDis'>确定</Button>
             </div>
         </Modal>
     </div>
@@ -122,7 +122,7 @@ export default {
                 problemClassificationId: '',
                 problemTitle: '',
                 whetherCommon: 'long',
-                id: ''
+                id: null
             },
             init: {
                 language_url: "/tinymce/langs/zh_CN.js",
@@ -156,7 +156,8 @@ export default {
                 }
             },
             problemList: [],
-            addModal: false
+            addModal: false,
+            btnDis: false
         }
     },
     components: {
@@ -209,6 +210,24 @@ export default {
                     this.addModal = false;
                 }
             })
+        }
+    },
+    watch: {
+        'helpInfo': {
+            handler () {
+                console.log(this.helpInfo);
+                for(let key in this.helpInfo) {
+                    console.log(key)
+                    if (key !== 'id') { 
+                        if (this.helpInfo[key] ==='') {
+                            this.btnDis = true
+                        } else {
+                            this.btnDis = false
+                        }
+                    }
+                    
+                }
+            },immediate: true, deep: true
         }
     }
 }
