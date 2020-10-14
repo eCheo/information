@@ -83,16 +83,46 @@ export default [
     name: 'components',
     meta: {
       icon: 'logo-buffer',
-      title: '资讯管理'
+      title: '资讯管理',
+      notCache: true
     },
     component: Main,
     children: [
       {
+        path: 'drag',
+        name: 'drag',
+        meta: {
+         
+        },
+        children: [
+          {
+            path: 'drag_list_page',
+            name: 'drag_list_page',
+            meta: {
+              icon: 'ios-infinite',
+              title: '审核发布',
+              notCache: true
+            },
+            component: () => import('@/view/components/drag-list/drag-list.vue')
+          },
+          {
+            path: 'addArticle',
+            name: 'addArticle',
+            meta: {
+              hideInMenu: true,
+              title: '发布文章',
+              notCache: true
+            },
+            component: () => import('@/view/components/drag-list/addArticle.vue')
+          }
+        ],
+        component: parentView
+      },
+      {
         path: 'count',
         name: 'count',
         meta: {
-          icon: 'md-trending-up',
-          title: ''
+          hideInBread: true
         },
         children: [
           {
@@ -111,7 +141,8 @@ export default [
               icon: 'md-trending-up',
               title: '查看发布内容',
               hideInMenu: true,
-              access: null
+              access: null,
+              notCache: true
             },
             children: [
               {
@@ -121,7 +152,8 @@ export default [
                   icon: 'md-trending-up',
                   title: '详情',
                   hideInMenu: true,
-                  access: null
+                  access: null,
+                  notCache: true
                 },
                 component: () => import('@/view/components/count-to/aclDetails.vue')
               },
@@ -132,7 +164,8 @@ export default [
                   icon: 'md-trending-up',
                   title: '查看发布内容',
                   hideInMenu: true,
-                  access: null
+                  access: null,
+                  notCache: true
                 },
                 component: () => import('@/view/components/count-to/countDetails.vue')
               }
@@ -143,39 +176,12 @@ export default [
         component: parentView
       },
       {
-        path: 'drag',
-        name: 'drag',
-        meta: {
-          hideInBread: true
-        },
-        children: [
-          {
-            path: 'drag_list_page',
-            name: 'drag_list_page',
-            meta: {
-              icon: 'ios-infinite',
-              title: '审核发布'
-            },
-            component: () => import('@/view/components/drag-list/drag-list.vue')
-          },
-          {
-            path: 'addArticle',
-            name: 'addArticle',
-            meta: {
-              hideInMenu: true,
-              title: '发布文章'
-            },
-            component: () => import('@/view/components/drag-list/addArticle.vue')
-          }
-        ],
-        component: parentView
-      },
-      {
         path: 'addcolumn',
         name: 'addcolumn',
         meta: {
           icon: 'ios-infinite',
-          title: '添加修改栏目'
+          title: '添加修改栏目',
+          notCache: true
         },
         component: () => import('@/view/components/drag-list/addColumn.vue')
       }
@@ -186,7 +192,8 @@ export default [
     name: 'update',
     meta: {
       icon: 'md-cloud-upload',
-      title: '积分管理中心'
+      title: '积分管理中心',
+      notCache: true
     },
     component: Main,
     children: [
@@ -195,7 +202,8 @@ export default [
         name: 'update_table_page',
         meta: {
           icon: 'ios-document',
-          title: '规则设置'
+          title: '规则设置',
+          notCache: true
         },
         component: () => import('@/view/update/update-table.vue')
       },
@@ -204,7 +212,8 @@ export default [
         name: 'getIntegral',
         meta: {
           icon: 'md-clipboard',
-          title: '积分获取'
+          title: '积分获取',
+          notCache: true
         },
         component: () => import('@/view/update/getIntegral.vue')
       },
@@ -213,7 +222,8 @@ export default [
         name: 'getIntegralChange',
         meta: {
           icon: 'md-clipboard',
-          title: '积分变更'
+          title: '积分变更',
+          notCache: true
         },
         component: () => import('@/view/update/getIntegralChange.vue')
       },
@@ -222,7 +232,8 @@ export default [
         name: 'getIntegralDetailed',
         meta: {
           icon: 'md-clipboard',
-          title: '会员积分明细'
+          title: '会员积分明细',
+          notCache: true
         },
         component: () => import('@/view/update/getIntegralDetailed.vue')
       },
@@ -231,7 +242,8 @@ export default [
         name: 'shop',
         meta: {
           icon: 'md-clipboard',
-          title: '商城管理'
+          title: '商城管理',
+          notCache: true
         },
         children: [
           {
@@ -239,7 +251,8 @@ export default [
             name: 'shoppingManger',
             meta: {
               icon: 'md-clipboard',
-              title: '商城管理'
+              title: '商城管理',
+              notCache: true
             },
             component: () => import('@/view/update/shoppingManger.vue')
           },
@@ -248,7 +261,8 @@ export default [
             name: 'shoppingAdd',
             meta: {
               title: '添加商品',
-              hideInMenu: true
+              hideInMenu: true,
+              notCache: true
             },
             component: () => import('@/view/update/shoppingAdd.vue')
           }
@@ -260,7 +274,8 @@ export default [
         name: 'order',
         meta: {
           icon: 'md-clipboard',
-          title: '订单管理'
+          title: '订单管理',
+          notCache: true
         },
         children: [
           {
@@ -268,7 +283,8 @@ export default [
             name: 'ordermanage',
             meta: {
               icon: 'md-clipboard',
-              title: '订单管理'
+              title: '订单管理',
+              notCache: true
             },
             component: () => import('@/view/update/orderManage.vue')
           },
@@ -278,7 +294,8 @@ export default [
             meta: {
               icon: 'md-clipboard',
               title: '订单详情',
-              hideInMenu: true
+              hideInMenu: true,
+              notCache: true
             },
             component: () => import('@/view/update/orderdetails.vue')
           },
@@ -292,7 +309,8 @@ export default [
     name: 'excel',
     meta: {
       icon: 'ios-stats',
-      title: '客服管理'
+      title: '客服管理',
+      notCache: true
     },
     component: Main,
     children: [
@@ -301,7 +319,8 @@ export default [
         name: 'customerservice',
         meta: {
           icon: 'md-add',
-          title: '客服列表'
+          title: '客服列表',
+          notCache: true
         },
         component: () => import('@/view/excel/customerService.vue')
       },
@@ -310,7 +329,8 @@ export default [
         name: 'upload-excel',
         meta: {
           icon: 'md-add',
-          title: '消息管理'
+          title: '消息管理',
+          notCache: true
         },
         component: () => import('@/view/excel/upload-excel.vue')
       },
@@ -319,7 +339,8 @@ export default [
         name: 'commentManage',
         meta: {
           icon: 'md-download',
-          title: '评论管理'
+          title: '评论管理',
+          notCache: true
         },
         component: () => import('@/view/excel/export-excel.vue')
       },
@@ -328,7 +349,8 @@ export default [
         name: 'user',
         meta: {
           icon: 'md-download',
-          title: '用户反馈'
+          title: '用户反馈',
+          notCache: true
         },
         children: [
           {
@@ -336,7 +358,8 @@ export default [
             name: 'userfeedback',
             meta: {
               icon: 'md-download',
-              title: '用户反馈'
+              title: '用户反馈',
+              notCache: true
             },
             component: () => import('@/view/excel/userFeedback.vue')
           },
@@ -346,7 +369,8 @@ export default [
             meta: {
               icon: 'md-download',
               title: '反馈详情',
-              hideInMenu: true
+              hideInMenu: true,
+              notCache: true
             },
             component: () => import('@/view/excel/userfeeddetails.vue')
           },
@@ -358,7 +382,8 @@ export default [
         name: 'reportlist',
         meta: {
           icon: 'md-download',
-          title: '举报列表'
+          title: '举报列表',
+          notCache: true
         },
         component: () => import('@/view/excel/reportlist.vue')
       }
@@ -369,7 +394,8 @@ export default [
     name: 'error_logger',
     meta: {
       icon: 'ios-stats',
-      title: '帮助管理'
+      title: '帮助管理',
+      notCache: true
     },
     component: Main,
     children: [
@@ -406,7 +432,8 @@ export default [
         name: 'error_store_page',
         meta: {
           icon: 'md-contact',
-          title: '用户管理'
+          title: '用户管理',
+          notCache: true
         },
         component: () => import('@/view/error-store/error-store.vue')
       }
@@ -426,7 +453,8 @@ export default [
         name: 'error_logger_page',
         meta: {
           icon: 'md-contact',
-          title: '用户管理'
+          title: '用户管理',
+          notCache: true
         },
         component: () => import('@/view/error-store/error-store.vue')
       }
@@ -445,7 +473,8 @@ export default [
         name: 'directive_page',
         meta: {
           icon: 'ios-navigate',
-          title: '系统设置'
+          title: '系统设置',
+          notCache: true
         },
         component: () => import('@/view/directive/directive.vue')
       }

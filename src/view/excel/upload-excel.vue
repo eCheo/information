@@ -41,8 +41,8 @@
                 </Input>
               </div>
               <ul class="kf-clist"> 
-                <li class="kf-citem" v-for="(item,index) in userData" :key="index" @click="chatInfo = item">
-                    <Badge dot :count='1'>
+                <li class="kf-citem" :class="chatInfo.id === item.id ? 'kf-bg': ''" v-for="(item,index) in userData" :key="index" @click="chatInfo = item,findChatRecordPageByCondition(1)">
+                    <Badge dot :count='item.chatUnReadCount'>
                        <Avatar size='large' shape="square" :src="item.headImgPath" />
                     </Badge>
                     <div class="kf-content">
@@ -56,7 +56,6 @@
               <div>
                 <p style="text-align:center;margin-bottom:15px;color:#333333;font-size:16px;">{{chatInfo.nickName}}</p>
                   <div class="chat" id="top">
-                    <Spin size="large" fix v-if="spinShow"></Spin>
                     <p style="text-align:center;">{{chatInfo.pubDate}}</p>
                     <Scroll :on-reach-top="handleReachEdge" loading-text='加载中' height='367'>
                         <div v-for="(item, index) in chatList" :key='index'>
@@ -317,7 +316,8 @@ export default {
       chatPage: 1,
       maxPage: 1,
       setUserId: '',
-      seachList: []
+      seachList: [],
+      originData: []
     }
   },
   components: {
@@ -339,6 +339,7 @@ export default {
       getChartBackEndRoom(this.userFrom).then(res => {
         if (res.status === 200 && res.data.code === '200') {
           this.userData = res.data.data;
+          this.originData = res.data.data;
         } else {
           this.$Message.error(res.data.message);
         }
@@ -406,18 +407,18 @@ export default {
                 whetherOwn: true
               }
               this.chatList.unshift(info);
-              //  setTimeout(() => {
-              //   document.getElementById('top').scrollTop = document.getElementById('top').scrollHeight;
-              // }, 200);
+               setTimeout(() => {
+                document.getElementById('top').scrollTop = document.getElementById('top').scrollHeight;
+              }, 200);
             } else {
               info = {
                 headImgPath: item.headImgPath,
                 content: item.content
               }
               this.chatList.unshift(info);
-              //  setTimeout(() => {
-              //   document.getElementById('top').scrollTop = document.getElementById('top').scrollHeight;
-              // }, 200);
+               setTimeout(() => {
+                document.getElementById('top').scrollTop = document.getElementById('top').scrollHeight;
+              }, 200);
             }
           })
           this.spinShow = false;
@@ -437,7 +438,7 @@ export default {
       let _that = this;
       ws.onopen = function(evt) {
         let params = {
-          receiverMemberId: _that.chatInfo.memberId,
+          receiverMemberId: _that.chatInfo.receiverMemberId,
           content: _that.chatContent,
           chatType: 'Txt',
           actionType: 'Chat'
@@ -490,9 +491,15 @@ export default {
       this.seachList = [];
       var len = this.userData.length;
       var arr = [];
+      let nkName = ''; 
       for(var i = 0;i < len; i++){
-          if( evt.data && this.userData[i].nickName.indexOf(evt.data.toUpperCase())>=0){
-              this.seachList.push(this.userData[i].nickName);
+        nkName = this.userData[i].nickName;
+          if(evt.data && nkName.toUpperCase().indexOf(evt.data.toUpperCase())>=0){
+              this.seachList.push(this.userData[i]);
+              this.userData = this.seachList;
+              break
+          } else if (!evt.data){
+            this.userData = this.originData;
           }
       }
     }
@@ -540,6 +547,15 @@ export default {
     .kf-rtop {
       padding: 26px 0 15px 15px;
       box-sizing: border-box;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 99;
+    }
+    .kf-clist {
+      margin-top: 70px;
+      height: 800px;
+      overflow: auto;
     }
     .kf-citem {
       padding: 15px;
@@ -566,6 +582,9 @@ export default {
       }
     }
     .kf-citem:hover {
+      background-color: rgb(209, 207, 204)
+    }
+    .kf-bg {
       background-color: rgb(209, 207, 204)
     }
   }

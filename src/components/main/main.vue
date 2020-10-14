@@ -95,8 +95,8 @@ export default {
   methods: {
     ...mapMutations([
       'setBreadCrumb',
-      'setTagNavList',
       'addTag',
+      'setTagNavList',
       'setLocal',
       'setHomeRoute',
       'closeTag'
@@ -136,7 +136,7 @@ export default {
           }
         }
       }
-      this.setTagNavList(res)
+      // this.setTagNavList(res)
     },
     handleClick (item) {
       this.turnToPage(item)
@@ -170,7 +170,15 @@ export default {
     /**
      * @description 初始化设置面包屑导航和标签导航
      */
-    this.setTagNavList()
+    let tagNavList = [
+      {
+        meta: {hideInMenu: true, title: "首页", notCache: true, icon: "md-home"},
+        name: "home",
+        params: {},
+        path: "/home",
+        query: {}}
+    ]
+    this.setTagNavList(tagNavList)
     this.setHomeRoute(routers)
     const { name, params, query, meta } = this.$route
     this.addTag({

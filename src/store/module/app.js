@@ -28,7 +28,14 @@ const closePage = (state, route) => {
 export default {
   state: {
     breadCrumbList: [],
-    tagNavList: [],
+    tagNavList: [
+      {
+        meta: {hideInMenu: true, title: "首页", notCache: true, icon: "md-home"},
+        name: "home",
+        params: {},
+        path: "/home",
+        query: {}}
+    ],
     homeRoute: {},
     local: localRead('local'),
     errorList: [],
@@ -57,7 +64,7 @@ export default {
         tagList.unshift(homeTag)
       }
       state.tagNavList = tagList
-      setTagNavListInLocalstorage([...tagList])
+      // setTagNavListInLocalstorage([...tagList])
     },
     closeTag (state, route) {
       let tag = state.tagNavList.filter(item => routeEqual(item, route))
@@ -73,7 +80,8 @@ export default {
           if (router.name === homeName) state.tagNavList.unshift(router)
           else state.tagNavList.splice(1, 0, router)
         }
-        setTagNavListInLocalstorage([...state.tagNavList])
+        // console.log(state)
+        // setTagNavListInLocalstorage([...state.tagNavList])
       }
     },
     setLocal (state, lang) {

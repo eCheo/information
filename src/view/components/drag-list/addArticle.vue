@@ -9,7 +9,7 @@
         <template v-if="item.status === 'finished'">
           <img :src="item.url" style="width:250px;height:250px;" />
           <div class="demo-upload-list-cover">
-            <Icon type="ios-eye-outline" @click.native="handleView(item.name)"></Icon>
+            <!-- <Icon type="ios-eye-outline" @click.native="handleView(item.name)"></Icon> -->
             <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
           </div>
         </template>
@@ -156,7 +156,7 @@
         <template v-if="item.status === 'finished'">
           <img :src="item.url" style="width:250px;height:250px;" />
           <div class="demo-upload-list-cover">
-            <Icon type="ios-eye-outline" @click.native="handleView(item.name)"></Icon>
+            <!-- <Icon type="ios-eye-outline" @click.native="handleView(item.name)"></Icon> -->
             <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
           </div>
         </template>
@@ -324,18 +324,19 @@ export default {
   },
   mounted() {
     tinymce.init({});
-    if (this.$refs.upload.fileList) {
-      this.uploadList = this.$refs.upload.fileList;
-    }
-    if (this.$refs.fmUpload.fileList) {
-      this.fmUploadList = this.$refs.fmUpload.fileList;
-    }
     this.headers = {
       Authorization:
         sessionStorage.getItem("tokenType") +
         " " +
         sessionStorage.getItem("token")
     };
+    if (this.$refs.upload.fileList) {
+      this.uploadList = this.$refs.upload.fileList;
+    }
+    if (this.$refs.fmUpload.fileList) {
+      this.fmUploadList = this.$refs.fmUpload.fileList;
+    }
+    
   },
   methods: {
     handleChange(html, text) {
@@ -372,6 +373,7 @@ export default {
           opposingButtonText: this.topicData.optionTwo,
           content: this.content,
           title: this.title,
+          imagePaths: this.viewImg,
           type: "Topic",
           id: this.$route.query.id
         };
@@ -483,9 +485,15 @@ export default {
     },
     handleBeforeUpload() {
       const check = this.uploadList.length < 9;
+      if (this.viewType === "Topic" && this.uploadList.length === 1) {
+         this.$Notice.warning({
+          title: "话题封面只能上传一张"
+        });
+        return false;
+      }
       if (!check) {
         this.$Notice.warning({
-          title: "Up to five pictures can be uploaded."
+          title: "图片最多上传九张"
         });
       }
       return check;

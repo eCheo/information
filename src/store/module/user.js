@@ -10,6 +10,7 @@ import {
   getUnreadCount
 } from '@/api/user'
 import { setToken, getToken } from '@/libs/util'
+import route from '../../router/routers'
 
 export default {
   state: {
@@ -122,6 +123,19 @@ export default {
         try {
           getUserInfo(tokenType, token).then(res => {
             const data = res.data.data
+            route.forEach(item => {
+              if (data.memberType === 'backend' && item.name !== 'components') {
+                item.meta.hideInMenu = true;
+              }
+              // if (item.name === 'components') {
+              //   item.children.forEach(it => {
+              //     console.log(it)
+              //     if (it.name !== 'drag') {
+              //       it.meta.hideInMenu = true;
+              //     }
+              //   })
+              // }
+            })
             commit('setAvator', data.headImgPath)
             commit('setUserName', data.nickName)
             // commit('setUserId', data.user_id)
