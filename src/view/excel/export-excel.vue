@@ -5,7 +5,7 @@
       <ul class="kf-list">
         <li class="kf-item">
           <span>用户名字</span>
-          <Input style="width:200px;"></Input>
+          <Input v-model="nickName" style="width:200px;"></Input>
         </li>
         <li class="kf-item">
           <span>选择时间</span>
@@ -21,7 +21,7 @@
           ></DatePicker>
         </li>
         <li class="kf-item">
-          <Button type="success" >搜索</Button>
+          <Button type="success" @click="findBackEndComment(commentPage)">搜索</Button>
         </li>
       </ul>
     </div>
@@ -94,6 +94,7 @@
                 <span v-else>
                   {{it.memberBackEndDto.nickName}}<a style="color:#05b55c;">回复</a>{{it.replyBackEndMemberDto.nickName}}：{{it.content}}
                 </span>
+                <Button style="float:right" type="error" @click="deleteComment(it.id)">删除</Button>
                 <Button style="float:right" type="success" @click="replay(it, 'ReplyReply')">回复</Button>
         </div>
       </div>
@@ -106,7 +107,7 @@
   </div>
 </template>
 <script>
-import { findBackEndComment, findBackEndArticle, articlesCommentOrReplay, findBackEndReplyList} from "@/api/data";
+import { findBackEndComment, findBackEndArticle, articlesCommentOrReplay, findBackEndReplyList, deleteComment} from "@/api/data";
 export default {
   data() {
     return {
@@ -128,7 +129,10 @@ export default {
       moreModal: false,
       spinShow: false,
       replySonPage: 1,
-      commentInfo: {}
+      commentInfo: {},
+      nickName: null,
+      starTime: null,
+      endTime: null
     };
   },
   created() {
@@ -138,8 +142,8 @@ export default {
     changeDate(date) {
       let starTime = date[0].replace(/([^\u0000-\u00FF])/g, "-");
       let endTime = date[1].replace(/([^\u0000-\u00FF])/g, "-");
-      this.userFrom.startTime = starTime.substring(0, starTime.length - 1);
-      this.userFrom.endTime = endTime.substring(0, endTime.length - 1);
+      this.startTime = starTime.substring(0, starTime.length - 1);
+      this.endTime = endTime.substring(0, endTime.length - 1);
     },
     // 查询文章评论
     findBackEndComment(page) {
@@ -147,7 +151,11 @@ export default {
       let params = {
         page: page,
         size: "5",
-        articlesId: this.articleId
+        articlesId: this.articleId,
+        EQ_isDelete: 'false',
+        nikeName: this.nickName,
+        startTime: this.startTime,
+        endTime: this.endTime
       };
       findBackEndComment(params).then(res => {
         if (res.status === 200 && res.data.code === "200") {
@@ -205,7 +213,8 @@ export default {
       let params = {
         page: this.replySonPage,
         size: '5',
-        EQ_parentId: this.commentInfo.id
+        EQ_parentId: this.commentInfo.id,
+        EQ_isDelete: 'false'
       }
       findBackEndReplyList(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
@@ -223,6 +232,20 @@ export default {
       this.replayOneInfo = item;
       this.replayOneInfo.type = type;
       this.nickName = type === 'ReplyReply' &&  item.replyBackEndMemberDto.nickName ? item.memberBackEndDto.nickName : item.nickName;
+    },
+    // 删除评论
+    deleteComment(id) {
+      let params = {
+        id: id
+      }
+      deleteComment(params).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.$Message.success('删除评论成功');
+          this.findBackEndReplyList(this.replySonPage)
+        } else {
+          this.$Message.error(res.data.message)
+        }
+      })
     }
   }
 };

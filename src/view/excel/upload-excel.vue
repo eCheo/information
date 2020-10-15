@@ -2,37 +2,6 @@
   <div>
     <Tabs type="card">
         <TabPane label="客服消息">
-          <!-- <div class="kf-top">
-            <ul class="kf-list">
-              <li class="kf-item">
-                <span>用户名字</span>
-                <Input style="width:200px;" v-model="userFrom.nickName"> </Input>
-              </li>
-              <li class="kf-item">
-                <span>选择时间</span>
-                <DatePicker
-                :transfer='true'
-                v-model="selectTime"
-                @on-change='changeDate'
-                format="yyyy年MM月dd日"
-                type="daterange"
-                placement="bottom-end"
-                placeholder="请选择时间"
-                style="width: 200px"
-              ></DatePicker>
-              </li>
-              <li class="kf-item">
-                <Button type="success" @click="getChartBackEndRoom(1)">搜索</Button>
-              </li>
-            </ul>
-          </div>
-          <div class="kf-tab">
-            <p>用户列表</p>
-            <Table border :columns="userList" :data="userData.content"></Table>
-            <div style="margin-top:10px;text-align:right;">
-              <Page :page-size='10' :current='userFrom.page' :total="userData.totalElements" @on-change='getChartBackEndRoom' />
-            </div>
-          </div> -->
           <div class="kf-chat">
             <div class="kc-right">
               <div class="kf-rtop">

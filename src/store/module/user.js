@@ -124,7 +124,7 @@ export default {
           getUserInfo(tokenType, token).then(res => {
             const data = res.data.data
             route.forEach(item => {
-              if (data.memberType === 'backend' && item.name !== 'components') {
+              if (data.memberType !== 'backend' && item.name !== 'components') {
                 item.meta.hideInMenu = true;
               }
               // if (item.name === 'components') {
