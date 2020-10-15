@@ -215,17 +215,10 @@ export default {
     watch: {
         'helpInfo': {
             handler () {
-                console.log(this.helpInfo);
-                for(let key in this.helpInfo) {
-                    console.log(key)
-                    if (key !== 'id') { 
-                        if (this.helpInfo[key] ==='') {
-                            this.btnDis = true
-                        } else {
-                            this.btnDis = false
-                        }
-                    }
-                    
+                if (this.helpInfo.content ==='' && this.helpInfo.content === '' && this.helpInfo.problemClassificationId === '' && this.helpInfo.problemTitle === '') {
+                    this.btnDis = true
+                } else {
+                    this.btnDis = false
                 }
             },immediate: true, deep: true
         }

@@ -25,8 +25,14 @@
           style="float:right;"
           type="success"
           @click="$router.push({path:'/components/drag/addArticle', query:{type: releaseType}})"
-          v-if="releaseType !== 'BrokeTheNews'"
+          v-if="releaseType !== 'BrokeTheNews' && releaseType !== 'Topic'"
         >{{releaseBtText}}</Button>
+        <Button
+          style="float:right;"
+          type="success"
+          @click="$router.push({path:'/components/drag/addArticle', query:{type: releaseType}})"
+          v-if="$store.state.user.menberType === 'backend' && releaseType === 'Topic'"
+        >发布话题</Button>
       </div>
       <Table border :columns="authenticationList" :loading='tableLoading' :data="authenticationData.content"></Table>
       <div style="text-align:right;">
@@ -44,6 +50,7 @@ import {
   cancelArticlesTop,
   setArticlesTop
 } from "@/api/data";
+// import $store from 'vuex'
 export default {
   name: "drag_list_page",
   // components: {

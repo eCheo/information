@@ -512,6 +512,16 @@ export default [
     ]
   },
   {
+    path: 'drag_list_page',
+    name: 'drag_list_page',
+    meta: {
+      icon: 'ios-infinite',
+      title: '审核发布',
+      notCache: true
+    },
+    component: () => import('@/view/components/drag-list/drag-list.vue')
+  },
+  {
     path: '/401',
     name: 'error_401',
     meta: {

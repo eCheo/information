@@ -25,11 +25,15 @@ export default {
     messageUnreadList: [],
     messageReadedList: [],
     messageTrashList: [],
-    messageContentStore: {}
+    messageContentStore: {},
+    menberType: ''
   },
   mutations: {
     setAvator (state, avatorPath) {
       state.avatorImgPath = avatorPath
+    },
+    setMenberType (state, menberType) {
+      state.menberType = menberType
     },
     setUserId (state, id) {
       state.userId = id
@@ -124,21 +128,15 @@ export default {
           getUserInfo(tokenType, token).then(res => {
             const data = res.data.data
             route.forEach(item => {
-              if (data.memberType !== 'backend' && item.name !== 'components') {
+              if (data.memberType !== 'backend' && item.name !== 'drag_list_page') {
+                item.meta.hideInMenu = true;
+              } else if (data.memberType === 'backend' && item.name === 'drag_list_page') {
                 item.meta.hideInMenu = true;
               }
-              // if (item.name === 'components') {
-              //   item.children.forEach(it => {
-              //     console.log(it)
-              //     if (it.name !== 'drag') {
-              //       it.meta.hideInMenu = true;
-              //     }
-              //   })
-              // }
             })
             commit('setAvator', data.headImgPath)
             commit('setUserName', data.nickName)
-            // commit('setUserId', data.user_id)
+            commit('setMenberType', data.memberType)
             commit('setAccess', ['super_admin'])
             commit('setHasGetInfo', true)
             sessionStorage.setItem('setHasGetInfo', true)

@@ -10,8 +10,8 @@
                 </Input>
               </div>
               <ul class="kf-clist"> 
-                <li class="kf-citem" :class="chatInfo.id === item.id ? 'kf-bg': ''" v-for="(item,index) in userData" :key="index" @click="chatInfo = item,findChatRecordPageByCondition(1)">
-                    <Badge dot :count='item.chatUnReadCount'>
+                <li class="kf-citem" :class="chatInfo.id === item.id ? 'kf-bg': ''" v-for="(item,index) in userData" :key="index" @click="chatInfo = item,item.chatUnReadCount = 0,findChatRecordPageByCondition(1)">
+                    <Badge :count='item.chatUnReadCount'>
                        <Avatar size='large' shape="square" :src="item.headImgPath" />
                     </Badge>
                     <div class="kf-content">
@@ -419,13 +419,23 @@ export default {
       };
       ws.onmessage = function(evt) {
           let data = JSON.parse(evt.data);
+           var paramsJie = {
+            actionType: "MessageSignIn",
+            charRoomId: _that.chatInfo.id
+          }
+          if (_that.chatInfo.id === data.data.chartRoomId && data.data.pushType === 'Other' && data.data.actionType === 'Chat') {
+            ws.send(JSON.stringify(paramsJie))
+          }
           if (data.code === '200') {
             if (data.data.pushType === 'Other' && data.data.actionType === 'Chat') {
               let info = {
                 headImgPath: data.data.headImgPath,
                 content: data.data.content
               }
-              _that.chatList.push(info);
+              if (_that.chatInfo.id === data.data.chartRoomId || _that.chatInfo.id === data.data.charRoomId) {
+                _that.chatList.push(info);
+              }
+              _that.updateMessage(data.data);
               setTimeout(() => {
                 document.getElementsByClassName('ivu-scroll-container')[0].scrollTop = document.getElementsByClassName('ivu-scroll-content')[0].scrollHeight;
               }, 200);
@@ -435,7 +445,12 @@ export default {
                 content: _that.chatContent,
                 whetherOwn: true
               }
-              _that.chatList.push(info);
+              if (_that.chatInfo.id === data.data.chartRoomId || _that.chatInfo.id === data.data.charRoomId) {
+                _that.chatList.push(info);
+                _that.$set(_that.chatInfo, 'chatUnReadCount', 0);
+              }
+              data.data.content = _that.chatContent;
+               _that.updateMessage(data.data);
               _that.chatContent = '';
               setTimeout(() => {
                 document.getElementsByClassName('ivu-scroll-container')[0].scrollTop = document.getElementsByClassName('ivu-scroll-content')[0].scrollHeight;
@@ -471,6 +486,21 @@ export default {
             this.userData = this.originData;
           }
       }
+    },
+    updateMessage(data) {
+      this.userData.forEach(item => {
+        if (item.id === data.charRoomId || item.id === data.chartRoomId) {
+            console.log(data)
+            this.$set(item, 'content', data.content)
+            if (data.pushType === 'Other' && item.id !== this.chatInfo.id) {
+              this.$set(item, 'chatUnReadCount', data.chatUnReadCount)
+            } else {
+              this.$set(item, 'chatUnReadCount', 0)
+            }
+        }
+      })
+      this.$set(this, 'userData', this.userData)
+      console.log(this.userData);
     }
   },
   computed: {
