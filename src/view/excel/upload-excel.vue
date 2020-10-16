@@ -293,18 +293,18 @@ export default {
      "tinymce-editor": Editor
   },
   created() {
-    this.getChartBackEndRoom(1);
+    this.getChartBackEndRoom();
     this.findSystemMessage(1);
   },
   mounted() {
     tinymce.init({});
+    
   },
   methods: {
     handleChange (html, text) {
       this.content = html
     },
-    getChartBackEndRoom(page) {
-      this.userFrom.page = page;
+    getChartBackEndRoom() {
       getChartBackEndRoom(this.userFrom).then(res => {
         if (res.status === 200 && res.data.code === '200') {
           this.userData = res.data.data;
@@ -415,7 +415,9 @@ export default {
         ws.send(JSON.stringify(params))
       };
       ws.onclose = function(evt) {
-          // onClose(evt)
+          if (sessionStorage.getItem('token')) {
+            _that.heartbeat();
+          }
       };
       ws.onmessage = function(evt) {
           let data = JSON.parse(evt.data);
@@ -490,17 +492,44 @@ export default {
     updateMessage(data) {
       this.userData.forEach(item => {
         if (item.id === data.charRoomId || item.id === data.chartRoomId) {
-            console.log(data)
-            this.$set(item, 'content', data.content)
+            this.$set(item, 'content', data.content);    
             if (data.pushType === 'Other' && item.id !== this.chatInfo.id) {
               this.$set(item, 'chatUnReadCount', data.chatUnReadCount)
+              this.$set(item, 'nowDate', data.nowDate);
             } else {
               this.$set(item, 'chatUnReadCount', 0)
             }
         }
       })
+      let existence = this.userData.some((item) => {
+        return item.id === data.charRoomId || item.id === data.chartRoomId
+      })
+      if (existence) {
+       let index = this.userData.findIndex(item => {
+          return item.id === data.charRoomId || item.id === data.chartRoomId
+        })
+        if (data.pushType === 'Other') {
+          this.userData.splice(index, 1);
+          this.userData.unshift(data)
+        } else {
+          this.getChartBackEndRoom()
+        }
+      } else {
+        this.userData.unshift(data);
+      }
       this.$set(this, 'userData', this.userData)
-      console.log(this.userData);
+      console.log(this.userData)
+    },
+    heartbeat() {
+        const ws = new WebSocket('ws://47.56.186.16:8099/ws?=' + this.token);
+        let _that = this;
+        ws.onopen = function(evt) {
+          let params = {
+            actionType: 'Heartbeat'
+          }
+          ws.send(JSON.stringify(params))
+        };
+        console.log('send');
     }
   },
   computed: {

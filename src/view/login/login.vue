@@ -40,7 +40,6 @@ export default {
               this.$router.push({
                 name: this.$config.homeName
               })
-              console.log(this.$route);
               this.heartbeat();
           })
         } else {
