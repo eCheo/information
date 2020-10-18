@@ -11,12 +11,13 @@
               </div>
               <ul class="kf-clist"> 
                 <li class="kf-citem" :class="chatInfo.id === item.id ? 'kf-bg': ''" v-for="(item,index) in userData" :key="index" @click="chatInfo = item,item.chatUnReadCount = 0,findChatRecordPageByCondition(1)">
-                    <Badge :count='item.chatUnReadCount'>
+                    <Badge :count='item.chatUnReadCount' overflow-count="99">
                        <Avatar size='large' shape="square" :src="item.headImgPath" />
                     </Badge>
                     <div class="kf-content">
-                        <p>{{item.nickName}} <span style="float:right;">{{item.pubDate}}</span></p>
-                        <p>{{item.content}}</p>
+                        <p style="width:88px;display:inline-block;">{{item.nickName}}</p>
+                        <span style="float:right;">{{item.pubDate}}</span>
+                        <p style="width:200px">{{item.content}}</p>
                     </div>
                 </li>
               </ul>
@@ -190,7 +191,7 @@ export default {
           }
         }
       ],
-      userData: {},
+      userData: [],
       userFrom: {
         nickName: '',
         startTime: '',
@@ -295,10 +296,12 @@ export default {
   created() {
     this.getChartBackEndRoom();
     this.findSystemMessage(1);
+    this.$ws('ws://47.56.186.16:8099/ws?token=' + this.token);
+    this.setMessage()
   },
   mounted() {
     tinymce.init({});
-    
+    // this.heartbeat();
   },
   methods: {
     handleChange (html, text) {
@@ -403,66 +406,15 @@ export default {
         this.$Message.error('请输入回复内容');
         return
       }
-      const ws = new WebSocket('ws://47.56.186.16:8099/ws?=' + this.token);
       let _that = this;
-      ws.onopen = function(evt) {
         let params = {
-          receiverMemberId: _that.chatInfo.receiverMemberId,
+          receiverMemberId: _that.chatInfo.receiverMemberId || _that.chatInfo.senderId,
           content: _that.chatContent,
           chatType: 'Txt',
           actionType: 'Chat'
         }
-        ws.send(JSON.stringify(params))
-      };
-      ws.onclose = function(evt) {
-          if (sessionStorage.getItem('token')) {
-            _that.heartbeat();
-          }
-      };
-      ws.onmessage = function(evt) {
-          let data = JSON.parse(evt.data);
-           var paramsJie = {
-            actionType: "MessageSignIn",
-            charRoomId: _that.chatInfo.id
-          }
-          if (_that.chatInfo.id === data.data.chartRoomId && data.data.pushType === 'Other' && data.data.actionType === 'Chat') {
-            ws.send(JSON.stringify(paramsJie))
-          }
-          if (data.code === '200') {
-            if (data.data.pushType === 'Other' && data.data.actionType === 'Chat') {
-              let info = {
-                headImgPath: data.data.headImgPath,
-                content: data.data.content
-              }
-              if (_that.chatInfo.id === data.data.chartRoomId || _that.chatInfo.id === data.data.charRoomId) {
-                _that.chatList.push(info);
-              }
-              _that.updateMessage(data.data);
-              setTimeout(() => {
-                document.getElementsByClassName('ivu-scroll-container')[0].scrollTop = document.getElementsByClassName('ivu-scroll-content')[0].scrollHeight;
-              }, 200);
-            } else {
-              let info = {
-                headImgPath: _that.$store.state.user.avatorImgPath,
-                content: _that.chatContent,
-                whetherOwn: true
-              }
-              if (_that.chatInfo.id === data.data.chartRoomId || _that.chatInfo.id === data.data.charRoomId) {
-                _that.chatList.push(info);
-                _that.$set(_that.chatInfo, 'chatUnReadCount', 0);
-              }
-              data.data.content = _that.chatContent;
-               _that.updateMessage(data.data);
-              _that.chatContent = '';
-              setTimeout(() => {
-                document.getElementsByClassName('ivu-scroll-container')[0].scrollTop = document.getElementsByClassName('ivu-scroll-content')[0].scrollHeight;
-              }, 200);
-            }
-          }
-      };
-      ws.onerror = function(evt) {
-            // onError(evt)
-      };
+        window.webSocket.send(JSON.stringify(params))
+        this.setMessage();
     },
     handleReachEdge (dir) {
                 return new Promise(resolve => {
@@ -490,46 +442,100 @@ export default {
       }
     },
     updateMessage(data) {
-      this.userData.forEach(item => {
-        if (item.id === data.charRoomId || item.id === data.chartRoomId) {
-            this.$set(item, 'content', data.content);    
-            if (data.pushType === 'Other' && item.id !== this.chatInfo.id) {
-              this.$set(item, 'chatUnReadCount', data.chatUnReadCount)
-              this.$set(item, 'nowDate', data.nowDate);
-            } else {
-              this.$set(item, 'chatUnReadCount', 0)
-            }
-        }
-      })
-      let existence = this.userData.some((item) => {
-        return item.id === data.charRoomId || item.id === data.chartRoomId
-      })
-      if (existence) {
-       let index = this.userData.findIndex(item => {
+      if (this.userData.length !== 0) {
+        this.userData.forEach(item => {
+          if (item.id === data.charRoomId || item.id === data.chartRoomId) {
+              this.$set(item, 'content', data.content); 
+              if (data.pushType === 'Other' && item.id !== this.chatInfo.id) {
+                this.$set(item, 'chatUnReadCount', data.chatUnReadCount)
+                this.$set(item, 'nowDate', data.nowDate);
+                return;
+              } else {
+                this.$set(item, 'chatUnReadCount', 0);
+                this.$set(data, 'chatUnReadCount', 0);
+                return;
+              }
+          }
+        })
+        let existence = this.userData.some((item) => {
           return item.id === data.charRoomId || item.id === data.chartRoomId
         })
-        if (data.pushType === 'Other') {
-          this.userData.splice(index, 1);
-          this.userData.unshift(data)
-        } else {
-          this.getChartBackEndRoom()
+        if (existence) {
+        let index = this.userData.findIndex(item => {
+            return item.id === data.charRoomId || item.id === data.chartRoomId
+          })
+          if (data.pushType === 'Other' && data.actionType === 'Chat') {
+            this.userData.splice(index, 1);
+            data.id = data.charRoomId || data.chartRoomId;
+            this.userData.unshift(data)
+          } else {
+            this.getChartBackEndRoom()
+          }
+        } else if(data.pushType === 'Server' && data.actionType === 'Chat'){
+          data.id = data.charRoomId || data.chartRoomId;
+          this.userData.unshift(data);
         }
-      } else {
-        this.userData.unshift(data);
+        this.$set(this, 'userData', this.userData)
       }
-      this.$set(this, 'userData', this.userData)
-      console.log(this.userData)
     },
     heartbeat() {
-        const ws = new WebSocket('ws://47.56.186.16:8099/ws?=' + this.token);
+        // const ws = new WebSocket('ws://47.56.186.16:8099/ws?token=' + this.token);
         let _that = this;
-        ws.onopen = function(evt) {
+        this.ws.onopen = function(evt) {
           let params = {
             actionType: 'Heartbeat'
           }
-          ws.send(JSON.stringify(params))
+          _that.ws.send(JSON.stringify(params))
         };
         console.log('send');
+    },
+    setMessage() {
+       let _that = this;
+       window.webSocket.onmessage = function(evt) {
+        let data = JSON.parse(evt.data);
+        if (data.data.actionType !== 'Heartbeat') {
+           var paramsJie = {
+            actionType: "MessageSignIn",
+            charRoomId: _that.chatInfo.id
+          }
+          if (_that.chatInfo.id === data.data.charRoomId && data.data.pushType === 'Other' && data.data.actionType === 'Chat' && _that.chatInfo.id !== '') {
+            window.webSocket.send(JSON.stringify(paramsJie))
+          }
+          if (data.code === '200') {
+            if (data.data.pushType === 'Other' && data.data.actionType === 'Chat') {
+              let info = {
+                headImgPath: data.data.headImgPath,
+                content: data.data.content
+              }
+              if (_that.chatInfo.id === data.data.chartRoomId || _that.chatInfo.id === data.data.charRoomId) {
+                _that.chatList.push(info);
+              }
+              if (data.data.pushType === 'Other' && data.data.actionType === 'Chat') {
+                _that.updateMessage(data.data);
+              }
+              setTimeout(() => {
+                document.getElementsByClassName('ivu-scroll-container')[0].scrollTop = document.getElementsByClassName('ivu-scroll-content')[0].scrollHeight;
+              }, 200);
+            } else if (data.data.pushType === 'Server' && data.data.actionType === 'Chat'){
+              let info = {
+                headImgPath: _that.$store.state.user.avatorImgPath,
+                content: _that.chatContent,
+                whetherOwn: true
+              }
+              if (_that.chatInfo.id === data.data.chartRoomId || _that.chatInfo.id === data.data.charRoomId) {
+                _that.chatList.push(info);
+                _that.$set(_that.chatInfo, 'chatUnReadCount', 0);
+              }
+              _that.updateMessage(data.data);
+              data.data.content = _that.chatContent;
+              _that.chatContent = '';
+              setTimeout(() => {
+                document.getElementsByClassName('ivu-scroll-container')[0].scrollTop = document.getElementsByClassName('ivu-scroll-content')[0].scrollHeight;
+              }, 200);
+            }
+          }
+        }
+      };
     }
   },
   computed: {

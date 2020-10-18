@@ -50,41 +50,15 @@ export default [
       }
     ]
   },
-  // {
-  //   path: '/join',
-  //   name: 'join',
-  //   component: Main,
-  //   meta: {
-  //     hideInBread: true
-  //   }
-  // },
-  // {
-  //   path: '/message',
-  //   name: 'message',
-  //   component: Main,
-  //   meta: {
-  //     hideInBread: true,
-  //     hideInMenu: true
-  //   },
-  //   children: [
-  //     {
-  //       path: 'message_page',
-  //       name: 'message_page',
-  //       meta: {
-  //         icon: 'md-notifications',
-  //         title: '消息中心'
-  //       },
-  //       component: () => import('@/view/single-page/message/index.vue')
-  //     }
-  //   ]
-  // },
   {
     path: '/components',
     name: 'components',
     meta: {
       icon: 'logo-buffer',
       title: '资讯管理',
-      notCache: true
+      notCache: true,
+      notCache: true,
+      hideInMenu: false
     },
     component: Main,
     children: [
@@ -92,7 +66,6 @@ export default [
         path: 'drag',
         name: 'drag',
         meta: {
-         
         },
         children: [
           {
@@ -193,7 +166,9 @@ export default [
     meta: {
       icon: 'md-cloud-upload',
       title: '积分管理中心',
-      notCache: true
+      notCache: true,
+      notCache: true,
+      hideInMenu: false
     },
     component: Main,
     children: [
@@ -310,7 +285,9 @@ export default [
     meta: {
       icon: 'ios-stats',
       title: '客服管理',
-      notCache: true
+      notCache: true,
+      notCache: true,
+      hideInMenu: false
     },
     component: Main,
     children: [
@@ -395,7 +372,9 @@ export default [
     meta: {
       icon: 'ios-stats',
       title: '帮助管理',
-      notCache: true
+      notCache: true,
+      notCache: true,
+      hideInMenu: false
     },
     component: Main,
     children: [
@@ -423,7 +402,10 @@ export default [
     path: '/error_store',
     name: 'error_store',
     meta: {
-      hideInBread: true
+      icon: 'md-contact',
+      notCache: true,
+      hideInBread: true,
+      hideInMenu: false
     },
     component: Main,
     children: [
@@ -440,31 +422,13 @@ export default [
     ]
   },
   {
-    path: '/error_logger',
-    name: 'error_logger',
-    meta: {
-      hideInBread: true,
-      hideInMenu: true
-    },
-    component: Main,
-    children: [
-      {
-        path: 'error_logger_page',
-        name: 'error_logger_page',
-        meta: {
-          icon: 'md-contact',
-          title: '用户管理',
-          notCache: true
-        },
-        component: () => import('@/view/error-store/error-store.vue')
-      }
-    ]
-  },
-  {
     path: '/directive',
     name: 'directive',
     meta: {
-      hideInBread: true
+      icon: 'md-contact',
+      notCache: true,
+      hideInBread: true,
+      hideInMenu: false
     },
     component: Main,
     children: [
@@ -484,6 +448,7 @@ export default [
     path: '/argu',
     name: 'argu',
     meta: {
+      notCache: true,
       hideInMenu: true
     },
     component: Main,
@@ -516,8 +481,9 @@ export default [
     name: 'drag_list_page',
     meta: {
       icon: 'ios-infinite',
-      title: '审核发布',
-      notCache: true
+      title: '我的资讯',
+      notCache: true,
+      hideInMenu: true
     },
     component: () => import('@/view/components/drag-list/drag-list.vue')
   },

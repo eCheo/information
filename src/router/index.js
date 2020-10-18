@@ -30,6 +30,17 @@ router.beforeEach((to, from, next) => {
       store.dispatch('getUserInfo').then(user => {
         // 拉取用户信息，通过用户权限和跳转的页面的name来判断是否有权限访问;access必须是一个数组，如：['super_admin'] ['super_admin', 'admin']
         turnTo(to, user.access, next)
+        routes.forEach(item => {
+          if (store.state.user.menberType === "front" && item.name !== "drag_list_page") {
+            item.meta.hideInMenu = true;
+          } else if (store.state.user.menberType === "front" && item.name === "drag_list_page") {
+            item.meta.hideInMenu = false
+          }else if (store.state.user.menberType === "backend" && item.name === "drag_list_page") {
+            item.meta.hideInMenu = true;
+          } else if (item.meta.icon){
+            item.meta.hideInMenu = false;
+          }
+        });
       }).catch(() => {
         setToken('')
         sessionStorage.removeItem('tokenType')

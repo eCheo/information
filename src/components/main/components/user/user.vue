@@ -33,13 +33,15 @@ export default {
       'handleLogOut'
     ]),
     logout () {
+      // sessionStorage.removeItem('tokenType')
+      // sessionStorage.removeItem('token')
      loginOut().then(() => {
+        sessionStorage.removeItem('tokenType')
+        sessionStorage.removeItem('token')
+        this.$store.commit('setToken', '');
         this.$router.push({
           name: 'login'
         })
-        setToken('')
-        sessionStorage.removeItem('tokenType')
-        sessionStorage.removeItem('token')
       })
     },
     message () {

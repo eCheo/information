@@ -10,8 +10,7 @@ import {
   getUnreadCount
 } from '@/api/user'
 import { setToken, getToken } from '@/libs/util'
-import route from '../../router/routers'
-
+import route from "../../router/routers";
 export default {
   state: {
     userName: '',
@@ -26,7 +25,8 @@ export default {
     messageReadedList: [],
     messageTrashList: [],
     messageContentStore: {},
-    menberType: ''
+    menberType: '',
+    ws: null
   },
   mutations: {
     setAvator (state, avatorPath) {
@@ -110,6 +110,8 @@ export default {
         logout(state.token).then(() => {
           commit('setAccess', [])
           commit('setToken', '')
+          sessionStorage.removeItem('tokenType')
+          sessionStorage.removeItem('token')
           resolve()
         }).catch(err => {
           reject(err)
@@ -126,14 +128,7 @@ export default {
         let token = sessionStorage.getItem('token') || state.token
         try {
           getUserInfo(tokenType, token).then(res => {
-            const data = res.data.data
-            route.forEach(item => {
-              if (data.memberType !== 'backend' && item.name !== 'drag_list_page') {
-                item.meta.hideInMenu = true;
-              } else if (data.memberType === 'backend' && item.name === 'drag_list_page') {
-                item.meta.hideInMenu = true;
-              }
-            })
+            let data = res.data.data
             commit('setAvator', data.headImgPath)
             commit('setUserName', data.nickName)
             commit('setMenberType', data.memberType)

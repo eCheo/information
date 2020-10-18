@@ -8,8 +8,8 @@
           <RadioGroup v-model="releaseType" type="button" @on-change="releaseTypeChange">
             <Radio label="PublishArticle">文章</Radio>
             <Radio label="PublishVideo">视频</Radio>
-            <Radio label="BrokeTheNews">爆料</Radio>
-            <Radio label="Topic">话题</Radio>
+            <Radio label="BrokeTheNews" v-if="$store.state.user.menberType === 'backend'">爆料</Radio>
+            <Radio label="Topic" v-if="$store.state.user.menberType === 'backend'">话题</Radio>
           </RadioGroup>
         </div>
         <div style="margin-top:20px;">
@@ -202,7 +202,8 @@ export default {
                 "Button",
                 {
                   style: {
-                    margin: '0 10px'
+                    margin: '0 10px',
+                    display: this.$store.state.user.menberType === 'front' ? 'none' : 'inline-block'
                   },
                   on: {
                     click: () => {
@@ -218,6 +219,9 @@ export default {
                   props: {
                     loading: params.row.loading,
                     type: 'error'
+                  },
+                  style: {
+                    display: this.$store.state.user.menberType === 'front' ? 'none' : 'inline-block'
                   },
                   on: {
                     click: () => {
@@ -242,7 +246,8 @@ export default {
                     disabled: params.row.whetherTop
                   },
                   style: {
-                    marginRight: '10px'
+                    marginRight: '10px',
+                    display: this.$store.state.user.menberType === 'front' ? 'none' : 'inline-block'
                   },
                   on: {
                     click: () => {
@@ -257,6 +262,9 @@ export default {
                     loading: params.row.loading,
                     type: 'error',
                     disabled: !params.row.whetherTop
+                  },
+                  style: {
+                    display: this.$store.state.user.menberType === 'front' ? 'none' : 'inline-block'
                   },
                   on: {
                     click: () => {
