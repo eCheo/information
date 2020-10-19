@@ -103,7 +103,7 @@
                 <Button type="success" @click="replay(it, 'ReplyReply')">回复</Button>
                 <Poptip confirm
                       title="是否删除该评论?"
-                      @on-ok='deleteComment(it.id)'
+                      @on-ok='isDelete = false,deleteComment(it.id)'
                       placement="top-end" >
                   <Button style="margin-left:10px;" type="error">删除</Button>
                 </Poptip>
@@ -252,14 +252,12 @@ export default {
       }
       deleteComment(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
-          this.isDelete = true;
           this.$Message.success('删除评论成功');
           if (!this.isDelete) {
             this.findBackEndReplyList(this.replySonPage);
           }
           this.findBackEndComment(this.commentPage)
         } else {
-          this.isDelete = true;
           this.$Message.error(res.data.message)
         }
       })
