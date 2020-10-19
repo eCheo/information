@@ -571,10 +571,9 @@ export default {
   padding: 15px;
 }
 .kf-chat {
-  background-color: #fff;
   border-radius: 4px;
   display: flex;
-  height: 800px;
+  height: 577px;
   .kc-right {
     background-color: rgb(237, 234, 232);
     width: 300px;
@@ -588,7 +587,7 @@ export default {
     }
     .kf-clist {
       margin-top: 70px;
-      height: 800px;
+      height: 577px;
       overflow: auto;
     }
     .kf-citem {
