@@ -52,6 +52,12 @@
             </div>
             <div class="ex-hf">
               <Button type="success" @click="replay(item, 'Reply')">回复</Button>
+              <Poptip confirm
+                      title="是否删除该评论?"
+                      @on-ok='isDelete = true,deleteComment(item.id)'
+                      placement="top-end" >
+                  <Button style="margin-left:10px;" type="error">删除</Button>
+              </Poptip>
             </div>
             <div class="ex-more" v-if="item.replyCount > 0">
               <p>当前有<span style="color:#19be6b;">{{item.replyCount}}条</span>回复<span style='cursor:pointer;color:#2d8cf0;' @click="commentInfo = item,findBackEndReplyList(1)">点击查看详情</span></p>
@@ -69,7 +75,7 @@
     <Modal v-model="modalShow" :mask-closable='false'>
       <p>回复{{nickName}}</p>
       <Input v-model="replayContent" :maxlength="500" show-word-limit type="textarea" style="width: 200px" />
-      <Button type="success" @click="articlesCommentOrReplay">回复</Button>
+      <Button type="success" style="margin-left:10px;" @click="articlesCommentOrReplay">回复</Button>
       <div slot="footer">
         
       </div>
@@ -88,14 +94,19 @@
             </div>
           </div>
         <div class="ex-hhf" style="width:100%;" v-for="(it, index) in replySonList.content" :key="index">
-                <span v-if="!it.replyBackEndMemberDto">
+                <p v-if="!it.replyBackEndMemberDto">
                   {{it.memberBackEndDto.nickName}}：{{it.content}}
-                </span>
-                <span v-else>
+                </p>
+                <p v-else>
                   {{it.memberBackEndDto.nickName}}<a style="color:#05b55c;">回复</a>{{it.replyBackEndMemberDto.nickName}}：{{it.content}}
-                </span>
-                <Button style="float:right" type="error" @click="deleteComment(it.id)">删除</Button>
-                <Button style="float:right" type="success" @click="replay(it, 'ReplyReply')">回复</Button>
+                </p>
+                <Button type="success" @click="replay(it, 'ReplyReply')">回复</Button>
+                <Poptip confirm
+                      title="是否删除该评论?"
+                      @on-ok='deleteComment(it.id)'
+                      placement="top-end" >
+                  <Button style="margin-left:10px;" type="error">删除</Button>
+                </Poptip>
         </div>
       </div>
       <div slot="footer">
@@ -132,7 +143,8 @@ export default {
       commentInfo: {},
       nickName: null,
       starTime: null,
-      endTime: null
+      endTime: null,
+      isDelete: false
     };
   },
   created() {
@@ -240,9 +252,14 @@ export default {
       }
       deleteComment(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
+          this.isDelete = true;
           this.$Message.success('删除评论成功');
-          this.findBackEndReplyList(this.replySonPage)
+          if (!this.isDelete) {
+            this.findBackEndReplyList(this.replySonPage);
+          }
+          this.findBackEndComment(this.commentPage)
         } else {
+          this.isDelete = true;
           this.$Message.error(res.data.message)
         }
       })
@@ -323,7 +340,7 @@ export default {
   }
   .ex-ct {
     font-size: 14px;
-    width: 87%;
+    width: 84%;
     margin-left: 15px;
     p {
       color: #666666;
@@ -349,5 +366,9 @@ export default {
     color: #666666;
     margin:0 0 15px 0;
     border-bottom: 1px solid #e9e9e9;
+    p {
+      width: 72%;
+      display: inline-block;
+    }
   }
 </style>
