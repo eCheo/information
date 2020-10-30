@@ -59,13 +59,13 @@
         <Upload
           ref="upload"
           :show-upload-list="true"
-          :on-success="handleSuccess"
+          :on-success="handleSuccessfm"
           :default-file-list="vidoeList"
           :format="['avi','mp4']"
           :max-size="10240"
-          :on-format-error="handleFormatError"
+          :on-format-error="handleFormatErrorfm"
           :on-exceeded-size="handleMaxSize"
-          :before-upload="handleBeforeUpload"
+          :before-upload='handleBeforeUploadfm'
           :headers="headers"
           type="drag"
           action="http://47.56.186.16:8089/api/obs/upload.json"
@@ -78,7 +78,7 @@
         <p>封面</p>
         <div class="demo-upload-list" v-for="(item, index) in fmUploadList" :key="index">
           <template v-if="item.status === 'finished'">
-            <img :src="item.url" style="width:250px;height:250px;" />
+            <img :src="item.response.data.viewUrl" style="width:250px;height:250px;" />
             <div class="demo-upload-list-cover">
               <Icon type="ios-trash-outline" @click.native="handleRemovefm(item)"></Icon>
             </div>
@@ -93,7 +93,8 @@
           :on-success="handleSuccessfm"
           :format="['jpg','png']"
           :max-size="5042"
-          :on-format-error="handleFormatErrorfm"
+          :before-upload='handleBeforeUploadfm'
+          :on-format-error="handleFormatError"
           :on-exceeded-size="handleMaxSizefm"
           multiple
           :headers="headers"
@@ -470,11 +471,11 @@ export default {
     },
     handleFormatError(file) {
       this.$Notice.warning({
-        title: "The file format is incorrect",
+        title: "文件类型错误",
         desc:
-          "File format of " +
+          "暂不支持该文件" +
           file.name +
-          " is incorrect, please select jpg or png."
+          " 类型"
       });
     },
     handleMaxSize(file) {
@@ -522,6 +523,19 @@ export default {
         title: "格式错误",
         desc: "视频暂时只支持 avi or mp4."
       });
+    },
+    handleBeforeUploadfm() {
+      if (this.fileName === 'PublishVideoImag' && this.fmUploadList.length === 1) {
+         this.$Notice.warning({
+          title: "视频封面只能上传一张"
+        });
+        return false;
+      } else if(this.fileName === 'PublishVideo' && this.uploadList.length === 1) {
+        this.$Notice.warning({
+          title: "视频只能上传一个"
+        });
+        return false;
+      }
     },
     handleMaxSizefm(file) {
       this.$Notice.warning({
