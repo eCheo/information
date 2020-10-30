@@ -514,9 +514,7 @@ export default {
       }
     },
     handleSuccessvd(res, file) {
-      if (this.fileName === "PublishVideo") {
           this.viodeUrl = res.data.viewUrl;
-      }
     },
     handleRemovefm(file) {
       const fileList = this.$refs.fmUpload.fileList || [];
