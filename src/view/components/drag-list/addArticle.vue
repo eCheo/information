@@ -59,7 +59,7 @@
         <Upload
           ref="upload"
           :show-upload-list="true"
-          :on-success="handleSuccessfm"
+          :on-success="handleSuccessvd"
           :default-file-list="vidoeList"
           :format="['avi','mp4']"
           :max-size="10240"
@@ -511,6 +511,11 @@ export default {
       } else {
         file.url = res.data.viewUrl;
         this.viewImg.push(res.data.viewUrl);
+      }
+    },
+    handleSuccessvd(res, file) {
+      if (this.fileName === "PublishVideo") {
+          this.viodeUrl = res.data.viewUrl;
       }
     },
     handleRemovefm(file) {
