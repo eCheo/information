@@ -225,8 +225,8 @@
         </div>
     </div>
     <div v-if="viewType !== 'BrokeTheNews'">
-      <Button type="success" @click="articleAdd('Dismount')" style="margin-right:10px;">保存</Button>
-      <Button type="error" @click="articleAdd('Grounding')">上架</Button>
+      <Button :disabled='isDis' type="success" @click="articleAdd('Dismount')" style="margin-right:10px;">保存</Button>
+      <Button :disabled='isDis' type="error" @click="articleAdd('Grounding')">上架</Button>
     </div>
   </div>
 </template>
@@ -512,11 +512,13 @@ export default {
         file.url = res.data.viewUrl;
         this.viewImg.push(res.data.viewUrl);
       }
+      console.log(this.videoImagePath)
     },
     handleSuccessvd(res, file) {
       if (this.fileName === "PublishVideo") {
           this.viodeUrl = res.data.viewUrl;
       }
+      console.log(this.viodeUrl)
     },
     handleRemovefm(file) {
       const fileList = this.$refs.fmUpload.fileList || [];
@@ -566,6 +568,11 @@ export default {
         }
       })
     },
+  },
+  computed: {
+    isDis() {
+      return (this.videoImagePath === '' || this.viodeUrl === '') && this.viewType === 'PublishVideo'
+    }
   },
   watch: {
     uploadList: {
