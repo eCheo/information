@@ -313,22 +313,23 @@ export default {
       this.specification.splice(index, 1)
     },
     specsSonAdd (list) {
-      if (list.specification.length !== 0) {
-        let repeat = list.specification.some(item => {
+      let sonList = list.specification || list.info;
+      if (sonList.length !== 0) {
+        let repeat = sonList.some(item => {
           return item === list.sonName
         })
         if (repeat) {
           this.$Message.error('子规格名不能重复')
           return
         } else {
-          list.specification.push(list.sonName)
+          sonList.push(list.sonName)
           this.setList.add(list.sonName)
         }
       } else {
-        list.specification.push(list.sonName)
+        sonList.push(list.sonName)
         this.setList.add(list.sonName)
       }
-      this.sonMap.set(list.key, list.specification)
+      this.sonMap.set(list.key, sonList)
       this.tableAdd()
     },
     specsSonDetele (item, index) {
