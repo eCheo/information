@@ -145,7 +145,7 @@ export default {
           render: (h, params) => {
             return h('InputNumber', {
               props: {
-                value: params.row.money,
+                value: Number(params.row.money),
                 activeChange: false,
                 formatter: value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
               },
@@ -167,7 +167,7 @@ export default {
           render: (h, params) => {
             return h('InputNumber', {
               props: {
-                value: params.row.stock,
+                value: Number(params.row.stock),
                 activeChange: false
               },
               on: {
@@ -184,7 +184,7 @@ export default {
           render: (h, params) => {
             return h('InputNumber', {
               props: {
-                value: params.row.integral,
+                value: Number(params.row.integral),
                 activeChange: false
               },
               on: {
