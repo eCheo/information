@@ -135,9 +135,6 @@ export default {
                 menubar: false,
                 images_upload_handler: (blobInfo, success, failure) => {
                 const file = blobInfo.blob();
-                if (file.size > 5242880) {
-                    this.$Message.error("图片请不要大于 5MB");
-                } else {
                     try {
                     let params = new FormData();
                     params.append('filename', file.name);
@@ -152,7 +149,6 @@ export default {
                     } catch {
                     failure('上传图片失败')
                     }
-                }
                 }
             },
             problemList: [],

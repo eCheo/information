@@ -4,7 +4,7 @@
       <Input v-model="title" style="width:500px;margin-bottom: 20px;" placeholder="请输入文章标题"></Input>
       <tinymce-editor ref="editor" :init="init" v-model="content" @on-change="handleChange" />
       <p style="margin:20px 0;">*封面(必填)</p>
-      <p>只能上传jgp/png文件，且不超过5M</p>
+      <p>只能上传jgp/png文件</p>
       <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index">
         <template v-if="item.status === 'finished'">
           <img :src="item.url" style="width:250px;height:250px;" />
@@ -22,9 +22,7 @@
         :show-upload-list="false"
         :on-success="handleSuccess"
         :format="['jpg','png']"
-        :max-size="5042"
         :on-format-error="handleFormatError"
-        :on-exceeded-size="handleMaxSize"
         :before-upload="handleBeforeUpload"
         multiple
         :headers="headers"
@@ -62,10 +60,8 @@
           :on-success="handleSuccessvd"
           :default-file-list="vidoeList"
           :format="['avi','mp4']"
-          :max-size="10240"
           :on-format-error="handleFormatErrorfm"
-          :on-exceeded-size="handleMaxSize"
-          :before-upload='handleBeforeUploadfm'
+          :before-upload='handleBeforeUploadvideo'
           :headers="headers"
           type="drag"
           action="http://47.56.186.16:8089/api/obs/upload.json"
@@ -74,11 +70,11 @@
           <Button icon="ios-cloud-upload-outline" @click="fileName ='PublishVideo'">上传文件</Button>
         </Upload>
       </div>
-      <div>
+      <div style="margin:20px 0;">
         <p>封面</p>
         <div class="demo-upload-list" v-for="(item, index) in fmUploadList" :key="index">
           <template v-if="item.status === 'finished'">
-            <img :src="item.response.data.viewUrl" style="width:250px;height:250px;" />
+            <img :src="item.url || item.response.data.viewUrl" style="width:250px;height:250px;" />
             <div class="demo-upload-list-cover">
               <Icon type="ios-trash-outline" @click.native="handleRemovefm(item)"></Icon>
             </div>
@@ -92,10 +88,8 @@
           :show-upload-list="false"
           :on-success="handleSuccessfm"
           :format="['jpg','png']"
-          :max-size="5042"
           :before-upload='handleBeforeUploadfm'
           :on-format-error="handleFormatError"
-          :on-exceeded-size="handleMaxSizefm"
           multiple
           :headers="headers"
           type="drag"
@@ -116,7 +110,7 @@
         <Input class="video-input" v-model="title"></Input>
       </div>
       <div style="margin:20px 0;">
-        <span>栏目类型</span>
+        <span style="margin-right:20px;">栏目类型</span>
         <div
           class="lm-list"
           :class="condiIndex === index ? 'lm-bg' : ''"
@@ -170,9 +164,7 @@
         :show-upload-list="false"
         :on-success="handleSuccess"
         :format="['jpg','png']"
-        :max-size="5042"
         :on-format-error="handleFormatError"
-        :on-exceeded-size="handleMaxSize"
         :before-upload="handleBeforeUpload"
         multiple
         :headers="headers"
@@ -331,13 +323,12 @@ export default {
         " " +
         sessionStorage.getItem("token")
     };
-    if (this.$refs.upload.fileList) {
+    if (this.$refs.upload) {
       this.uploadList = this.$refs.upload.fileList;
     }
     if (this.$refs.fmUpload.fileList) {
       this.fmUploadList = this.$refs.fmUpload.fileList;
-    }
-    
+    } 
   },
   methods: {
     handleChange(html, text) {
@@ -431,7 +422,7 @@ export default {
               status: "finished"
             });
           }
-          if (res.data.data.imagePaths.length > 0) {
+          if (res.data.data.imagePaths && res.data.data.imagePaths.length > 0) {
             res.data.data.imagePaths.forEach(item => {
               this.uploadList.push({
                 url: item,
@@ -476,12 +467,6 @@ export default {
           "暂不支持该文件" +
           file.name +
           " 类型"
-      });
-    },
-    handleMaxSize(file) {
-      this.$Notice.warning({
-        title: "Exceeding file size limit",
-        desc: "File  " + file.name + " is too large, no more than 2M."
       });
     },
     handleBeforeUpload() {
@@ -533,18 +518,15 @@ export default {
           title: "视频封面只能上传一张"
         });
         return false;
-      } else if(this.fileName === 'PublishVideo' && this.uploadList.length === 1) {
+      }
+    },
+    handleBeforeUploadvideo() {
+      if(this.fileName === 'PublishVideo' && this.uploadList.length === 1) {
         this.$Notice.warning({
           title: "视频只能上传一个"
         });
         return false;
       }
-    },
-    handleMaxSizefm(file) {
-      this.$Notice.warning({
-        title: "Exceeding file size limit",
-        desc: "File  " + file.name + " is too large, no more than 10M."
-      });
     },
     informationExamine(row, status) {
       let params = {

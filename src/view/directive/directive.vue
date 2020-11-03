@@ -14,9 +14,7 @@
                 :show-upload-list="false"
                 :on-success="handleSuccess"
                 :format="['jpg','png']"
-                :max-size="5042"
                 :on-format-error="handleFormatError"
-                :on-exceeded-size="handleMaxSize"
                 :before-upload="handleBeforeUpload"
                 multiple
                 :headers="headers"
