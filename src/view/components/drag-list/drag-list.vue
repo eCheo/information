@@ -207,7 +207,14 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.deleteArticles(params.row.id);
+                      let text = this.releaseType === 'PublishArticle' ? '文章' : this.releaseType === 'PublishVideo' ? '视频' : '话题' 
+                      this.$Modal.confirm({
+                        title: '提示',
+                        content: `是否要删除该${text}？`,
+                        onOk: () => {
+                          this.deleteArticles(params.row.id);
+                        }
+                      })
                     }
                   }
                 },

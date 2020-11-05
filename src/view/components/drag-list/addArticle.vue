@@ -409,6 +409,10 @@ export default {
           this.topicData.optionOne = res.data.data.orthodoxButtonText;
           this.topicData.viewpointTwo = res.data.data.opposingView;
           this.topicData.optionTwo = res.data.data.opposingButtonText;
+          this.condiId = res.data.data.columnId;
+          this.condiIndex = this.conditionList.findIndex(item => {
+            return item.id === this.condiId
+          })
           if (this.viewType === "PublishVideo") {
             this.videoImagePath = res.data.data.videoImagePath;
             this.viodeUrl = res.data.data.videoPath;
@@ -447,17 +451,24 @@ export default {
       }
     },
     handleSuccess(res, file) {
-      if (this.viewType === "PublishVideo") {
-        if (this.fileName === "PublishVideo") {
-          this.viodeUrl = res.data.viewUrl;
-        } else if (this.fileName === "PublishVideoImag") {
-          this.videoImagePath = res.data.viewUrl;
+      if (res.code === '200') {
+        if (this.viewType === "PublishVideo") {
+          if (this.fileName === "PublishVideo") {
+            this.viodeUrl = res.data.viewUrl;
+          } else if (this.fileName === "PublishVideoImag") {
+            this.videoImagePath = res.data.viewUrl;
+          } else {
+            this.videoImagePath = res.data.viewUrl;
+          }
         } else {
-          this.videoImagePath = res.data.viewUrl;
+          file.url = res.data.viewUrl;
+          this.viewImg.push(res.data.viewUrl);
         }
       } else {
-        file.url = res.data.viewUrl;
-        this.viewImg.push(res.data.viewUrl);
+        this.$Notice.warning({
+          title: "提示",
+          desc: "上传失败"
+        });
       }
     },
     handleFormatError(file) {
@@ -485,21 +496,28 @@ export default {
       return check;
     },
     handleSuccessfm(res, file) {
-      if (this.viewType === "PublishVideo") {
-        if (this.fileName === "PublishVideo") {
-          this.viodeUrl = res.data.viewUrl;
-        } else if (this.fileName === "PublishVideoImag") {
-          this.videoImagePath = res.data.viewUrl;
-        } else {
-          this.videoImagePath = res.data.viewUrl;
-        }
+      if (res.code === '200') {
+        this.videoImagePath = res.data.viewUrl;
       } else {
-        file.url = res.data.viewUrl;
-        this.viewImg.push(res.data.viewUrl);
+        this.$Notice.warning({
+          title: "提示",
+          desc: "视频封面上传失败"
+        });
+        this.$refs.fmUpload.fileList.splice(fileList.indexOf(file), 1);
+        this.videoImagePath = "";
       }
     },
     handleSuccessvd(res, file) {
+      if (res.code === '200') {
           this.viodeUrl = res.data.viewUrl;
+      } else {
+        this.$Notice.warning({
+          title: "提示",
+          desc: "视频上传失败"
+        });
+        this.$refs.upload.fileList.splice(fileList.indexOf(file), 1);
+        this.viodeUrl = "";
+      }
     },
     handleRemovefm(file) {
       const fileList = this.$refs.fmUpload.fileList || [];

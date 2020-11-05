@@ -121,7 +121,13 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.deleteGoods(params.row);
+                    this.$Modal.confirm({
+                        title: '提示',
+                        content: `是否要删除该商品？`,
+                        onOk: () => {
+                          this.deleteGoods(params.row);
+                        }
+                      })
                   }
                 }
               }, '删除')
