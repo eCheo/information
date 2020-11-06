@@ -206,6 +206,7 @@ export default {
         toolbar:"bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify|bullist numlist |outdent indent blockquote | undo redo | link unlink image code | removeformat",
         branding: false,
         menubar: false,
+        fontsize_formats: '11px 12px 14px 16px 18px 24px 36px 48px',
         images_upload_handler: (blobInfo, success, failure) => {
           const file = blobInfo.blob();
             try {
