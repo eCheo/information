@@ -109,6 +109,13 @@
         <span>标题</span>
         <Input class="video-input" v-model="title"></Input>
       </div>
+      <div style="margin:20px 0;" v-if="$store.state.user.menberType !== 'front'">
+        <span style="margin-right:20px;">是否热点</span>
+        <i-switch v-model="isHotspot">
+          <span slot="open">是</span>
+          <span slot="close">否</span>
+        </i-switch>
+      </div>
       <div style="margin:20px 0;">
         <span style="margin-right:20px;">栏目类型</span>
         <div
@@ -250,6 +257,7 @@ export default {
       headers: {},
       viewImg: [],
       title: "",
+      isHotspot: false,
       conditionList: [],
       condiId: "",
       condiIndex: 0,
@@ -345,7 +353,8 @@ export default {
           title: this.title,
           videoPath: this.viodeUrl,
           videoImagePath: this.videoImagePath,
-          id: this.$route.query.id
+          id: this.$route.query.id,
+          isHotspot: this.$store.state.user.menberType !== 'front' ? this.isHotspot : null 
         };
       } else if (this.viewType === "PublishArticle") {
         params = {
@@ -411,6 +420,7 @@ export default {
           this.topicData.viewpointTwo = res.data.data.opposingView;
           this.topicData.optionTwo = res.data.data.opposingButtonText;
           this.condiId = res.data.data.columnId;
+          this.isHotspot = res.data.data.isHotspot;
           this.condiIndex = this.conditionList.findIndex(item => {
             return item.id === this.condiId
           })

@@ -12,23 +12,37 @@
           <Table border :loading='loading' :columns="columnList" :data="columnData"></Table>
       </div>
       <Modal v-model="modal" title='修改栏目' @on-ok='addArticlesColumn'>
-          <div style="margin-bottom:10px;">
-              <p>栏目名称</p>
+          <div>
+              <p style="margin:10px 0;">栏目名称</p>
               <Input v-model="columnInfo.name"> </Input>
           </div>
           <div>
-              <p>优先级</p>
+              <p style="margin:10px 0;">优先级</p>
               <InputNumber :min="1" :step="1" v-model="columnInfo.sort"></InputNumber>
+          </div>
+          <div>
+              <p style="margin:10px 0;">是否下架</p>
+              <i-switch size="large" true-color="#13ce66" false-color="#ff4949" v-model="columnInfo.isShelf">
+                    <span slot="open">下架</span>
+                    <span slot="close">上架</span>
+              </i-switch>
           </div>
       </Modal>
       <Modal v-model="modalAdd" title='添加栏目' @on-ok='addArticlesColumn'>
-          <div style="margin-bottom:10px;">
-              <p>栏目名称</p>
+          <div>
+              <p style="margin:10px 0;">栏目名称</p>
               <Input v-model="columnInfo.name"> </Input>
           </div>
           <div>
-              <p>优先级</p>
+              <p style="margin:10px 0;">优先级</p>
               <InputNumber :min="1" :step="1" v-model="columnInfo.sort"></InputNumber>
+          </div>
+          <div>
+              <p style="margin:10px 0;">是否下架</p>
+              <i-switch size="large" true-color="#13ce66" false-color="#ff4949"  v-model="columnInfo.isShelf">
+                    <span slot="open">下架</span>
+                    <span slot="close">上架</span>
+              </i-switch>
           </div>
       </Modal>
     </div>
@@ -47,21 +61,32 @@ export default {
                     key: 'name'
                 },
                 {
+                    title: '状态',
+                    render: (h, params) => {
+                        let text = !params.row.isShelf ? '上架' : '下架'
+                        return h ('p', {}, text)
+                    }
+                },
+                {
                     title: '操作',
                     render: (h, params) => {
-                        return h('p', {
-                            style: {
-                                cursor: 'pointer'
-                            },
-                            on: {
-                                click: () => {
-                                    this.modal = true;
-                                    this.columnInfo.name = params.row.name;
-                                    this.columnInfo.id = params.row.id;
-                                    this.columnInfo.sort = params.row.sort;
+                        return h('div', [
+                            h('span', {
+                                style: {
+                                    cursor: 'pointer',
+                                    color: '#2D8cF0'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.modal = true;
+                                        this.columnInfo.name = params.row.name;
+                                        this.columnInfo.id = params.row.id;
+                                        this.columnInfo.sort = params.row.sort;
+                                        this.columnInfo.isShelf = params.row.isShelf;
+                                    }
                                 }
-                            }
-                        } ,'修改')
+                            } ,'修改')
+                        ])
                     }
                 }
             ],
@@ -70,7 +95,8 @@ export default {
             columnInfo: {
                 name: '',
                 id: '',
-                sort: 1
+                sort: 1,
+                isShelf: false
             },
             LIKE_name: ''
         }
