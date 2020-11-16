@@ -34,7 +34,14 @@
           <Icon type="ios-camera" size="20"></Icon>
         </div>
       </Upload>
-      <div>
+      <div style="margin:20px 0;" v-if="$store.state.user.menberType !== 'front'">
+        <span style="margin-right:20px;">是否热点</span>
+        <i-switch v-model="isHotspot">
+          <span slot="open">是</span>
+          <span slot="close">否</span>
+        </i-switch>
+      </div>
+      <div style="margin:20px 0;">
         <p>*选择所属栏目类型（单选/必选）</p>
         <p>选择与文章内容相符的栏目有利于提高文章的通过率</p>
         <div style="margin:20px 0;">
@@ -364,7 +371,8 @@ export default {
           type: "PublishArticle",
           imagePaths: this.viewImg,
           groundingType: status,
-          id: this.$route.query.id
+          id: this.$route.query.id,
+          isHotspot: this.$store.state.user.menberType !== 'front' ? this.isHotspot : null 
         };
       } else if (this.viewType === "Topic") {
         params = {
