@@ -123,6 +123,13 @@
           <span slot="close">否</span>
         </i-switch>
       </div>
+      <div style="margin:20px 0;" v-if="$store.state.user.menberType !== 'front'">
+        <span style="margin-right:20px;">是否横向播放</span>
+        <i-switch v-model="isHorizontal">
+          <span slot="open">是</span>
+          <span slot="close">否</span>
+        </i-switch>
+      </div>
       <div style="margin:20px 0;">
         <span style="margin-right:20px;">栏目类型</span>
         <div
@@ -265,6 +272,7 @@ export default {
       viewImg: [],
       title: "",
       isHotspot: false,
+      isHorizontal: false,
       conditionList: [],
       condiId: "",
       condiIndex: 0,
@@ -361,7 +369,8 @@ export default {
           videoPath: this.viodeUrl,
           videoImagePath: this.videoImagePath,
           id: this.$route.query.id,
-          isHotspot: this.$store.state.user.menberType !== 'front' ? this.isHotspot : null 
+          isHotspot: this.$store.state.user.menberType !== 'front' ? this.isHotspot : null,
+          isHorizontal: this.$store.state.user.menberType !== 'front' ? this.isHorizontal : null,
         };
       } else if (this.viewType === "PublishArticle") {
         params = {
@@ -429,6 +438,7 @@ export default {
           this.topicData.optionTwo = res.data.data.opposingButtonText;
           this.condiId = res.data.data.columnId;
           this.isHotspot = res.data.data.isHotspot;
+          this.isHorizontal = res.data.isHorizontal || false;
           this.condiIndex = this.conditionList.findIndex(item => {
             return item.id === this.condiId
           })
