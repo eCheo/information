@@ -272,7 +272,7 @@ export default {
       viewImg: [],
       title: "",
       isHotspot: false,
-      isHorizontal: false,
+      isHorizontal: true,
       conditionList: [],
       condiId: "",
       condiIndex: 0,
