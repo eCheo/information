@@ -438,7 +438,7 @@ export default {
           this.topicData.optionTwo = res.data.data.opposingButtonText;
           this.condiId = res.data.data.columnId;
           this.isHotspot = res.data.data.isHotspot;
-          this.isHorizontal = res.data.isHorizontal || false;
+          this.isHorizontal = res.data.data.isHorizontal || false;
           this.condiIndex = this.conditionList.findIndex(item => {
             return item.id === this.condiId
           })
