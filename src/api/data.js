@@ -517,3 +517,11 @@ export const cancelArticlesTop = data => {
     data: data
   })
 }
+
+export const pushAll = data => {
+  return axios.request({
+    url: '/api/backend/article/pushAll.json',
+    method: 'post',
+    data: data
+  })
+}

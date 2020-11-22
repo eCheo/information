@@ -48,7 +48,8 @@ import {
   deleteArticles,
   informationExamine,
   cancelArticlesTop,
-  setArticlesTop
+  setArticlesTop,
+  pushAll
 } from "@/api/data";
 // import $store from 'vuex'
 export default {
@@ -187,7 +188,11 @@ export default {
                 }, '不通过')
               ])
             } else {
-            return h("div", [
+            return h("div", {
+              style: {
+                padding: '5px 0'
+              }
+            }, [
               h("Button", {
                 props: {
                   type: 'success'
@@ -238,9 +243,28 @@ export default {
                 },
                 params.row.groundingType.name === "Dismount" ? "上架" : "下架"
               ),
+              h(
+                "Button",
+                {
+                  props: {
+                    loading: params.row.loading,
+                    type: 'success',
+                    disabled: params.row.isPushAll || params.row.groundingType.name === "Dismount"
+                  },
+                  style: {
+                    display: (this.releaseType !== 'PublishArticle' && this.releaseType !== 'PublishVideo') || this.$store.state.user.menberType === 'front' ? 'none' : 'inline-block',
+                    marginRight: '10px',
+                    marginTop: this.releaseType === 'PublishVideo' ? '10px' : '0'                    
+                  },
+                  on: {
+                    click: () => {
+                      this.pushAll(params.row);
+                    }
+                  }
+                }, '推送'),
               h('div', {
                   style: {
-                    display: this.releaseType === 'PublishArticle' ? 'block' : 'none',
+                    display: this.releaseType === 'PublishArticle' ? 'inline-block' : 'none',
                     marginTop: '10px'
                   }
                 },[
@@ -281,7 +305,7 @@ export default {
                 }, '取消置顶')
               ])
             ]);
-             }
+            }
           }
         }
       ],
@@ -366,7 +390,7 @@ export default {
       deleteArticles({ id: id }).then(res => {
         if (res.status === 200 && res.data.code === "200") {
           this.$Message.success("删除成功");
-          this.findArticlesResult(1);
+          this.findArticlesResult(this.authenticationFrom.page);
         } else {
           this.$Message.error(res.data.message);
         }
@@ -397,7 +421,7 @@ export default {
       setArticlesTop(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
           this.$Message.success('置顶成功');
-          this.findArticlesResult(1);
+          this.findArticlesResult(this.authenticationFrom.page);
         } else {
           this.$Message.error(res.data.message);
         }
@@ -410,7 +434,21 @@ export default {
       cancelArticlesTop(params).then(res => {
         if (res.status === 200 && res.data.code === '200') {
           this.$Message.success('取消置顶成功');
-          this.findArticlesResult(1);
+          this.findArticlesResult(this.authenticationFrom.page);
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      })
+    },
+    pushAll(data) {
+      let params = {
+        isPushAll: !data.isPushAll,
+        id: data.id
+      }
+      pushAll(params).then(res => {
+        if (res.status === 200 && res.data.code === '200') {
+          this.$Message.success('推送成功');
+          this.findArticlesResult(this.authenticationFrom.page);
         } else {
           this.$Message.error(res.data.message);
         }

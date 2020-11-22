@@ -61,6 +61,10 @@ export default {
                     key: 'name'
                 },
                 {
+                    title: '优先级',
+                    key: 'sort'
+                },
+                {
                     title: '状态',
                     render: (h, params) => {
                         let text = !params.row.isShelf ? '上架' : '下架'
@@ -107,7 +111,8 @@ export default {
     methods: {
         findArticles() {
             let params = {
-                LIKE_name: this.LIKE_name
+                LIKE_name: this.LIKE_name,
+                sort: 'sort,asc'
             }
             this.loading = true;
             findArticles(params).then(res => {
