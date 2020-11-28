@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <img style="width:100%;" src="../../../assets/images/js.jpg" />
+  <div style="width:100%;height:100%;">
+    <img style="width:100%;height:100%;" src="../../../assets/images/home.png" />
   </div>
 </template>
 
