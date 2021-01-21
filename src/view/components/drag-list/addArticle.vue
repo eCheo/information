@@ -40,6 +40,15 @@
           <span slot="open">是</span>
           <span slot="close">否</span>
         </i-switch>
+       
+      </div>
+      <div style="margin:20px 0;" v-if="$store.state.user.menberType !== 'front'">
+        <span style="margin-right:20px;">是否跳转链接</span>
+        <i-switch v-model="isJump">
+          <span slot="open">是</span>
+          <span slot="close">否</span>
+        </i-switch>
+        <Input style="width:250px;margin-left:20px;" v-if="isJump" v-model="jumpLink" placeholder="请输入跳转链接"></Input>
       </div>
       <div style="margin:20px 0;">
         <p>*选择所属栏目类型（单选/必选）</p>
@@ -324,7 +333,9 @@ export default {
       fmUploadList: [],
       vidoeList: [],
       memberDto: {},
-      newsData: {}
+      newsData: {},
+      isJump:false,
+      jumpLink: ''
     };
   },
   components: {
@@ -381,7 +392,9 @@ export default {
           imagePaths: this.viewImg,
           groundingType: status,
           id: this.$route.query.id,
-          isHotspot: this.$store.state.user.menberType !== 'front' ? this.isHotspot : null 
+          isHotspot: this.$store.state.user.menberType !== 'front' ? this.isHotspot : null,
+          isJump: this.$store.state.user.menberType !== 'front' ? this.isJump : null,
+          jumpLink: this.$store.state.user.menberType !== 'front' ? this.jumpLink : null
         };
       } else if (this.viewType === "Topic") {
         params = {
@@ -624,6 +637,7 @@ ul li {
 .lm-list {
   min-width: 70px;
   height: 30px;
+  padding: 0 10px;
   text-align: center;
   line-height: 30px;
   color: #333333;
