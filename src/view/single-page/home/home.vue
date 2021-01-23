@@ -57,7 +57,7 @@
               <count-to
                 :simplify="true"
                 :unit="unit2"
-                :end="countData.weekActiveUse"
+                :end="countData.weekActiveUser"
                 count-class="hm-sub-num"
               />
             </li>
