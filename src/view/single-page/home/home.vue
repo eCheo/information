@@ -22,15 +22,30 @@
           <ul class="hm-list">
             <li class="hm-item">
               <p class="hm-sub-title">今日新增用户</p>
-              <count-to :simplify="true" :unit="unit2" :end="111" count-class="hm-sub-num" />
+              <count-to
+                :simplify="true"
+                :unit="unit2"
+                :end="countData.nowInsertUser"
+                count-class="hm-sub-num"
+              />
             </li>
             <li class="hm-item">
               <p class="hm-sub-title">本周新增用户</p>
-              <count-to :simplify="true" :unit="unit2" :end="111" count-class="hm-sub-num" />
+              <count-to
+                :simplify="true"
+                :unit="unit2"
+                :end="countData.weekNewsUser"
+                count-class="hm-sub-num"
+              />
             </li>
             <li class="hm-item">
               <p class="hm-sub-title">总用户数</p>
-              <count-to :simplify="true" :unit="unit2" :end="111" count-class="hm-sub-num" />
+              <count-to
+                :simplify="true"
+                :unit="unit2"
+                :end="countData.memberCount"
+                count-class="hm-sub-num"
+              />
             </li>
           </ul>
         </div>
@@ -39,21 +54,36 @@
           <ul class="hm-list">
             <li class="hm-item">
               <p class="hm-sub-title">日活跃数(近七天平均值)</p>
-              <count-to :simplify="true" :unit="unit2" :end="111" count-class="hm-sub-num" />
+              <count-to
+                :simplify="true"
+                :unit="unit2"
+                :end="countData.weekActiveUse"
+                count-class="hm-sub-num"
+              />
             </li>
             <li class="hm-item">
               <p class="hm-sub-title">月活跃数(近30天)</p>
-              <count-to :simplify="true" :unit="unit2" :end="111" count-class="hm-sub-num" />
+              <count-to
+                :simplify="true"
+                :unit="unit2"
+                :end="countData.monthActiveUser"
+                count-class="hm-sub-num"
+              />
             </li>
             <li class="hm-item">
               <p class="hm-sub-title">季活跃数(近90天)</p>
-              <count-to :simplify="true" :unit="unit2" :end="111" count-class="hm-sub-num" />
+              <count-to
+                :simplify="true"
+                :unit="unit2"
+                :end="countData.quarterCount"
+                count-class="hm-sub-num"
+              />
             </li>
           </ul>
         </div>
       </div>
     </Row>
-    
+
     <!-- <img style="width:100%;height:100%;" src="../../../assets/images/home.png" /> -->
   </div>
 </template>
@@ -62,6 +92,7 @@
 import InforCard from "_c/info-card";
 import CountTo from "_c/count-to";
 import route from "../../../router/routers";
+import { getCount } from "../../../api/data";
 export default {
   name: "home",
   data() {
@@ -83,14 +114,44 @@ export default {
         [6, "百万多"],
         [7, "千万多"],
         [8, "亿多"]
-      ]
+      ],
+      countData: {
+        articleCount: 4359,
+        commentCount: 983,
+        likesCount: 144,
+        memberCount: 62,
+        monthActiveUser: 0,
+        nowInsertUser: 0,
+        quarterCount: 0,
+        videoCount: 645,
+        weekActiveUser: 0,
+        weekNewsUser: 0
+      }
     };
   },
   components: {
     InforCard,
     CountTo
   },
-  mounted() {}
+  created() {
+    this.getCount();
+  },
+  mounted() {},
+  methods: {
+    getCount() {
+      getCount().then(res => {
+        if (res.status === 200 && res.data.code === "200") {
+          this.countData = res.data.data;
+          this.inforCardData[0].count = this.countData.articleCount;
+          this.inforCardData[1].count = this.countData.commentCount;
+          this.inforCardData[2].count = this.countData.likesCount;
+          this.inforCardData[3].count = this.countData.videoCount;
+        } else {
+          this.$Message.error(res.data.message);
+        }
+      });
+    }
+  }
 };
 </script>
 

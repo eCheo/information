@@ -525,3 +525,11 @@ export const pushAll = data => {
     data: data
   })
 }
+
+export const getCount = data => {
+  return axios.request({
+    url: '/api/backend/article//indexCount.json',
+    method: 'post',
+    data: data
+  })
+}
