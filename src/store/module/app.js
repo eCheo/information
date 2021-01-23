@@ -81,7 +81,7 @@ export default {
           else state.tagNavList.splice(1, 0, router)
         }
         // console.log(state)
-        // setTagNavListInLocalstorage([...state.tagNavList])
+        setTagNavListInLocalstorage([...state.tagNavList])
       }
     },
     setLocal (state, lang) {

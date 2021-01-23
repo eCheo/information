@@ -1,8 +1,11 @@
 <template>
   <div>
     <div v-if="viewType === 'PublishArticle'">
-      <Input v-model="title" style="width:500px;margin-bottom: 20px;" placeholder="请输入文章标题"></Input>
-      <tinymce-editor ref="editor" :init="init" v-model="content" @on-change="handleChange" />
+      <div>
+        <Input v-model="title" style="width:500px;margin-bottom: 20px;" placeholder="请输入文章标题"></Input>
+        <Button style="float:right;" @click="handleCloseTag">返回</Button>
+      </div>
+      <tinymce-editor v-if="!isJump" ref="editor" :init="init" v-model="content" @on-change="handleChange" />
       <p style="margin:20px 0;">*封面(必填)</p>
       <p>只能上传jgp/png文件</p>
       <div class="demo-upload-list" v-for="(item, index) in uploadList" :key="index">
@@ -48,7 +51,7 @@
           <span slot="open">是</span>
           <span slot="close">否</span>
         </i-switch>
-        <Input style="width:250px;margin-left:20px;" v-if="isJump" v-model="jumpLink" placeholder="请输入跳转链接"></Input>
+        <Input style="width:250px;margin-left:20px;" v-if="isJump" v-model="content" placeholder="请输入跳转链接"></Input>
       </div>
       <div style="margin:20px 0;">
         <p>*选择所属栏目类型（单选/必选）</p>
@@ -264,6 +267,7 @@ import "tinymce/plugins/table"; // 插入表格插件
 import "tinymce/plugins/lists"; // 列表插件
 import "tinymce/plugins/wordcount"; // 字数统计插件
 import Editor from "@tinymce/tinymce-vue";
+import { mapMutations} from 'vuex'
 import {
   releaseArticle,
   findArticles,
@@ -366,6 +370,19 @@ export default {
     } 
   },
   methods: {
+    ...mapMutations([
+      'closeTag'
+    ]),
+    handleCloseTag() {
+      let route = {
+        meta: this.$route.meta,
+        name: this.$route.name,
+        params: this.$route.params,
+        query: this.$route.query
+      };
+      this.closeTag(route);
+      this.$router.push('/components/drag/drag_list_page')
+    },
     handleChange(html, text) {
       this.content = html;
     },
@@ -393,8 +410,7 @@ export default {
           groundingType: status,
           id: this.$route.query.id,
           isHotspot: this.$store.state.user.menberType !== 'front' ? this.isHotspot : null,
-          isJump: this.$store.state.user.menberType !== 'front' ? this.isJump : null,
-          jumpLink: this.$store.state.user.menberType !== 'front' ? this.jumpLink : null
+          isJump: this.isJump
         };
       } else if (this.viewType === "Topic") {
         params = {

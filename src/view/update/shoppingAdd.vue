@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div style="text-align:right;">
+      <Button @click="handleCloseTag">返回</Button>
+    </div>
     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
       <FormItem label="商品名称" prop="name">
         <Input v-model="formValidate.name" placeholder="请输入商品名称" style="width:150px"></Input>
@@ -113,6 +116,7 @@ import 'tinymce/plugins/wordcount'// 字数统计插件
 import Editor from "@tinymce/tinymce-vue";
 import { createGoods, findBackEndGoods, updateGoods, upload } from '@/api/data'
 import store from '../../store/module/user'
+import { mapMutations} from 'vuex'
 export default {
   data () {
     return {
@@ -243,6 +247,19 @@ export default {
     this.goodImagesList = this.$refs.goodImg.fileList;
   },
   methods: {
+     ...mapMutations([
+      'closeTag'
+    ]),
+    handleCloseTag() {
+      let route = {
+        meta: this.$route.meta,
+        name: this.$route.name,
+        params: this.$route.params,
+        query: this.$route.query
+      };
+      this.closeTag(route);
+      this.$router.push('/update/shop/shoppingManger')
+    },
     handleChange (html, text) {
       this.formValidate.goodDescribe = html
     },

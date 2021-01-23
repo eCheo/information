@@ -27,7 +27,7 @@ Vue.use(VOrgTree)
 /**
  * @description 注册admin内置插件
  */
-installPlugin(Vue)
+// installPlugin(Vue)
 /**
  * @description 生产环境关掉提示
  */

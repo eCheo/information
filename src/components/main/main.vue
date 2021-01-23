@@ -136,7 +136,7 @@ export default {
           }
         }
       }
-      // this.setTagNavList(res)
+      this.setTagNavList(res)
     },
     handleClick (item) {
       this.turnToPage(item)

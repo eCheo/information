@@ -95,7 +95,6 @@ export default {
       //
     ]),
     ...mapActions([
-      'getContentByMsgId',
       'getMessageList',
       'hasRead',
       'removeReaded',
@@ -106,18 +105,6 @@ export default {
     },
     handleSelect (name) {
       this.currentMessageType = name
-    },
-    handleView (msg_id) {
-      this.contentLoading = true
-      this.getContentByMsgId({ msg_id }).then(content => {
-        this.messageContent = content
-        const item = this.messageList.find(item => item.msg_id === msg_id)
-        if (item) this.showingMsgItem = item
-        if (this.currentMessageType === 'unread') this.hasRead({ msg_id })
-        this.stopLoading('contentLoading')
-      }).catch(() => {
-        this.stopLoading('contentLoading')
-      })
     },
     removeMsg (item) {
       item.loading = true

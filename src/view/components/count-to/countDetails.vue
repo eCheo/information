@@ -2,6 +2,9 @@
   <div>
     <div>
       <div class="ct-top">
+        <div style="text-align:right;">
+        <Button @click="handleCloseTag">返回</Button>
+      </div>
         <div class="ct-box">
           <div>
             <img :src="userInfo.memberDto.headImgPath" />
@@ -74,6 +77,7 @@ import {
   findBackEndArticlesPageByCondition,
   passOrNot
 } from "@/api/data";
+import { mapMutations } from "vuex";
 export default {
   data() {
     return {
@@ -159,6 +163,17 @@ export default {
     this.findBackEndArticlesPageByCondition(1);
   },
   methods: {
+    ...mapMutations(["closeTag"]),
+    handleCloseTag() {
+      let route = {
+        meta: this.$route.meta,
+        name: this.$route.name,
+        params: this.$route.params,
+        query: this.$route.query
+      };
+      this.closeTag(route);
+      this.$router.push("/components/count/count_to_page");
+    },
     findMemberLabelReviewById() {
       let params = {
         id: this.$route.query.id

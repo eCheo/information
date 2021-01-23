@@ -1,5 +1,8 @@
 <template>
   <div class='orderde'>
+    <div style="text-align:right;">
+      <Button @click="handleCloseTag">返回</Button>
+    </div>
     <ul class="or-list">
       <li class="or-item">
         <div style="width:100px;">
@@ -117,6 +120,7 @@
 </template>
 
 <script>
+import { mapMutations} from 'vuex'
 import {findBackEndOrderById, createLogistics} from "@/api/data"
 export default {
   data() {
@@ -133,6 +137,19 @@ export default {
     this.findBackEndOrderById();
   },
   methods: {
+    ...mapMutations([
+      'closeTag'
+    ]),
+    handleCloseTag() {
+      let route = {
+        meta: this.$route.meta,
+        name: this.$route.name,
+        params: this.$route.params,
+        query: this.$route.query
+      };
+      this.closeTag(route);
+      this.$router.push('/update/order/ordermanage')
+    },
     findBackEndOrderById() {
       let params = {
         id: this.$route.query.id
